@@ -15,7 +15,7 @@ class COutput(BaseModel):
     predicted_job: str
     fit_score: float = Field(ge=0, le=100)
     matched_skills: list[str] = Field(default_factory=list)
-    skill_gaps: list[SkillGap] = Field(default_factory=list)
+    skill_gaps: list[SkillGap]
 
 
 class Resource(BaseModel):
@@ -75,4 +75,3 @@ class RecommendResponse(BaseModel):
     report: str
     scoring_formula: str
     rag_scope_note: str
-
