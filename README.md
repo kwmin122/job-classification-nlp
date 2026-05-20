@@ -14,6 +14,7 @@ C 파트 격차 분석 JSON
 ## 현재 구현 범위
 
 - 학습 자료 DB 80개, 직무군별 20개씩 구성
+- 잡코리아 채용공고 샘플에서 반복 확인한 요구역량을 기준으로 DB 재구성
 - 공식문서, 공식학습, 실습플랫폼, 유튜브, 블로그, 강의 자료 혼합
 - 각 자료에 `type`, `level`, `language`, `reliability`, `reason` 포함
 - C 파트가 넘겨주는 `skill_gaps`를 받아 부족 역량별 Top-K 추천 생성
@@ -116,6 +117,8 @@ PYTHONPATH=backend .venv/bin/python backend/tools/verify_resource_urls.py
 ## 주요 파일
 
 - `backend/app/data/learning_resources.csv`: 학습 자료 DB 80개
+- `docs/jobkorea_skill_basis.md`: 잡코리아 기반 역량 선정 근거
+- `exports/learning_resources_catalog.csv`: 확인용 한국어 CSV
 - `backend/app/data/sample_c_output.json`: C 파트 샘플 출력
 - `backend/app/services/retriever.py`: TF-IDF 검색기
 - `backend/app/services/scorer.py`: 추천 점수 공식
