@@ -1,0 +1,81 @@
+id,job_group,skill,sub_skill,title,description,url,type,level,language,free_or_paid,estimated_time,reliability,reason
+DA001,데이터 분석가,Python,기초 문법,Python 공식 튜토리얼,Python 문법과 표준 라이브러리 기본을 공식 문서로 학습한다,https://docs.python.org/3/tutorial/,공식문서,beginner,영어,무료,6시간,5,데이터 분석 자동화와 Pandas 학습 전 기본 문법 보완에 적합
+DA002,데이터 분석가,Python,실습,Kaggle Python Course,Kaggle Learn의 짧은 실습 문제로 Python 기초 문법과 함수 사용을 연습한다,https://www.kaggle.com/learn/python,실습플랫폼,beginner,영어,무료,5시간,4,데이터 분석 입문자가 많이 쓰는 실습형 무료 자료
+DA003,데이터 분석가,Pandas,실습,Kaggle Pandas Course,Kaggle Learn에서 필터링 그룹화 결측치 처리 등 Pandas 핵심 조작을 실습한다,https://www.kaggle.com/learn/pandas,실습플랫폼,intermediate,영어,무료,5시간,4,지원자 자료에 데이터 전처리 실습 근거를 추가하기 좋음
+DA004,데이터 분석가,NumPy,배열 연산,NumPy Quickstart,배열 생성 인덱싱 브로드캐스팅 등 수치 연산 기본을 공식 문서로 학습한다,https://numpy.org/doc/stable/user/quickstart.html,공식문서,beginner,영어,무료,4시간,5,Python 기반 수치 분석 기초 보완
+DA005,데이터 분석가,Matplotlib,시각화,Matplotlib Tutorials,Matplotlib 기반 차트 작성과 시각화 기본 패턴을 공식 튜토리얼로 학습한다,https://matplotlib.org/stable/tutorials/index.html,공식문서,beginner,영어,무료,4시간,5,분석 결과를 차트로 설명하는 역량 보완
+DA006,데이터 분석가,Seaborn,통계 시각화,Seaborn Tutorial,분포 관계형 범주형 통계 시각화 패턴을 공식 문서로 학습한다,https://seaborn.pydata.org/tutorial.html,공식문서,intermediate,영어,무료,4시간,5,EDA 결과를 더 명확히 전달하는 역량 보완
+DA007,데이터 분석가,Plotly,인터랙티브 시각화,Plotly Python Documentation,Python으로 인터랙티브 차트와 대시보드용 시각화를 만드는 공식 문서다,https://plotly.com/python/,공식문서,intermediate,영어,무료,5시간,5,대화형 분석 결과 표현 역량 보완
+DA008,데이터 분석가,Streamlit,분석 앱,Streamlit Get started,Python 분석 결과를 간단한 데이터 앱으로 배포하는 공식 시작 문서다,https://docs.streamlit.io/get-started,공식문서,beginner,영어,무료,3시간,5,분석 결과를 사용자 화면으로 보여주는 역량 보완
+DA009,데이터 분석가,Tableau,대시보드,Tableau Get Started,Tableau Desktop 시작 흐름과 기본 분석 화면을 공식 도움말로 익힌다,https://help.tableau.com/current/pro/desktop/en-us/gettingstarted_overview.htm,공식문서,beginner,영어,무료,5시간,5,BI 도구 경험 부족을 공식 자료로 보완
+DA010,데이터 분석가,Power BI,대시보드,Microsoft Learn Power BI,Power BI 데이터 연결 모델링 리포트 생성을 Microsoft 공식 학습으로 익힌다,https://learn.microsoft.com/en-us/training/powerplatform/power-bi,공식학습,beginner,영어,무료,6시간,5,기업 데이터 분석 도구 요구사항 보완
+DA011,데이터 분석가,Excel,분석 도구,Microsoft Excel Help and Learning,Excel 함수 피벗 테이블 차트 등 기본 분석 도구를 Microsoft 공식 문서로 학습한다,https://support.microsoft.com/en-us/excel,공식문서,beginner,영어,무료,4시간,5,초기 데이터 정리와 분석 자동화 역량 보완
+DA012,데이터 분석가,Looker Studio,리포팅,Looker Studio Help,Looker Studio 데이터 소스 연결 리포트 공유를 Google 공식 도움말로 학습한다,https://support.google.com/looker-studio,공식문서,beginner,영어,무료,4시간,5,클라우드 기반 리포팅과 대시보드 경험 보완
+DA013,데이터 분석가,BigQuery,분석 SQL,BigQuery Documentation,BigQuery SQL과 대용량 데이터 분석 워크플로우를 Google 공식 문서로 학습한다,https://cloud.google.com/bigquery/docs,공식문서,intermediate,영어,무료,6시간,5,대용량 분석 SQL 경험 보완
+DA014,데이터 분석가,PostgreSQL,SQL 기초,PostgreSQL Tutorial,PostgreSQL 설치 기본 SQL 데이터 타입 쿼리 흐름을 공식 문서로 학습한다,https://www.postgresql.org/docs/current/tutorial.html,공식문서,beginner,영어,무료,6시간,5,RDBMS 기초와 분석 SQL 역량 보완
+DA015,데이터 분석가,MySQL,SQL 기초,freeCodeCamp SQL and Databases,SQL과 관계형 데이터베이스 기본 개념을 인기 튜토리얼 글로 학습한다,https://www.freecodecamp.org/news/sql-and-databases-full-course/,블로그,beginner,영어,무료,6시간,4,MySQL과 SQL 기초를 입문자가 접근하기 쉬운 인기 자료로 보완
+DA016,데이터 분석가,SQL,기초 쿼리,SQLBolt,SELECT JOIN GROUP BY 등 SQL 기초를 인터랙티브 문제로 학습한다,https://sqlbolt.com/,실습플랫폼,beginner,영어,무료,4시간,4,SQL 입문자가 널리 사용하는 가벼운 실습 자료
+DA017,데이터 분석가,SQL,분석 쿼리,Mode SQL Tutorial,분석 업무에 필요한 SQL 집계 조인 서브쿼리를 실무 예제로 학습한다,https://mode.com/sql-tutorial/,블로그,intermediate,영어,무료,6시간,4,분석가용 SQL 학습 자료로 많이 인용되는 튜토리얼
+DA018,데이터 분석가,데이터 분석,실무 채널,Alex The Analyst YouTube,데이터 분석 포트폴리오 SQL Excel Tableau 실무 흐름을 영상으로 학습한다,https://www.youtube.com/@AlexTheAnalyst,유튜브,beginner,영어,무료,6시간,3,데이터 분석 입문자에게 인기 있는 실무형 유튜브 채널
+DA019,데이터 분석가,데이터 분석,Python 채널,Data School YouTube,Pandas scikit-learn 데이터 분석 설명을 영상 중심으로 학습한다,https://www.youtube.com/@dataschool,유튜브,intermediate,영어,무료,6시간,3,데이터 분석과 ML 기초를 연결해서 설명하는 인기 채널
+DA020,데이터 분석가,데이터 분석,Python 인증,freeCodeCamp Data Analysis with Python,NumPy Pandas Matplotlib로 데이터 분석 프로젝트를 수행하는 무료 인증 과정이다,https://www.freecodecamp.org/learn/data-analysis-with-python/,실습플랫폼,intermediate,영어,무료,2주,4,무료 실습과 프로젝트 결과물을 만들기 좋은 인기 플랫폼
+ML001,AI/ML 엔지니어,Machine Learning,입문,Kaggle Intro to Machine Learning,의사결정나무 모델 검증 기본을 Kaggle Learn 실습으로 학습한다,https://www.kaggle.com/learn/intro-to-machine-learning,실습플랫폼,beginner,영어,무료,5시간,4,ML 입문자가 많이 사용하는 무료 실습 과정
+ML002,AI/ML 엔지니어,Machine Learning,중급,Kaggle Intermediate Machine Learning,결측치 범주형 변수 파이프라인 검증을 Kaggle Learn에서 실습한다,https://www.kaggle.com/learn/intermediate-machine-learning,실습플랫폼,intermediate,영어,무료,6시간,4,기본 모델 이후 실무 전처리와 검증 흐름 보완
+ML003,AI/ML 엔지니어,PyTorch,딥러닝 기초,PyTorch Learn the Basics,텐서 autograd 모델 학습 루프를 공식 튜토리얼로 학습한다,https://pytorch.org/tutorials/beginner/basics/intro.html,공식문서,beginner,영어,무료,8시간,5,PyTorch 경험 부족을 보완하는 공식 자료
+ML004,AI/ML 엔지니어,PyTorch,비전,TorchVision Object Detection Tutorial,PyTorch 기반 객체 탐지 모델 학습과 커스텀 데이터셋 구성을 실습한다,https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html,공식문서,advanced,영어,무료,6시간,5,딥러닝 응용 프로젝트 경험 보완
+ML005,AI/ML 엔지니어,TensorFlow,딥러닝,TensorFlow Tutorials,TensorFlow와 Keras 기반 모델 학습 평가 저장을 공식 문서로 학습한다,https://www.tensorflow.org/tutorials,공식문서,beginner,영어,무료,8시간,5,TensorFlow 요구사항 보완
+ML006,AI/ML 엔지니어,TensorFlow,Keras,TensorFlow Keras Guide,Keras를 활용한 모델 구축 학습 저장 흐름을 TensorFlow 공식 문서로 익힌다,https://www.tensorflow.org/guide/keras,공식문서,intermediate,영어,무료,6시간,5,Keras 기반 딥러닝 구현 역량 보완
+ML007,AI/ML 엔지니어,Keras,모델 학습,Keras Guides,Keras API로 모델 정의 학습 콜백 저장 흐름을 공식 문서로 학습한다,https://keras.io/guides/,공식문서,intermediate,영어,무료,6시간,5,딥러닝 모델 구현 과정을 간결하게 익히기 좋음
+ML008,AI/ML 엔지니어,Hugging Face,NLP,Hugging Face NLP Course,Transformers Datasets Tokenizers 기반 NLP 모델 활용을 공식 학습 자료로 익힌다,https://huggingface.co/learn/nlp-course/chapter1/1,공식학습,intermediate,영어,무료,1주,5,NLP와 BERT 계열 요구사항 보완
+ML009,AI/ML 엔지니어,Transformers,사전학습 모델,Transformers Documentation,사전학습 모델 로딩 추론 파인튜닝 파이프라인을 공식 문서로 학습한다,https://huggingface.co/docs/transformers/index,공식문서,intermediate,영어,무료,1주,5,Transformer 실무 활용 역량 보완
+ML010,AI/ML 엔지니어,Datasets,데이터셋,Hugging Face Datasets Documentation,ML 데이터셋 로딩 전처리 공유 흐름을 공식 문서로 학습한다,https://huggingface.co/docs/datasets/index,공식문서,intermediate,영어,무료,5시간,5,모델 학습 데이터 관리 역량 보완
+ML011,AI/ML 엔지니어,MLflow,실험 관리,MLflow Documentation,실험 추적 모델 레지스트리 배포 흐름을 공식 문서로 학습한다,https://mlflow.org/docs/latest/index.html,공식문서,intermediate,영어,무료,1주,5,MLOps 요구사항과 모델 관리 경험 보완
+ML012,AI/ML 엔지니어,DVC,데이터 버전관리,DVC Documentation,데이터셋 모델 파이프라인 버전관리를 공식 문서로 실습한다,https://dvc.org/doc,공식문서,intermediate,영어,무료,1주,5,ML 프로젝트 재현성과 버전관리 경험 보완
+ML013,AI/ML 엔지니어,통계,머신러닝 설명,StatQuest YouTube,통계 머신러닝 딥러닝 개념을 직관적인 영상으로 학습한다,https://www.youtube.com/@statquest,유튜브,beginner,영어,무료,8시간,4,ML 개념 설명으로 널리 알려진 인기 학습 채널
+ML014,AI/ML 엔지니어,딥러닝,신경망 직관,3Blue1Brown Neural Networks,신경망과 역전파 개념을 시각적 설명 영상으로 이해한다,https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr,유튜브,beginner,영어,무료,4시간,4,딥러닝 이론을 직관적으로 이해하기 좋은 인기 강의
+ML015,AI/ML 엔지니어,Machine Learning,기초 이론,Google Machine Learning Crash Course,ML 개념 검증 과적합 분류 지표를 Google 공식 학습으로 익힌다,https://developers.google.com/machine-learning/crash-course,공식학습,beginner,영어,무료,1주,5,모델 평가와 기본 개념 근거 보완
+ML016,AI/ML 엔지니어,SageMaker,모델 운영,Amazon SageMaker Documentation,AWS SageMaker 기반 모델 학습 배포 운영 개념을 공식 문서로 학습한다,https://docs.aws.amazon.com/sagemaker/latest/dg/whatis.html,공식문서,advanced,영어,무료,1주,5,AWS ML 플랫폼 경험 보완
+ML017,AI/ML 엔지니어,Vertex AI,모델 운영,Vertex AI Documentation,Google Cloud Vertex AI 모델 학습 배포 통합 플랫폼을 공식 문서로 학습한다,https://cloud.google.com/vertex-ai/docs/start/introduction-unified-platform,공식문서,advanced,영어,무료,1주,5,GCP 기반 ML 운영 경험 보완
+ML018,AI/ML 엔지니어,Deep Learning,응용 강의,DeepLearning.AI Short Courses,생성형 AI 머신러닝 응용 주제를 짧은 공식 강의로 학습한다,https://www.deeplearning.ai/short-courses/,강의,intermediate,영어,부분무료,6시간,4,AI 실무 주제를 빠르게 훑기 좋은 인기 교육 플랫폼
+ML019,AI/ML 엔지니어,MLOps,실무 프로젝트,Made With ML,ML 시스템 설계 실험 운영 배포 흐름을 실무 프로젝트 관점에서 학습한다,https://madewithml.com/,블로그,advanced,영어,무료,2주,4,ML 실무와 MLOps를 연결하는 유명 실전 자료
+ML020,AI/ML 엔지니어,Machine Learning,Python 실습,sentdex YouTube,Python 기반 머신러닝 딥러닝 프로젝트 실습을 영상으로 학습한다,https://www.youtube.com/@sentdex,유튜브,intermediate,영어,무료,8시간,3,Python ML 실습으로 오래 알려진 인기 유튜브 채널
+BE001,백엔드 개발자,Java,기초 문법,Java Tutorials,Java 언어 기본 클래스 컬렉션 예외 처리를 공식 튜토리얼로 학습한다,https://docs.oracle.com/javase/tutorial/,공식문서,beginner,영어,무료,1주,5,Java 기반 백엔드 기본기 보완
+BE002,백엔드 개발자,Spring Boot,REST API,Spring Building a RESTful Web Service,Spring Boot로 REST API를 만드는 공식 가이드다,https://spring.io/guides/gs/rest-service/,공식문서,beginner,영어,무료,3시간,5,Spring REST API 경험 부족 보완에 적합
+BE003,백엔드 개발자,Spring Boot,JPA,Spring Accessing Data with JPA,JPA 기반 데이터 접근 계층을 공식 가이드로 실습한다,https://spring.io/guides/gs/accessing-data-jpa/,공식문서,intermediate,영어,무료,4시간,5,DB 연동 백엔드 경험 보강
+BE004,백엔드 개발자,Node.js,서버 기초,Node.js Learn,Node.js 런타임 비동기 파일 시스템 HTTP 기본을 공식 문서로 학습한다,https://nodejs.org/en/learn,공식문서,beginner,영어,무료,5시간,5,Node 기반 서버 경험 부족 시 기초 보완
+BE005,백엔드 개발자,Express,REST API,Express Starter Guide,Express 설치 라우팅 미들웨어 시작 흐름을 공식 문서로 학습한다,https://expressjs.com/en/starter/installing.html,공식문서,beginner,영어,무료,4시간,5,Node REST API 구현 역량 보완
+BE006,백엔드 개발자,FastAPI,API 서버,FastAPI Tutorial,Python 기반 API 서버와 자동 문서화를 공식 튜토리얼로 학습한다,https://fastapi.tiangolo.com/tutorial/,공식문서,beginner,영어,무료,5시간,5,API 서버 구조 이해와 빠른 실습에 적합
+BE007,백엔드 개발자,Django,웹 백엔드,Django Tutorial,Django 프로젝트 앱 모델 뷰 템플릿 흐름을 공식 튜토리얼로 학습한다,https://docs.djangoproject.com/en/stable/intro/tutorial01/,공식문서,beginner,영어,무료,8시간,5,Python 백엔드 프레임워크 경험 보완
+BE008,백엔드 개발자,PostgreSQL,SQL 기초,PostgreSQL Tutorial,PostgreSQL 설치 기본 SQL 데이터 타입 쿼리 흐름을 공식 문서로 학습한다,https://www.postgresql.org/docs/current/tutorial.html,공식문서,beginner,영어,무료,6시간,5,RDBMS 기초와 PostgreSQL 사용 경험 보완
+BE009,백엔드 개발자,MySQL,SQL 기초,freeCodeCamp SQL and Databases,SQL과 관계형 데이터베이스 기본 개념을 인기 튜토리얼 글로 학습한다,https://www.freecodecamp.org/news/sql-and-databases-full-course/,블로그,beginner,영어,무료,6시간,4,MySQL 기반 백엔드 요구사항을 접근성 높은 자료로 보완
+BE010,백엔드 개발자,Redis,캐시,Redis Documentation,Redis 자료구조 캐시 세션 메시징 기본을 공식 문서로 학습한다,https://redis.io/docs/latest/,공식문서,intermediate,영어,무료,5시간,5,캐시와 성능 개선 경험 보완
+BE011,백엔드 개발자,Docker,컨테이너,Docker Get Started,Docker 이미지 컨테이너 Dockerfile 기본을 공식 문서로 학습한다,https://docs.docker.com/get-started/,공식문서,beginner,영어,무료,4시간,5,Docker 부족 역량 보완의 첫 자료
+BE012,백엔드 개발자,Docker,Docker Compose,Docker Compose Quickstart,여러 컨테이너 서비스 정의와 실행 흐름을 공식 문서로 학습한다,https://docs.docker.com/compose/gettingstarted/,공식문서,intermediate,영어,무료,4시간,5,백엔드 API와 DB를 함께 실행하는 실습에 적합
+BE013,백엔드 개발자,AWS,EC2,Amazon EC2 Getting Started,EC2 인스턴스 생성 접속 배포 기본을 AWS 공식 문서로 학습한다,https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html,공식문서,beginner,영어,무료,5시간,5,AWS 배포 경험 부족을 보완
+BE014,백엔드 개발자,AWS,RDS,Amazon RDS User Guide,RDS 관리형 데이터베이스 개념 생성 연결 운영을 AWS 공식 문서로 학습한다,https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html,공식문서,intermediate,영어,무료,5시간,5,백엔드 DB 운영과 클라우드 경험 보완
+BE015,백엔드 개발자,CI/CD,GitHub Actions,GitHub Actions Documentation,워크플로우 작성 빌드 테스트 배포 자동화를 GitHub 공식 문서로 학습한다,https://docs.github.com/en/actions,공식문서,beginner,영어,무료,5시간,5,CI/CD 부족 역량 보완의 기준 자료
+BE016,백엔드 개발자,CI/CD,배포 자동화,Deploying with GitHub Actions,GitHub Actions 기반 배포 자동화 패턴을 GitHub 공식 문서로 학습한다,https://docs.github.com/en/actions/use-cases-and-examples/deploying/deploying-with-github-actions,공식문서,intermediate,영어,무료,4시간,5,배포 자동화 경험을 구체화하기 좋음
+BE017,백엔드 개발자,CI/CD,워크플로우 입문,GitHub Actions Quickstart,GitHub Actions 워크플로우 파일을 만들고 자동 실행하는 기본 흐름을 공식 문서로 학습한다,https://docs.github.com/en/actions/writing-workflows/quickstart,공식문서,beginner,영어,무료,3시간,5,CI/CD 입문 단계에서 공식적으로 따라 하기 좋은 자료
+BE018,백엔드 개발자,AWS,클라우드 기초,AWS Cloud Practitioner Essentials,AWS 핵심 서비스와 클라우드 기본 개념을 공식 디지털 학습으로 익힌다,https://aws.amazon.com/training/digital/aws-cloud-practitioner-essentials/,공식학습,beginner,영어,무료,6시간,5,AWS 경험이 부족한 지원자가 서비스 지도를 잡기 좋음
+BE019,백엔드 개발자,Spring Boot,보안,Spring Securing a Web Application,Spring Security로 웹 애플리케이션 인증 흐름을 공식 가이드로 실습한다,https://spring.io/guides/gs/securing-web/,공식문서,intermediate,영어,무료,4시간,5,백엔드 인증 보안 경험 부족을 공식 실습으로 보완
+BE020,백엔드 개발자,Docker,실무 채널,TechWorld with Nana Docker,컨테이너 Docker Compose DevOps 흐름을 영상으로 학습한다,https://www.youtube.com/@TechWorldwithNana,유튜브,intermediate,영어,무료,6시간,4,Docker와 DevOps 입문자에게 인기 있는 실무형 유튜브 채널
+FE001,프론트엔드 개발자,HTML,기초,MDN HTML Guide,HTML 요소 폼 시맨틱 구조를 MDN 공식 문서로 학습한다,https://developer.mozilla.org/en-US/docs/Learn/HTML,공식문서,beginner,영어,무료,5시간,5,웹 기본 구조와 접근성 기초 보완
+FE002,프론트엔드 개발자,CSS,기초,MDN CSS Guide,CSS 선택자 박스 모델 레이아웃 스타일링 기본을 MDN으로 학습한다,https://developer.mozilla.org/en-US/docs/Learn/CSS,공식문서,beginner,영어,무료,6시간,5,프론트엔드 스타일링 기본기 보완
+FE003,프론트엔드 개발자,JavaScript,기초,freeCodeCamp JavaScript Algorithms,JavaScript 기초 자료구조 알고리즘을 무료 실습 인증 과정으로 학습한다,https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures-v8/,실습플랫폼,beginner,영어,무료,2주,4,프론트엔드 입문자가 많이 사용하는 인기 실습 과정
+FE004,프론트엔드 개발자,CSS,실무 채널,Kevin Powell YouTube,CSS 레이아웃 반응형 디자인 실무 팁을 영상으로 학습한다,https://www.youtube.com/@KevinPowell,유튜브,intermediate,영어,무료,6시간,4,CSS 학습 분야에서 인지도가 높은 인기 채널
+FE005,프론트엔드 개발자,CSS,Grid,MDN Grid Guide,CSS Grid 행 열 영역 기반 레이아웃을 MDN 공식 문서로 학습한다,https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Grids,공식문서,intermediate,영어,무료,4시간,5,복잡한 UI 레이아웃 구현 역량 보완
+FE006,프론트엔드 개발자,TypeScript,타입 시스템,TypeScript Handbook,TypeScript 타입 인터페이스 제네릭 설정을 공식 문서로 학습한다,https://www.typescriptlang.org/docs/handbook/intro.html,공식문서,beginner,영어,무료,6시간,5,TS 요구사항 보완의 기준 자료
+FE007,프론트엔드 개발자,React,기초,React Learn,컴포넌트 상태 이벤트 렌더링 흐름을 React 공식 문서로 학습한다,https://react.dev/learn,공식문서,beginner,영어,무료,8시간,5,React 경험 부족 보완의 대표 자료
+FE008,프론트엔드 개발자,React,API,React Reference,React 훅 컴포넌트 API와 클라이언트 렌더링 API를 공식 문서로 학습한다,https://react.dev/reference/react,공식문서,intermediate,영어,무료,6시간,5,React 실무 코드 이해와 구현 보완
+FE009,프론트엔드 개발자,Next.js,App Router,Next.js Documentation,라우팅 서버 컴포넌트 데이터 패칭 배포 흐름을 Next.js 공식 문서로 학습한다,https://nextjs.org/docs,공식문서,intermediate,영어,무료,1주,5,현대 React 프레임워크 역량 보완
+FE010,프론트엔드 개발자,Vite,빌드 도구,Vite Guide,개발 서버 번들링 설정 플러그인 흐름을 Vite 공식 문서로 학습한다,https://vite.dev/guide/,공식문서,beginner,영어,무료,3시간,5,프론트엔드 개발 환경 이해 보완
+FE011,프론트엔드 개발자,Frontend,종합 실습,freeCodeCamp Responsive Web Design,HTML CSS 반응형 웹 접근성 기초를 무료 실습 인증 과정으로 학습한다,https://www.freecodecamp.org/learn/2022/responsive-web-design/,실습플랫폼,beginner,영어,무료,2주,4,프론트엔드 기초 결과물을 만들기 좋은 인기 과정
+FE012,프론트엔드 개발자,JavaScript,실무 채널,Web Dev Simplified YouTube,JavaScript React 웹 개발 개념을 짧은 실무 영상으로 학습한다,https://www.youtube.com/@WebDevSimplified,유튜브,intermediate,영어,무료,6시간,4,프론트엔드 학습자가 많이 참고하는 인기 채널
+FE013,프론트엔드 개발자,CSS,실무 블로그,Josh W Comeau Blog,CSS React UI 구현에서 자주 막히는 개념을 깊이 있는 글로 학습한다,https://www.joshwcomeau.com/,블로그,advanced,영어,무료,6시간,4,프론트엔드 UI 품질을 높이는 유명 블로그
+FE014,프론트엔드 개발자,Testing Library,컴포넌트 테스트,Testing Library Docs,사용자 관점의 컴포넌트 테스트 작성법을 공식 문서로 학습한다,https://testing-library.com/docs/,공식문서,intermediate,영어,무료,5시간,5,프론트엔드 테스트 경험 보완
+FE015,프론트엔드 개발자,Playwright,E2E 테스트,Playwright Docs,브라우저 자동화 E2E 테스트 작성법을 공식 문서로 학습한다,https://playwright.dev/docs/intro,공식문서,intermediate,영어,무료,5시간,5,E2E 테스트와 안정성 보완
+FE016,프론트엔드 개발자,Storybook,컴포넌트 문서화,Storybook Docs,컴포넌트 개발 문서화 테스트 워크플로우를 공식 문서로 학습한다,https://storybook.js.org/docs,공식문서,intermediate,영어,무료,5시간,5,컴포넌트 기반 협업과 문서화 경험 보완
+FE017,프론트엔드 개발자,Frontend,트렌드 요약,Fireship YouTube,웹 프레임워크 클라우드 개발 트렌드를 짧고 밀도 높은 영상으로 학습한다,https://www.youtube.com/@Fireship,유튜브,intermediate,영어,무료,4시간,4,기술 흐름을 빠르게 파악하기 좋은 인기 채널
+FE018,프론트엔드 개발자,접근성,웹 접근성,MDN Accessibility,시맨틱 HTML ARIA 키보드 접근성 기본을 MDN 공식 문서로 학습한다,https://developer.mozilla.org/en-US/docs/Learn/Accessibility,공식문서,beginner,영어,무료,5시간,5,접근성 요구사항과 UI 품질 보완
+FE019,프론트엔드 개발자,ARIA,접근성 패턴,WAI ARIA Authoring Practices,컴포넌트별 ARIA 패턴과 키보드 상호작용을 W3C 공식 문서로 학습한다,https://www.w3.org/WAI/ARIA/apg/,공식문서,advanced,영어,무료,8시간,5,복잡한 UI 접근성 심화 역량 보완
+FE020,프론트엔드 개발자,Chrome DevTools,디버깅,Chrome DevTools Documentation,브라우저 디버깅 성능 네트워크 분석을 Chrome 공식 문서로 학습한다,https://developer.chrome.com/docs/devtools,공식문서,intermediate,영어,무료,4시간,5,프론트엔드 디버깅과 성능 분석 경험 보완

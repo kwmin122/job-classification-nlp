@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
+.next/
+out/
+dist/
+backend/app/cache/
+.env
+.env.local
+npm-debug.log*
+
