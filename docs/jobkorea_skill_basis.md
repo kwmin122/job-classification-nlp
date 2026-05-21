@@ -28,6 +28,8 @@ Generated: 2026-05-20
 - 총 80개, 직무군별 20개
 - 전체 자료 언어는 `한국어`로 통일
 - 한국어 공식문서 중심으로 재편하되, 한국어 공식문서가 부족한 실무 기술은 인프런 한국어 검색 결과 또는 한국어 유튜브 채널로 보완
+- 유튜브 자료는 직무군별 5개씩, 총 20개로 보강했다.
+- 예시 채널/검색 축: 혁펜하임, 테디노트, 빵형의 개발도상국, 모두를 위한 딥러닝, 우아한Tech, 메타코딩, 개발바닥, 드림코딩, 노마드 코더, 코딩애플, 코딩앙마, 나도코딩, 생활코딩
 - 데이터 분석가: Python, SQL, Pandas, BI, Spark/Airflow, AWS, 통계/ML
 - AI/ML 엔지니어: Python, ML, PyTorch, TensorFlow, CV, ONNX, LLM, MLOps, Spark
 - 백엔드 개발자: Java, Spring Boot, JPA, API, AWS, Docker, CI/CD, Git, DB, 테스트
