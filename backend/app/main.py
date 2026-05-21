@@ -6,6 +6,11 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.schemas import COutput, RecommendResponse, SkillRecommendation
+from app.services.embedding_retriever import (
+    CHUNKING_STRATEGY,
+    RetrieverInfo,
+    build_retriever,
+)
 from app.services.resource_loader import SAMPLE_PATH, load_resources
 from app.services.retriever import TfidfRetriever
 from app.services.roadmap_generator import generate_roadmap
@@ -45,7 +50,15 @@ def recommend(c_output: COutput, top_k: int = 3) -> RecommendResponse:
         raise HTTPException(status_code=400, detail="top_k must be between 1 and 10")
 
     resources = load_resources()
-    retriever = TfidfRetriever(resources)
+    try:
+        retriever, retriever_info = build_retriever(resources)
+    except Exception:
+        retriever = TfidfRetriever(resources)
+        retriever_info = RetrieverInfo(
+            retrieval_mode="tfidf_fallback",
+            embedding_model="none",
+            chunking_strategy=CHUNKING_STRATEGY,
+        )
     skill_recommendations: list[SkillRecommendation] = []
 
     sorted_gaps = sorted(c_output.skill_gaps, key=lambda gap: gap.gap_score, reverse=True)
@@ -59,7 +72,16 @@ def recommend(c_output: COutput, top_k: int = 3) -> RecommendResponse:
                 gap.evidence,
             ]
         )
-        candidates = retriever.search(query, limit=max(12, top_k * 4))
+        try:
+            candidates = retriever.search(query, limit=max(12, top_k * 4))
+        except Exception:
+            retriever = TfidfRetriever(resources)
+            retriever_info = RetrieverInfo(
+                retrieval_mode="tfidf_fallback",
+                embedding_model="none",
+                chunking_strategy=CHUNKING_STRATEGY,
+            )
+            candidates = retriever.search(query, limit=max(12, top_k * 4))
         scored = [
             score_resource(
                 resource=resource,
@@ -109,4 +131,7 @@ def recommend(c_output: COutput, top_k: int = 3) -> RecommendResponse:
             "This is curated learning-resource DB retrieval over learning_resources.csv, "
             "not open-web search."
         ),
+        retrieval_mode=retriever_info.retrieval_mode,
+        embedding_model=retriever_info.embedding_model,
+        chunking_strategy=retriever_info.chunking_strategy,
     )

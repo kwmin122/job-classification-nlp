@@ -115,6 +115,9 @@ export default function Home() {
           report={result?.report ?? null}
           formula={result?.scoring_formula ?? null}
           ragScope={result?.rag_scope_note ?? null}
+          retrievalMode={result?.retrieval_mode ?? null}
+          embeddingModel={result?.embedding_model ?? null}
+          chunkingStrategy={result?.chunking_strategy ?? null}
         />
       </section>
     </main>

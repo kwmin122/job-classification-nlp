@@ -531,6 +531,20 @@ li + li {
   color: var(--muted);
 }
 
+.retrieval-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.retrieval-meta span {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: oklch(0.985 0.006 92);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
 @media (max-width: 1050px) {
   .dashboard-shell {
     grid-template-columns: minmax(0, 1fr);

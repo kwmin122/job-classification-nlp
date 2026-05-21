@@ -47,10 +47,12 @@ numpy cosine similarity 검색
 - 추천 점수 공식 공개
 - GPU 없이 실행되는 로컬 FastAPI + Next.js 대시보드
 - 최종 설계는 OpenAI `text-embedding-3-small` API로 학습자료와 query를 임베딩
+- `OPENAI_API_KEY`가 있으면 `EmbeddingRetriever`, 없으면 `TfidfRetriever` fallback 사용
+- `backend/tools/build_embeddings.py`로 80개 학습자료 임베딩 캐시 사전 생성 가능
 
 이 프로젝트의 RAG는 웹 전체 검색이 아니라, 직접 큐레이션한 `learning_resources.csv`를 검색하는 추천 RAG입니다.
 
-현재 코드의 검색기는 CPU 재현성을 우선한 `TfidfRetriever`입니다. 최종 제출 설계에서는 이를 OpenAI `text-embedding-3-small` 기반 `EmbeddingRetriever`로 교체하고, TF-IDF는 fallback으로 남깁니다.
+현재 코드의 기본 목표 검색기는 OpenAI `text-embedding-3-small` 기반 `EmbeddingRetriever`입니다. API key가 없거나 임베딩 생성이 실패하면 기존 `TfidfRetriever`로 fallback합니다.
 
 ## C 파트 입력 계약
 
@@ -141,6 +143,17 @@ PYTHONPATH=backend .venv/bin/python backend/tools/verify_resource_urls.py
 
 검증 스크립트는 HTTP 상태 코드와 최종 redirect URL, HTML title을 출력하고 실패 URL이 있으면 non-zero exit code로 종료합니다.
 
+## 임베딩 캐시 생성
+
+최종 RAG 검색용 임베딩 캐시를 생성합니다.
+
+```bash
+export OPENAI_API_KEY="..."
+PYTHONPATH=backend .venv/bin/python backend/tools/build_embeddings.py
+```
+
+캐시는 `backend/app/cache/` 아래에 생성되며 git에는 포함하지 않습니다.
+
 ## 발표용 설명
 
 > 저는 C 파트가 계산한 부족 역량과 격차 점수를 입력으로 받아, 직접 구축한 80개 학습 자료 DB에서 관련 자료를 검색합니다. 검색된 자료는 의미 유사도, 기술 매칭, 직무군 매칭, 신뢰도 점수를 조합해 정렬하고, 그 결과를 바탕으로 학습 로드맵과 자연어 리포트를 생성합니다. 마지막으로 이 과정을 로컬 대시보드에서 확인할 수 있게 통합했습니다.
@@ -152,9 +165,11 @@ PYTHONPATH=backend .venv/bin/python backend/tools/verify_resource_urls.py
 - `docs/jobkorea_skill_basis.md`: 잡코리아 기반 역량 선정 근거
 - `exports/learning_resources_catalog.csv`: 확인용 한국어 CSV
 - `backend/app/data/sample_c_output.json`: C 파트 샘플 출력
-- `backend/app/services/retriever.py`: 현재 TF-IDF fallback 검색기
+- `backend/app/services/embedding_retriever.py`: OpenAI embedding 검색기와 fallback 선택 로직
+- `backend/app/services/retriever.py`: TF-IDF fallback 검색기
 - `backend/app/services/scorer.py`: 추천 점수 공식
 - `backend/app/services/roadmap_generator.py`: 학습 로드맵 생성
 - `backend/app/services/report_generator.py`: 자연어 리포트 생성
 - `backend/app/main.py`: FastAPI 엔드포인트
+- `backend/tools/build_embeddings.py`: 임베딩 캐시 생성 도구
 - `frontend/app/page.tsx`: 로컬 대시보드 화면

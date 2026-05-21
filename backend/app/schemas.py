@@ -75,3 +75,6 @@ class RecommendResponse(BaseModel):
     report: str
     scoring_formula: str
     rag_scope_note: str
+    retrieval_mode: str
+    embedding_model: str
+    chunking_strategy: str

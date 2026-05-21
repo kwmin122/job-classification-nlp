@@ -31,10 +31,6 @@ def resource_search_text(resource: Resource) -> str:
             resource.sub_skill,
             resource.title,
             resource.description,
-            resource.type,
-            resource.level,
-            resource.language,
             resource.reason,
         ]
     )
-

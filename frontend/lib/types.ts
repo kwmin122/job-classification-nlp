@@ -70,5 +70,7 @@ export type RecommendResponse = {
   report: string;
   scoring_formula: string;
   rag_scope_note: string;
+  retrieval_mode: string;
+  embedding_model: string;
+  chunking_strategy: string;
 };
-
