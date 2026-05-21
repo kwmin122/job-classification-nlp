@@ -1,81 +1,81 @@
 ﻿id,job_group,skill,sub_skill,title,description,url,type,level,language,free_or_paid,estimated_time,reliability,reason
-DA001,데이터 분석가,Python,분석 기초,Python 공식 튜토리얼,Python 기본 문법과 표준 라이브러리를 학습한다,https://docs.python.org/3/tutorial/,공식문서,beginner,영어,무료,6시간,5,잡코리아 데이터 분석가 공고에서 Python이 반복됨
-DA002,데이터 분석가,Python,실습,Kaggle Python Course,노트북 기반 Python 기초 실습을 진행한다,https://www.kaggle.com/learn/python,실습플랫폼,beginner,영어,무료,5시간,4,분석 코딩 감각을 만들기 좋은 실습형 자료
-DA003,데이터 분석가,SQL,기초 쿼리,SQLBolt,SELECT JOIN GROUP BY 등 분석가 필수 SQL을 실습한다,https://sqlbolt.com/,실습플랫폼,beginner,영어,무료,4시간,4,잡코리아 데이터 분석 공고에서 SQL 요구가 가장 반복됨
-DA004,데이터 분석가,SQL,DB 기초,PostgreSQL Tutorial,관계형 데이터베이스와 SQL 기본 문법을 학습한다,https://www.postgresql.org/docs/current/tutorial.html,공식문서,beginner,영어,무료,5시간,5,SQL 역량을 실제 DB 기준으로 설명할 수 있게 함
-DA005,데이터 분석가,Pandas,전처리,Pandas User Guide,데이터프레임 전처리와 집계 흐름을 학습한다,https://pandas.pydata.org/docs/user_guide/index.html,공식문서,intermediate,영어,무료,6시간,5,Python 분석 역량을 실제 데이터 처리 경험으로 연결
-DA006,데이터 분석가,Pandas,실습,Kaggle Pandas Course,필터링 그룹화 결측치 처리 등 Pandas 조작을 연습한다,https://www.kaggle.com/learn/pandas,실습플랫폼,intermediate,영어,무료,5시간,4,분석 포트폴리오에서 전처리 근거를 만들기 좋음
-DA007,데이터 분석가,Tableau,BI 시각화,Tableau Get Started,대시보드와 시각화 기본 흐름을 학습한다,https://help.tableau.com/current/pro/desktop/en-us/gettingstarted_overview.htm,공식문서,beginner,영어,무료,4시간,5,잡코리아 데이터 분석 공고에서 Tableau가 반복됨
-DA008,데이터 분석가,Power BI,BI 시각화,Microsoft Learn Power BI,Power BI 데이터 모델링과 리포트 제작을 학습한다,https://learn.microsoft.com/en-us/training/powerplatform/power-bi,공식학습,beginner,영어,무료,6시간,5,BI 도구 경험 요구에 대응
-DA009,데이터 분석가,Excel,분석 실무,Microsoft Excel Help and Learning,Excel 함수 피벗 테이블 차트 기본을 정리한다,https://support.microsoft.com/en-us/excel,공식문서,beginner,영어,무료,4시간,5,일반 데이터 분석 직무에서 여전히 쓰이는 기본 도구
-DA010,데이터 분석가,R,통계 분석,R for Data Science,R 기반 데이터 정제 시각화 모델링 흐름을 학습한다,https://r4ds.hadley.nz/,책,intermediate,영어,무료,10시간,4,Python과 함께 R이 등장하는 데이터 분석 공고 대응
-DA011,데이터 분석가,Spark,대용량 데이터,Apache Spark SQL Guide,Spark SQL과 DataFrame 분석 흐름을 학습한다,https://spark.apache.org/docs/latest/sql-programming-guide.html,공식문서,intermediate,영어,무료,6시간,5,게임 빅데이터 분석 공고에서 Spark 요구가 확인됨
-DA012,데이터 분석가,Airflow,워크플로우,Apache Airflow Tutorial,DAG 태스크 의존성 등 데이터 파이프라인 기본을 익힌다,https://airflow.apache.org/docs/apache-airflow/stable/tutorial/index.html,공식문서,intermediate,영어,무료,5시간,5,Airflow가 등장하는 분석 공고 대응
-DA013,데이터 분석가,Redash,쿼리 대시보드,Redash User Guide,Redash에서 데이터 소스 연결 쿼리 시각화 대시보드 생성 흐름을 학습한다,https://redash.io/help/user-guide/getting-started/,공식문서,beginner,영어,무료,3시간,5,Redash를 요구하는 데이터 분석 공고 대응
-DA014,데이터 분석가,BigQuery,클라우드 분석,BigQuery Documentation,클라우드 데이터 웨어하우스와 SQL 분석 환경을 익힌다,https://cloud.google.com/bigquery/docs,공식문서,intermediate,영어,무료,6시간,5,AWS Azure 등 클라우드 분석 요구 확장
-DA015,데이터 분석가,AWS,클라우드 기초,AWS Cloud Practitioner Essentials,AWS 핵심 서비스와 클라우드 기본 개념을 익힌다,https://aws.amazon.com/training/learn-about/cloud-practitioner/,공식학습,beginner,영어,무료,6시간,5,데이터 분석 공고에서 AWS Azure가 반복됨
-DA016,데이터 분석가,통계,기초 통계,Khan Academy Statistics and Probability,확률 분포 추정 검정 등 분석 해석 기초를 학습한다,https://www.khanacademy.org/math/statistics-probability,강의,beginner,영어,무료,8시간,4,분석 결과를 설명하기 위한 기본 통계 역량
-DA017,데이터 분석가,Machine Learning,분석 모델링,Google Machine Learning Crash Course,기본 ML 개념과 모델 평가를 정리한다,https://developers.google.com/machine-learning/crash-course,공식학습,intermediate,영어,무료,8시간,5,AI 데이터 분석가 공고에서 ML 요구가 확인됨
-DA018,데이터 분석가,데이터 시각화,Python 시각화,Seaborn Tutorial,분포 비교 관계 시각화 패턴을 학습한다,https://seaborn.pydata.org/tutorial.html,공식문서,intermediate,영어,무료,4시간,5,Tableau BI 외 Python 시각화 역량 보완
-DA019,데이터 분석가,데이터 분석,실무 채널,Alex The Analyst YouTube,SQL Excel Tableau 포트폴리오 흐름을 영상으로 참고한다,https://www.youtube.com/@AlexTheAnalyst,유튜브,beginner,영어,무료,6시간,3,인기 있는 데이터 분석 커리어 포트폴리오 채널
-DA020,데이터 분석가,데이터 분석,프로젝트 실습,freeCodeCamp Data Analysis with Python,Python NumPy Pandas Matplotlib 프로젝트 실습을 진행한다,https://www.freecodecamp.org/learn/data-analysis-with-python,실습플랫폼,intermediate,영어,무료,20시간,4,분석 프로젝트 증거를 만들기 좋은 무료 실습 자료
-ML001,AI/ML 엔지니어,Python,AI 개발 기초,Python 공식 튜토리얼,AI ML 공고에서 반복되는 Python 기본을 정리한다,https://docs.python.org/3/tutorial/,공식문서,beginner,영어,무료,6시간,5,AI ML 엔지니어 공고에서 Python은 기본 전제
-ML002,AI/ML 엔지니어,Machine Learning,기초 모델링,Kaggle Intro to Machine Learning,기본 머신러닝 워크플로우를 실습한다,https://www.kaggle.com/learn/intro-to-machine-learning,실습플랫폼,beginner,영어,무료,4시간,4,머신러닝 기본 경험을 빠르게 만들 수 있음
-ML003,AI/ML 엔지니어,Machine Learning,심화 모델링,Kaggle Intermediate Machine Learning,결측치 범주형 변수 파이프라인 XGBoost를 실습한다,https://www.kaggle.com/learn/intermediate-machine-learning,실습플랫폼,intermediate,영어,무료,5시간,4,모델링 실습 근거를 보강하기 좋음
-ML004,AI/ML 엔지니어,PyTorch,딥러닝 프레임워크,PyTorch Learn the Basics,Tensor Dataset Autograd 모델 학습 루프를 익힌다,https://pytorch.org/tutorials/beginner/basics/intro.html,공식문서,beginner,영어,무료,6시간,5,잡코리아 ML AI 공고에서 PyTorch 요구가 반복됨
-ML005,AI/ML 엔지니어,TensorFlow,딥러닝 프레임워크,TensorFlow Tutorials,TensorFlow 모델 학습 평가 저장 흐름을 익힌다,https://www.tensorflow.org/tutorials,공식문서,beginner,영어,무료,6시간,5,TensorFlow도 AI 공고에서 PyTorch와 함께 반복됨
-ML006,AI/ML 엔지니어,Keras,모델링 API,Keras Guides,Keras 모델 정의 학습 커스터마이징을 학습한다,https://keras.io/guides/,공식문서,intermediate,영어,무료,5시간,5,TensorFlow 기반 모델 구현을 단순화해 설명 가능
-ML007,AI/ML 엔지니어,OpenCV,컴퓨터비전,OpenCV Python Tutorials,이미지 처리 특징 추출 등 CV 기본기를 학습한다,https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html,공식문서,intermediate,영어,무료,6시간,5,CV 라이다 문서인식 ML 공고에서 OpenCV 계열 요구 확인
-ML008,AI/ML 엔지니어,Computer Vision,객체 탐지,TorchVision Object Detection Tutorial,PyTorch 기반 객체 탐지 fine tuning을 실습한다,https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html,공식문서,advanced,영어,무료,6시간,5,detectron2 mmdetection 등 객체탐지 요구에 대응
-ML009,AI/ML 엔지니어,ONNX,모델 교환,ONNX Tutorial,ONNX 모델 형식과 변환 호환 개념을 공식 문서로 학습한다,https://onnx.ai/onnx/intro/,공식문서,intermediate,영어,무료,4시간,5,ONNX 요구가 있는 ML 공고 대응
-ML010,AI/ML 엔지니어,Transformers,NLP/LLM,Transformers Documentation,Transformers 모델 로딩 추론 fine tuning 흐름을 익힌다,https://huggingface.co/docs/transformers/index,공식문서,intermediate,영어,무료,6시간,5,LLM AI 공고에서 기본으로 요구되는 모델 활용 역량
-ML011,AI/ML 엔지니어,Hugging Face,LLM 학습,Hugging Face LLM Course,Transformers Datasets Tokenizers 등 LLM NLP 개발 흐름을 학습한다,https://huggingface.co/learn/llm-course/chapter1/1,공식학습,intermediate,영어,무료,10시간,5,LLM 관련 역량을 체계적으로 정리하기 좋음
-ML012,AI/ML 엔지니어,LangChain,LLM 앱,LangChain Python Documentation,LangChain 기반 체인 도구 RAG 앱 구성 흐름을 학습한다,https://python.langchain.com/docs/introduction/,공식문서,intermediate,영어,무료,6시간,5,잡코리아 ML 공고에서 LangChain 요구 확인
-ML013,AI/ML 엔지니어,vLLM,LLM 서빙,vLLM Documentation,LLM 추론 서버와 고성능 serving 기본 개념을 학습한다,https://docs.vllm.ai/en/latest/,공식문서,advanced,영어,무료,5시간,5,vLLM 요구가 있는 최신 ML 공고 대응
-ML014,AI/ML 엔지니어,MLflow,MLOps,MLflow Documentation,실험 추적 모델 레지스트리 배포 흐름을 학습한다,https://mlflow.org/docs/latest/index.html,공식문서,intermediate,영어,무료,6시간,5,MLOps 엔지니어 직무와 연결되는 운영 역량
-ML015,AI/ML 엔지니어,DVC,데이터/모델 버전관리,DVC Documentation,데이터셋과 모델 산출물 버전관리 흐름을 익힌다,https://dvc.org/doc,공식문서,intermediate,영어,무료,5시간,5,모델 재현성과 협업 역량 보완
-ML016,AI/ML 엔지니어,Docker,모델 실행환경,Docker Get Started,모델 개발 환경을 컨테이너로 고정하는 기본 흐름을 학습한다,https://docs.docker.com/get-started/,공식문서,beginner,영어,무료,4시간,5,ML 배포와 MLOps에서 컨테이너 이해가 필요
-ML017,AI/ML 엔지니어,SageMaker,클라우드 ML,Amazon SageMaker Documentation,클라우드 기반 모델 학습 배포 환경을 이해한다,https://docs.aws.amazon.com/sagemaker/latest/dg/whatis.html,공식문서,intermediate,영어,무료,6시간,5,AI ML 공고의 클라우드 운영 요구 보완
-ML018,AI/ML 엔지니어,Spark,대용량 데이터,Apache Spark Documentation,분산 데이터 처리와 ML 전처리 기반을 학습한다,https://spark.apache.org/docs/latest/,공식문서,intermediate,영어,무료,6시간,5,빅데이터 AI 공고에서 Spark Hadoop 계열 요구 확인
-ML019,AI/ML 엔지니어,통계,모델 이해,StatQuest YouTube,머신러닝 통계 모델 개념을 직관적으로 학습한다,https://www.youtube.com/@statquest,유튜브,beginner,영어,무료,6시간,4,ML 개념 설명력을 높이기 좋은 인기 교육 채널
-ML020,AI/ML 엔지니어,MLOps,실무 로드맵,Made With ML,데이터 모델링 배포 모니터링까지 ML 시스템 흐름을 학습한다,https://madewithml.com/,블로그,advanced,영어,무료,10시간,4,MLOps 포트폴리오 설계에 적합
-BE001,백엔드 개발자,Java,언어 기초,Java Tutorials,객체지향 컬렉션 예외 처리 등 Java 기본기를 정리한다,https://docs.oracle.com/javase/tutorial/,공식문서,beginner,영어,무료,8시간,5,잡코리아 백엔드 공고에서 Java가 반복적으로 등장
-BE002,백엔드 개발자,Spring Boot,REST API,Spring Building a RESTful Web Service,Spring Boot로 REST API를 만드는 기본 흐름을 학습한다,https://spring.io/guides/gs/rest-service/,공식문서,beginner,영어,무료,4시간,5,Spring Boot는 Java 백엔드 공고의 핵심 요구역량
-BE003,백엔드 개발자,JPA,데이터 접근,Spring Accessing Data with JPA,Spring Data JPA와 엔티티 저장 조회 흐름을 익힌다,https://spring.io/guides/gs/accessing-data-jpa/,공식문서,intermediate,영어,무료,4시간,5,JPA ORM 요구가 반복되는 백엔드 공고 대응
-BE004,백엔드 개발자,Spring Security,인증/인가,Spring Securing a Web Application,Spring Security 기반 로그인 보호 흐름을 학습한다,https://spring.io/guides/gs/securing-web/,공식문서,intermediate,영어,무료,4시간,5,백엔드 인증 인가 경험 보완에 적합
-BE005,백엔드 개발자,REST API,API 설계,Microsoft REST API Guidelines,REST API 리소스 설계 상태코드 버전관리 원칙을 정리한다,https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design,공식문서,intermediate,영어,무료,5시간,4,API RESTful Open API 요구가 반복됨
-BE006,백엔드 개발자,OpenAPI,API 문서화,Swagger OpenAPI Documentation,OpenAPI 스펙과 API 문서화 흐름을 학습한다,https://swagger.io/docs/specification/about/,공식문서,beginner,영어,무료,3시간,5,Open API와 협업형 API 문서화 요구 대응
-BE007,백엔드 개발자,AWS,EC2 배포,Amazon EC2 Getting Started,EC2 인스턴스 생성 접속 배포 기본 흐름을 학습한다,https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html,공식문서,beginner,영어,무료,5시간,5,AWS 인프라 운영 배포 요구가 반복됨
-BE008,백엔드 개발자,AWS,RDS 운영,Amazon RDS User Guide,RDS 데이터베이스 생성 연결 운영 기본을 익힌다,https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html,공식문서,intermediate,영어,무료,5시간,5,DB 운영과 클라우드 배포 경험 보완
-BE009,백엔드 개발자,Docker,컨테이너,Docker Get Started,Docker 이미지 컨테이너 Dockerfile 기본을 학습한다,https://docs.docker.com/get-started/,공식문서,beginner,영어,무료,4시간,5,Docker CI CD 환경 경험이 공고에서 확인됨
-BE010,백엔드 개발자,Docker,Docker Compose,Docker Compose Quickstart,API와 DB를 함께 실행하는 Compose 기본 흐름을 학습한다,https://docs.docker.com/compose/gettingstarted/,공식문서,intermediate,영어,무료,4시간,5,백엔드 프로젝트를 실행 가능한 형태로 묶기 좋음
-BE011,백엔드 개발자,CI/CD,GitHub Actions,GitHub Actions Documentation,빌드 테스트 배포 자동화 워크플로우를 학습한다,https://docs.github.com/en/actions,공식문서,beginner,영어,무료,5시간,5,백엔드 공고에서 CI CD 환경 경험이 반복됨
-BE012,백엔드 개발자,CI/CD,배포 자동화,Deploying with GitHub Actions,GitHub Actions 배포 파이프라인 패턴을 학습한다,https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/control-deployments,공식문서,intermediate,영어,무료,4시간,5,배포 자동화 경험을 포트폴리오에 넣기 좋음
-BE013,백엔드 개발자,Git,협업,Git Documentation,브랜치 커밋 병합 등 Git 기본을 공식 문서로 정리한다,https://git-scm.com/doc,공식문서,beginner,영어,무료,4시간,5,Git GitHub 협업 요구가 반복됨
-BE014,백엔드 개발자,PostgreSQL,DB 기초,PostgreSQL Tutorial,관계형 DB 설계와 SQL 기본 흐름을 익힌다,https://www.postgresql.org/docs/current/tutorial.html,공식문서,beginner,영어,무료,5시간,5,DB 연동과 서버 개발 역량의 기본 자료
-BE015,백엔드 개발자,MySQL,DB 실습,freeCodeCamp SQL and Databases,SQL과 데이터베이스 기본을 실습형 강의로 정리한다,https://www.freecodecamp.org/news/sql-and-databases-full-course/,블로그,beginner,영어,무료,8시간,4,MariaDB MySQL 계열 요구에 대응 가능
-BE016,백엔드 개발자,Redis,캐시,Redis Documentation,캐시 자료구조 TTL 등 Redis 기본을 학습한다,https://redis.io/docs/latest/,공식문서,intermediate,영어,무료,4시간,5,성능 개선과 캐싱 경험을 추가하기 좋음
-BE017,백엔드 개발자,Kotlin,JVM 언어,Kotlin Documentation,Kotlin 기본 문법과 JVM 백엔드 활용 흐름을 익힌다,https://kotlinlang.org/docs/home.html,공식문서,beginner,영어,무료,5시간,5,Kotlin이 Java와 함께 등장하는 공고 대응
-BE018,백엔드 개발자,Node.js,서버 런타임,Node.js Learn,Node.js 런타임과 서버 개발 기본을 정리한다,https://nodejs.org/en/learn,공식문서,beginner,영어,무료,5시간,5,python java nodejs 중 하나 이상 요구하는 공고 대응
-BE019,백엔드 개발자,CI/CD,Jenkins,Jenkins Pipeline Documentation,Jenkins Pipeline으로 빌드 테스트 배포 자동화 흐름을 학습한다,https://www.jenkins.io/doc/book/pipeline/,공식문서,intermediate,영어,무료,5시간,5,백엔드 공고에서 Jenkins 기반 CI/CD 경험 요구가 확인됨
-BE020,백엔드 개발자,Docker,실무 영상,TechWorld with Nana Docker,Docker Compose DevOps 흐름을 영상으로 학습한다,https://www.youtube.com/@TechWorldwithNana,유튜브,intermediate,영어,무료,6시간,4,Docker DevOps 입문자에게 인기 있는 실무형 채널
-FE001,프론트엔드 개발자,HTML,웹 기초,MDN HTML Guide,시맨틱 HTML과 문서 구조를 공식 자료로 익힌다,https://developer.mozilla.org/en-US/docs/Learn/HTML,공식문서,beginner,영어,무료,4시간,5,프론트엔드 기초와 접근성의 시작점
-FE002,프론트엔드 개발자,CSS,웹 스타일링,MDN CSS Guide,레이아웃 박스 모델 반응형 스타일링을 학습한다,https://developer.mozilla.org/en-US/docs/Learn/CSS,공식문서,beginner,영어,무료,5시간,5,프론트엔드 구현의 기본 역량
-FE003,프론트엔드 개발자,JavaScript,언어 기초,MDN JavaScript Guide,ES6 문법 함수 객체 비동기 기초를 정리한다,https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide,공식문서,beginner,영어,무료,8시간,5,JavaScript ES6 요구가 확인됨
-FE004,프론트엔드 개발자,TypeScript,타입 시스템,TypeScript Handbook,타입 인터페이스 제네릭 등 실무 TS 기본을 익힌다,https://www.typescriptlang.org/docs/handbook/intro.html,공식문서,beginner,영어,무료,6시간,5,TypeScript는 React Next 공고에서 반복되는 요구역량
-FE005,프론트엔드 개발자,React,컴포넌트,React Learn,컴포넌트 props state 이벤트 렌더링 흐름을 학습한다,https://react.dev/learn,공식문서,beginner,영어,무료,6시간,5,잡코리아 프론트엔드 공고에서 React 요구가 반복됨
-FE006,프론트엔드 개발자,Next.js,프레임워크,Next.js Documentation,라우팅 렌더링 데이터 패칭 배포 흐름을 학습한다,https://nextjs.org/docs,공식문서,intermediate,영어,무료,6시간,5,Next.js는 최근 프론트 공고에서 자주 등장
-FE007,프론트엔드 개발자,Git,협업,GitHub Docs Get started,GitHub 기반 저장소 협업 PR 이슈 흐름을 익힌다,https://docs.github.com/en/get-started,공식문서,beginner,영어,무료,4시간,5,Git GitHub 요구가 프론트 공고에서 반복됨
-FE008,프론트엔드 개발자,Tailwind CSS,스타일링,Tailwind CSS Documentation,유틸리티 클래스 기반 반응형 UI 작성법을 학습한다,https://tailwindcss.com/docs,공식문서,beginner,영어,무료,4시간,5,Tailwind CSS가 Next React 공고에 포함됨
-FE009,프론트엔드 개발자,React Query,서버 상태,TanStack Query Documentation,서버 상태 캐싱 재시도 동기화 흐름을 학습한다,https://tanstack.com/query/latest/docs/framework/react/overview,공식문서,intermediate,영어,무료,5시간,5,React Query가 최신 프론트 공고에서 반복됨
-FE010,프론트엔드 개발자,Redux,상태관리,Redux Toolkit Quick Start,Redux Toolkit 기반 전역 상태관리 기본을 익힌다,https://redux-toolkit.js.org/tutorials/quick-start,공식문서,intermediate,영어,무료,4시간,5,Redux Recoil Zustand 같은 상태관리 요구 대응
-FE011,프론트엔드 개발자,Zustand,상태관리,Zustand Documentation,간단한 전역 상태관리와 store 패턴을 학습한다,https://zustand-demo.pmnd.rs/,공식문서,beginner,영어,무료,3시간,4,Zustand 요구가 있는 프론트 공고 대응
-FE012,프론트엔드 개발자,Vite,빌드 도구,Vite Guide,Vite 프로젝트 구성 개발 서버 빌드 기본을 학습한다,https://vite.dev/guide/,공식문서,beginner,영어,무료,3시간,5,Vite Webpack 요구가 프론트 공고에 등장
-FE013,프론트엔드 개발자,Webpack,번들링,Webpack Concepts,엔트리 로더 플러그인 번들링 개념을 학습한다,https://webpack.js.org/concepts/,공식문서,intermediate,영어,무료,4시간,5,Vite Webpack 기반 빌드 환경 이해 보완
-FE014,프론트엔드 개발자,Jest,테스트,Jest Getting Started,컴포넌트 함수 테스트의 기본 구조를 학습한다,https://jestjs.io/docs/getting-started,공식문서,beginner,영어,무료,4시간,5,Jest 요구가 있는 프론트 공고 대응
-FE015,프론트엔드 개발자,Testing Library,UI 테스트,Testing Library Docs,사용자 관점의 컴포넌트 테스트 방식을 익힌다,https://testing-library.com/docs/,공식문서,intermediate,영어,무료,4시간,5,React 테스트 신뢰도를 높이는 기본 자료
-FE016,프론트엔드 개발자,Playwright,E2E 테스트,Playwright Docs,브라우저 기반 E2E 테스트 작성법을 익힌다,https://playwright.dev/docs/intro,공식문서,intermediate,영어,무료,5시간,5,포트폴리오에서 품질 역량을 보여주기 좋음
-FE017,프론트엔드 개발자,접근성,웹 접근성,MDN Accessibility,시맨틱 마크업 키보드 접근성 ARIA 기본을 학습한다,https://developer.mozilla.org/en-US/docs/Learn/Accessibility,공식문서,beginner,영어,무료,4시간,5,프론트엔드 완성도를 높이는 핵심 보완 역량
-FE018,프론트엔드 개발자,API 연동,OpenAPI/Swagger,Swagger OpenAPI Documentation,백엔드 API 스펙을 읽고 연동하는 기본 구조를 익힌다,https://swagger.io/docs/specification/about/,공식문서,beginner,영어,무료,3시간,5,Swagger OpenAPI 요구가 있는 프론트 공고 대응
-FE019,프론트엔드 개발자,CSS,실무 채널,Kevin Powell YouTube,CSS 레이아웃 반응형 스타일링을 인기 채널로 보완한다,https://www.youtube.com/@KevinPowell,유튜브,beginner,영어,무료,6시간,4,CSS 실무 감각을 만들기 좋은 인기 채널
-FE020,프론트엔드 개발자,Frontend,실무 채널,Web Dev Simplified YouTube,React TypeScript 웹 개발 흐름을 영상으로 복습한다,https://www.youtube.com/@WebDevSimplified,유튜브,beginner,영어,무료,6시간,3,프론트엔드 입문자에게 인기 있는 실습형 채널
+DA001,데이터 분석가,Python,분석 기초,Python 공식 한국어 튜토리얼,Python 기본 문법과 표준 라이브러리를 한국어 공식 문서로 학습한다,https://docs.python.org/ko/3/tutorial/,공식문서,beginner,한국어,무료,6시간,5,잡코리아 데이터 분석가 공고에서 Python 요구가 반복됨
+DA002,데이터 분석가,Python,입문 실습,인프런 Python 강의 모음,Python 입문과 실습 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Python,강의,beginner,한국어,무료,8시간,3,Python 기초가 부족한 지원자에게 접근성 높은 한국어 강의 자료
+DA003,데이터 분석가,SQL,분석 쿼리,프로그래머스 SQL 고득점 Kit,SQL SELECT JOIN GROUP BY 문제를 한국어 환경에서 실습한다,https://school.programmers.co.kr/learn/challenges?tab=sql_practice_kit,실습플랫폼,beginner,한국어,무료,3시간,4,잡코리아 데이터 분석 공고에서 SQL 요구가 반복됨
+DA004,데이터 분석가,SQL,Pandas SQL,인프런 SQL 강의 모음,SQL과 데이터베이스 기초 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=SQL,강의,beginner,한국어,무료,3시간,3,SQL 역량을 실제 DB 학습으로 보완
+DA005,데이터 분석가,Pandas,전처리,인프런 Pandas 강의 모음,Pandas 전처리와 분석 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Pandas,강의,intermediate,한국어,무료,8시간,3,Python 데이터 처리 역량을 실제 분석 경험으로 연결
+DA006,데이터 분석가,Pandas,실습,인프런 데이터 분석 강의 모음,데이터 분석 프로젝트와 EDA 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=%EB%8D%B0%EC%9D%B4%ED%84%B0+%EB%B6%84%EC%84%9D,강의,intermediate,한국어,무료,10시간,3,분석 전처리와 EDA 부족 역량 보완
+DA007,데이터 분석가,Tableau,BI 시각화,Tableau 한국어 시작 가이드,Tableau 대시보드와 시각화 기본 흐름을 한국어 도움말로 학습한다,https://help.tableau.com/current/pro/desktop/ko-kr/gettingstarted_overview.htm,공식문서,beginner,한국어,무료,4시간,5,잡코리아 데이터 분석 공고에서 Tableau가 반복됨
+DA008,데이터 분석가,Power BI,BI 시각화,Microsoft Learn Power BI 한국어,Power BI 데이터 모델링과 리포트 제작을 한국어 학습 경로로 익힌다,https://learn.microsoft.com/ko-kr/training/powerplatform/power-bi,공식학습,beginner,한국어,무료,6시간,5,BI 도구 경험 요구에 대응
+DA009,데이터 분석가,Excel,분석 실무,Microsoft Excel 도움말 및 학습,Excel 함수 피벗 테이블 차트 기본을 한국어로 정리한다,https://support.microsoft.com/ko-kr/excel,공식문서,beginner,한국어,무료,4시간,5,일반 데이터 분석 직무에서 여전히 쓰이는 기본 도구
+DA010,데이터 분석가,R,통계 분석,인프런 R 데이터 분석 강의 모음,R 기반 통계 분석 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=R+%EB%8D%B0%EC%9D%B4%ED%84%B0+%EB%B6%84%EC%84%9D,강의,intermediate,한국어,무료,8시간,3,Python과 함께 R이 등장하는 데이터 분석 공고 대응
+DA011,데이터 분석가,Spark,대용량 데이터,인프런 Spark 강의 모음,Spark 기반 대용량 데이터 처리 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Spark,강의,intermediate,한국어,무료,8시간,3,빅데이터 분석 공고에서 Spark 요구가 확인됨
+DA012,데이터 분석가,Airflow,워크플로우,인프런 Airflow 강의 모음,Airflow DAG와 데이터 파이프라인 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Airflow,강의,intermediate,한국어,무료,6시간,3,Airflow가 등장하는 분석 공고 대응
+DA013,데이터 분석가,Looker Studio,대시보드,Looker Studio 고객센터 한국어,Looker Studio 리포트와 대시보드 작성 흐름을 한국어 도움말로 익힌다,https://support.google.com/looker-studio/?hl=ko,공식문서,beginner,한국어,무료,4시간,5,BI 대시보드 역량을 보완
+DA014,데이터 분석가,BigQuery,클라우드 분석,BigQuery 문서 한국어,클라우드 데이터 웨어하우스와 SQL 분석 환경을 한국어 문서로 학습한다,https://cloud.google.com/bigquery/docs?hl=ko,공식문서,intermediate,한국어,무료,6시간,5,클라우드 분석 요구 대응
+DA015,데이터 분석가,AWS,클라우드 기초,AWS Cloud Practitioner 한국어 학습,AWS 핵심 서비스와 클라우드 기본 개념을 한국어 AWS 페이지로 학습한다,https://aws.amazon.com/ko/training/learn-about/cloud-practitioner/,공식학습,beginner,한국어,무료,6시간,5,데이터 분석 공고의 AWS Azure 클라우드 요구 보완
+DA016,데이터 분석가,통계,기초 통계,칸아카데미 통계와 확률,확률 분포 추정 검정 등 분석 해석 기초를 한국어로 학습한다,https://ko.khanacademy.org/math/statistics-probability,강의,beginner,한국어,무료,8시간,4,분석 결과를 설명하기 위한 기본 통계 역량
+DA017,데이터 분석가,Machine Learning,분석 모델링,Google 머신러닝 단기집중과정 한국어,기본 ML 개념과 모델 평가를 한국어 Google 자료로 정리한다,https://developers.google.com/machine-learning/crash-course?hl=ko,공식학습,intermediate,한국어,무료,8시간,5,AI 데이터 분석가 공고의 ML 요구 대응
+DA018,데이터 분석가,데이터 시각화,Python 시각화,인프런 데이터 시각화 강의 모음,Python과 BI 기반 데이터 시각화 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=%EB%8D%B0%EC%9D%B4%ED%84%B0+%EC%8B%9C%EA%B0%81%ED%99%94,강의,intermediate,한국어,무료,5시간,3,Tableau BI 외 Python 시각화 역량 보완
+DA019,데이터 분석가,데이터 분석,실무 채널,나도코딩 YouTube,Python과 데이터 분석 기초를 한국어 영상으로 보완한다,https://www.youtube.com/@nadocoding,유튜브,beginner,한국어,무료,6시간,3,한국어 입문자에게 접근성이 높은 인기 개발 채널
+DA020,데이터 분석가,데이터 분석,실무 채널,생활코딩 YouTube,데이터와 웹 기초를 한국어 강의로 보완한다,https://www.youtube.com/@coohde,유튜브,beginner,한국어,무료,6시간,3,기초 이해가 약한 지원자에게 적합한 한국어 채널
+ML001,AI/ML 엔지니어,Python,AI 개발 기초,Python 공식 한국어 튜토리얼,AI ML 개발에 필요한 Python 기본 문법을 한국어 공식 문서로 익힌다,https://docs.python.org/ko/3/tutorial/,공식문서,beginner,한국어,무료,6시간,5,AI ML 공고에서 Python은 기본 전제
+ML002,AI/ML 엔지니어,Machine Learning,기초 모델링,Google 머신러닝 단기집중과정 한국어,머신러닝 기본 개념과 모델 평가를 한국어로 학습한다,https://developers.google.com/machine-learning/crash-course?hl=ko,공식학습,beginner,한국어,무료,8시간,5,머신러닝 기본 경험을 빠르게 만들 수 있음
+ML003,AI/ML 엔지니어,Machine Learning,입문 강의,모두를 위한 딥러닝 시즌2 PyTorch,머신러닝과 딥러닝 기초를 한국어 강의 코드로 학습한다,https://github.com/deeplearningzerotoall/PyTorch,오픈소스,beginner,한국어,무료,10시간,4,한국어 ML 입문 자료로 널리 쓰이는 강의 코드
+ML004,AI/ML 엔지니어,PyTorch,딥러닝 프레임워크,PyTorch 한국어 튜토리얼,Tensor Dataset Autograd 모델 학습 루프를 한국어 공식 튜토리얼로 익힌다,https://tutorials.pytorch.kr/,공식문서,beginner,한국어,무료,6시간,5,잡코리아 ML AI 공고에서 PyTorch 요구가 반복됨
+ML005,AI/ML 엔지니어,TensorFlow,딥러닝 프레임워크,TensorFlow 튜토리얼 한국어,TensorFlow 모델 학습 평가 저장 흐름을 한국어 공식 문서로 익힌다,https://www.tensorflow.org/tutorials?hl=ko,공식문서,beginner,한국어,무료,6시간,5,TensorFlow도 AI 공고에서 PyTorch와 함께 반복됨
+ML006,AI/ML 엔지니어,Keras,모델링 API,TensorFlow Keras 가이드 한국어,Keras 모델 정의 학습 커스터마이징을 한국어 문서로 학습한다,https://www.tensorflow.org/guide/keras?hl=ko,공식문서,intermediate,한국어,무료,5시간,5,TensorFlow 기반 모델 구현을 단순화해 설명 가능
+ML007,AI/ML 엔지니어,OpenCV,컴퓨터비전,인프런 OpenCV 강의 모음,OpenCV 이미지 처리와 컴퓨터비전 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=OpenCV,강의,intermediate,한국어,무료,6시간,3,CV 문서인식 AI 공고의 OpenCV 요구 대응
+ML008,AI/ML 엔지니어,Computer Vision,객체 탐지,인프런 컴퓨터비전 강의 모음,컴퓨터비전과 객체 탐지 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=%EC%BB%B4%ED%93%A8%ED%84%B0%EB%B9%84%EC%A0%84,강의,advanced,한국어,무료,8시간,3,객체탐지와 딥러닝 모델 구현 요구 대응
+ML009,AI/ML 엔지니어,ONNX,모델 교환,인프런 ONNX 강의 모음,ONNX 모델 변환과 배포 관련 한국어 강의를 찾아 학습한다,https://www.inflearn.com/ko/search?s=ONNX,강의,intermediate,한국어,무료,4시간,3,ONNX 요구가 있는 ML 공고 대응
+ML010,AI/ML 엔지니어,Transformers,NLP/LLM,Hugging Face Transformers 한국어 문서,Transformers 모델 로딩 추론 파인튜닝 흐름을 한국어 문서로 학습한다,https://huggingface.co/docs/transformers/main/ko/index,공식문서,intermediate,한국어,무료,6시간,5,LLM AI 공고의 모델 활용 역량 보완
+ML011,AI/ML 엔지니어,Hugging Face,LLM 학습,인프런 NLP 강의 모음,자연어처리와 Transformer 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=NLP,강의,intermediate,한국어,무료,10시간,3,LLM NLP 관련 역량 보완
+ML012,AI/ML 엔지니어,LangChain,LLM 앱,인프런 LangChain 강의 모음,LangChain RAG 에이전트 앱 개발 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=LangChain,강의,intermediate,한국어,무료,6시간,3,잡코리아 ML 공고에서 LangChain 요구 확인
+ML013,AI/ML 엔지니어,vLLM,LLM 서빙,인프런 vLLM 강의 모음,vLLM과 LLM 서빙 관련 한국어 강의를 찾아 학습한다,https://www.inflearn.com/ko/search?s=vLLM,강의,advanced,한국어,무료,5시간,3,vLLM 요구가 있는 최신 ML 공고 대응
+ML014,AI/ML 엔지니어,MLflow,MLOps,인프런 MLflow 강의 모음,MLflow 실험 추적과 MLOps 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=MLflow,강의,intermediate,한국어,무료,6시간,3,MLOps 운영 역량 보완
+ML015,AI/ML 엔지니어,DVC,버전관리,인프런 DVC 강의 모음,데이터와 모델 버전관리 관련 한국어 강의를 찾아 학습한다,https://www.inflearn.com/ko/search?s=DVC,강의,intermediate,한국어,무료,5시간,3,모델 재현성과 협업 역량 보완
+ML016,AI/ML 엔지니어,Docker,모델 실행환경,인프런 Docker 강의 모음,Docker 컨테이너와 실행 환경 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Docker,강의,beginner,한국어,무료,4시간,3,ML 배포와 MLOps에서 컨테이너 이해가 필요
+ML017,AI/ML 엔지니어,SageMaker,클라우드 ML,Amazon SageMaker 한국어 문서,SageMaker 기반 모델 학습 배포 환경을 한국어 AWS 문서로 이해한다,https://docs.aws.amazon.com/ko_kr/sagemaker/latest/dg/whatis.html,공식문서,intermediate,한국어,무료,6시간,5,AI ML 공고의 클라우드 운영 요구 보완
+ML018,AI/ML 엔지니어,Spark,대용량 데이터,인프런 Spark 강의 모음,Spark 기반 대용량 데이터 처리 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Spark,강의,intermediate,한국어,무료,6시간,3,빅데이터 AI 공고의 Spark Hadoop 요구 대응
+ML019,AI/ML 엔지니어,통계,모델 이해,혁펜하임 YouTube,수학 통계 머신러닝 개념을 한국어 영상으로 보완한다,https://www.youtube.com/@hyukppen,유튜브,beginner,한국어,무료,6시간,3,ML 개념 설명력을 높이기 좋은 한국어 채널
+ML020,AI/ML 엔지니어,MLOps,실무 로드맵,테디노트 YouTube,LLM RAG LangChain 실무 흐름을 한국어 영상으로 학습한다,https://www.youtube.com/@teddynote,유튜브,intermediate,한국어,무료,6시간,3,LLM 앱과 RAG 실습 보완에 적합한 한국어 채널
+BE001,백엔드 개발자,Java,언어 기초,인프런 Java 강의 모음,Java 객체지향과 백엔드 기초 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Java,강의,beginner,한국어,무료,8시간,3,잡코리아 백엔드 공고에서 Java가 반복됨
+BE002,백엔드 개발자,Spring Boot,REST API,인프런 Spring Boot 강의 모음,Spring Boot REST API 개발 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Spring+Boot,강의,beginner,한국어,무료,6시간,3,Spring Boot는 Java 백엔드 공고의 핵심 요구역량
+BE003,백엔드 개발자,JPA,데이터 접근,인프런 JPA 강의 모음,JPA ORM 엔티티 관계 매핑 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=JPA,강의,intermediate,한국어,무료,6시간,3,JPA ORM 요구가 반복되는 백엔드 공고 대응
+BE004,백엔드 개발자,Spring Security,인증/인가,인프런 Spring Security 강의 모음,Spring Security 인증 인가 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Spring+Security,강의,intermediate,한국어,무료,6시간,3,백엔드 인증 인가 경험 보완
+BE005,백엔드 개발자,REST API,API 설계,Microsoft REST API 설계 모범 사례 한국어,REST API 리소스 설계 상태코드 버전관리 원칙을 한국어 문서로 정리한다,https://learn.microsoft.com/ko-kr/azure/architecture/best-practices/api-design,공식문서,intermediate,한국어,무료,5시간,5,API RESTful Open API 요구가 반복됨
+BE006,백엔드 개발자,OpenAPI,API 문서화,인프런 Swagger OpenAPI 강의 모음,OpenAPI와 Swagger 문서화 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Swagger+OpenAPI,강의,beginner,한국어,무료,3시간,3,Open API와 협업형 API 문서화 요구 대응
+BE007,백엔드 개발자,AWS,EC2 배포,Amazon EC2 시작하기 한국어,EC2 인스턴스 생성 접속 배포 기본 흐름을 한국어 문서로 학습한다,https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/EC2_GetStarted.html,공식문서,beginner,한국어,무료,5시간,5,AWS 인프라 운영 배포 요구가 반복됨
+BE008,백엔드 개발자,AWS,RDS 운영,Amazon RDS 한국어 문서,RDS 데이터베이스 생성 연결 운영 기본을 한국어 문서로 익힌다,https://docs.aws.amazon.com/ko_kr/AmazonRDS/latest/UserGuide/Welcome.html,공식문서,intermediate,한국어,무료,5시간,5,DB 운영과 클라우드 배포 경험 보완
+BE009,백엔드 개발자,Docker,컨테이너,인프런 Docker 강의 모음,Docker 컨테이너와 백엔드 배포 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Docker,강의,beginner,한국어,무료,4시간,3,Docker CI CD 환경 경험 요구 대응
+BE010,백엔드 개발자,Docker,Docker Compose,인프런 Docker Compose 강의 모음,Docker Compose 기반 API DB 실행 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Docker+Compose,강의,intermediate,한국어,무료,4시간,3,백엔드 프로젝트 실행 환경을 묶기 좋음
+BE011,백엔드 개발자,CI/CD,GitHub Actions,GitHub Actions 한국어 문서,빌드 테스트 배포 자동화 워크플로우를 한국어 공식 문서로 학습한다,https://docs.github.com/ko/actions,공식문서,beginner,한국어,무료,5시간,5,백엔드 공고에서 CI CD 환경 경험이 반복됨
+BE012,백엔드 개발자,CI/CD,Docker Action,GitHub Docker 컨테이너 작업 한국어 문서,Docker 컨테이너 기반 GitHub Actions 흐름을 한국어 공식 문서로 학습한다,https://docs.github.com/ko/actions/tutorials/using-containerized-services/creating-a-docker-container-action,공식문서,intermediate,한국어,무료,4시간,5,Docker와 CI CD를 함께 보완
+BE013,백엔드 개발자,Git,협업,Pro Git 한국어판,브랜치 커밋 병합 등 Git 기본을 한국어 공식 책으로 정리한다,https://git-scm.com/book/ko/v2,공식문서,beginner,한국어,무료,4시간,5,Git GitHub 협업 요구가 반복됨
+BE014,백엔드 개발자,PostgreSQL,DB 기초,PostgreSQL 한국어 문서,관계형 DB 설계와 SQL 기본 흐름을 한국어 문서로 익힌다,https://postgresql.kr/docs/,공식문서,beginner,한국어,무료,5시간,4,DB 연동과 서버 개발 역량의 기본 자료
+BE015,백엔드 개발자,MySQL,DB 실습,생활코딩 MySQL 강의 검색,MySQL과 관계형 DB 기초를 한국어 강의로 보완한다,https://www.youtube.com/results?search_query=%EC%83%9D%ED%99%9C%EC%BD%94%EB%94%A9+MySQL,유튜브,beginner,한국어,무료,6시간,3,MariaDB MySQL 계열 요구 대응
+BE016,백엔드 개발자,Redis,캐시,인프런 Redis 강의 모음,Redis 캐시 자료구조 TTL 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Redis,강의,intermediate,한국어,무료,4시간,3,성능 개선과 캐싱 경험을 추가하기 좋음
+BE017,백엔드 개발자,Kotlin,JVM 언어,인프런 Kotlin 강의 모음,Kotlin JVM 백엔드 활용 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Kotlin,강의,beginner,한국어,무료,5시간,3,Kotlin이 Java와 함께 등장하는 공고 대응
+BE018,백엔드 개발자,Node.js,서버 런타임,인프런 Node.js 강의 모음,Node.js 런타임과 서버 개발 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Node.js,강의,beginner,한국어,무료,5시간,3,Node.js 백엔드 요구 공고 대응
+BE019,백엔드 개발자,CI/CD,Jenkins,인프런 Jenkins 강의 모음,Jenkins 기반 빌드 배포 자동화 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Jenkins,강의,intermediate,한국어,무료,5시간,3,Jenkins 기반 CI CD 요구 대응
+BE020,백엔드 개발자,Docker,실무 영상,따라하며 배우는 Docker YouTube 검색,Docker와 배포 실습 영상을 한국어로 찾아 학습한다,https://www.youtube.com/results?search_query=Docker+%EA%B0%95%EC%9D%98+%ED%95%9C%EA%B5%AD%EC%96%B4,유튜브,intermediate,한국어,무료,6시간,3,Docker DevOps 입문 보완
+FE001,프론트엔드 개발자,HTML,웹 기초,MDN HTML 한국어,시맨틱 HTML과 문서 구조를 한국어 MDN으로 익힌다,https://developer.mozilla.org/ko/docs/Learn/HTML,공식문서,beginner,한국어,무료,4시간,5,프론트엔드 기초와 접근성의 시작점
+FE002,프론트엔드 개발자,CSS,웹 스타일링,MDN CSS 한국어,레이아웃 박스 모델 반응형 스타일링을 한국어 MDN으로 학습한다,https://developer.mozilla.org/ko/docs/Learn/CSS,공식문서,beginner,한국어,무료,5시간,5,프론트엔드 구현의 기본 역량
+FE003,프론트엔드 개발자,JavaScript,언어 기초,MDN JavaScript 가이드 한국어,ES6 문법 함수 객체 비동기 기초를 한국어 문서로 정리한다,https://developer.mozilla.org/ko/docs/Web/JavaScript/Guide,공식문서,beginner,한국어,무료,8시간,5,JavaScript ES6 요구 대응
+FE004,프론트엔드 개발자,TypeScript,타입 시스템,TypeScript 한글 문서,타입 인터페이스 제네릭 등 실무 TS 기본을 한국어로 익힌다,https://typescript-kr.github.io/,문서,beginner,한국어,무료,6시간,4,TypeScript는 React Next 공고에서 반복됨
+FE005,프론트엔드 개발자,React,컴포넌트,React 공식 한국어 문서,컴포넌트 props state 이벤트 렌더링 흐름을 한국어 공식 문서로 학습한다,https://ko.react.dev/learn,공식문서,beginner,한국어,무료,6시간,5,잡코리아 프론트엔드 공고에서 React 요구가 반복됨
+FE006,프론트엔드 개발자,Next.js,프레임워크,Next.js 한국어 문서,라우팅 렌더링 데이터 패칭 배포 흐름을 한국어 문서로 학습한다,https://nextjs-ko.org/docs,문서,intermediate,한국어,무료,6시간,4,Next.js는 최근 프론트 공고에서 자주 등장
+FE007,프론트엔드 개발자,Git,협업,GitHub 시작하기 한국어 문서,GitHub 기반 저장소 협업 PR 이슈 흐름을 한국어 문서로 익힌다,https://docs.github.com/ko/get-started,공식문서,beginner,한국어,무료,4시간,5,Git GitHub 요구가 반복됨
+FE008,프론트엔드 개발자,Tailwind CSS,스타일링,인프런 Tailwind CSS 강의 모음,Tailwind CSS 반응형 UI 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Tailwind+CSS,강의,beginner,한국어,무료,4시간,3,Tailwind CSS가 Next React 공고에 포함됨
+FE009,프론트엔드 개발자,React Query,서버 상태,인프런 React Query 강의 모음,React Query 서버 상태 캐싱 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=React+Query,강의,intermediate,한국어,무료,5시간,3,React Query가 최신 프론트 공고에서 반복됨
+FE010,프론트엔드 개발자,Redux,상태관리,Redux 한국어 문서,Redux Toolkit 기반 전역 상태관리 기본을 한국어 문서로 익힌다,https://ko.redux.js.org/,문서,intermediate,한국어,무료,4시간,4,Redux Recoil Zustand 같은 상태관리 요구 대응
+FE011,프론트엔드 개발자,Zustand,상태관리,인프런 Zustand 강의 모음,Zustand 전역 상태관리 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Zustand,강의,beginner,한국어,무료,3시간,3,Zustand 요구가 있는 프론트 공고 대응
+FE012,프론트엔드 개발자,Vite,빌드 도구,Vite 한국어 문서,Vite 프로젝트 구성 개발 서버 빌드 기본을 한국어 문서로 학습한다,https://ko.vite.dev/guide/,공식문서,beginner,한국어,무료,3시간,5,Vite Webpack 요구 대응
+FE013,프론트엔드 개발자,Webpack,번들링,Webpack 한국어 문서,엔트리 로더 플러그인 번들링 개념을 한국어 문서로 학습한다,https://webpack.kr/concepts/,문서,intermediate,한국어,무료,4시간,4,Vite Webpack 기반 빌드 환경 이해 보완
+FE014,프론트엔드 개발자,Jest,테스트,인프런 Jest 강의 모음,Jest 기반 프론트엔드 테스트 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Jest,강의,beginner,한국어,무료,4시간,3,Jest 요구가 있는 프론트 공고 대응
+FE015,프론트엔드 개발자,Testing Library,UI 테스트,인프런 Testing Library 강의 모음,사용자 관점의 컴포넌트 테스트 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Testing+Library,강의,intermediate,한국어,무료,4시간,3,React 테스트 신뢰도를 높이는 기본 자료
+FE016,프론트엔드 개발자,Playwright,E2E 테스트,인프런 Playwright 강의 모음,브라우저 기반 E2E 테스트 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Playwright,강의,intermediate,한국어,무료,5시간,3,포트폴리오에서 품질 역량을 보여주기 좋음
+FE017,프론트엔드 개발자,접근성,웹 접근성,MDN 접근성 한국어,시맨틱 마크업 키보드 접근성 ARIA 기본을 한국어 문서로 학습한다,https://developer.mozilla.org/ko/docs/Learn/Accessibility,공식문서,beginner,한국어,무료,4시간,5,프론트엔드 완성도를 높이는 핵심 보완 역량
+FE018,프론트엔드 개발자,API 연동,OpenAPI/Swagger,Microsoft REST API 설계 한국어,백엔드 API 스펙을 읽고 연동하는 기본 구조를 한국어 문서로 익힌다,https://learn.microsoft.com/ko-kr/azure/architecture/best-practices/api-design,공식문서,beginner,한국어,무료,3시간,5,Swagger OpenAPI 요구 대응
+FE019,프론트엔드 개발자,CSS,실무 채널,드림코딩 YouTube,HTML CSS JavaScript React 실무 감각을 한국어 영상으로 보완한다,https://www.youtube.com/@dream-coding,유튜브,beginner,한국어,무료,6시간,3,프론트엔드 입문자에게 인기 있는 한국어 채널
+FE020,프론트엔드 개발자,Frontend,실무 채널,노마드 코더 YouTube,React Next TypeScript 웹 개발 흐름을 한국어 영상으로 복습한다,https://www.youtube.com/@nomadcoders,유튜브,beginner,한국어,무료,6시간,3,프론트엔드 입문자에게 인기 있는 한국어 채널
