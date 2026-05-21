@@ -1,4 +1,4 @@
-import type { COutput, RecommendResponse } from "./types";
+import type { AnalyzeRequest, AnalyzeResponse, COutput, RecommendResponse } from "./types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 
@@ -26,3 +26,13 @@ export async function recommend(payload: COutput): Promise<RecommendResponse> {
   return parseResponse<RecommendResponse>(response);
 }
 
+export async function analyze(payload: AnalyzeRequest): Promise<AnalyzeResponse> {
+  const response = await fetch(`${API_BASE}/analyze`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+  return parseResponse<AnalyzeResponse>(response);
+}

@@ -35,6 +35,7 @@ export type ResourceRecommendation = {
   semantic_similarity: number;
   skill_match: number;
   job_group_match: number;
+  difficulty_match: number;
   reliability_norm: number;
   recommend_score: number;
 };
@@ -67,6 +68,69 @@ export type RecommendResponse = {
   top_priority_skill: string | null;
   skill_recommendations: SkillRecommendation[];
   roadmap: RoadmapItem[];
+  report: string;
+  scoring_formula: string;
+  rag_scope_note: string;
+  retrieval_mode: string;
+  embedding_model: string;
+  chunking_strategy: string;
+};
+
+export type SourceType = "url" | "text" | "file";
+
+export type RoadmapPreferences = {
+  duration_weeks: 2 | 4 | 8 | 12;
+  difficulty: "입문" | "기초" | "실무" | "심화";
+  intensity: "가볍게" | "보통" | "집중";
+};
+
+export type AnalyzeRequest = {
+  job_posting: {
+    source_type: SourceType;
+    url?: string;
+    text: string;
+  };
+  candidate_materials: Array<{
+    source_type: "text" | "file";
+    label: string;
+    text: string;
+  }>;
+  roadmap_preferences: RoadmapPreferences;
+};
+
+export type EvidenceItem = {
+  text: string;
+  source: string;
+};
+
+export type RequiredSkill = {
+  skill: string;
+  importance: string;
+  evidence: EvidenceItem[];
+};
+
+export type OwnedSkill = {
+  skill: string;
+  evidence: EvidenceItem[];
+};
+
+export type WeeklyRoadmapItem = {
+  week: number;
+  goal: string;
+  skills: string[];
+  recommended_titles: string[];
+  practice: string;
+};
+
+export type AnalyzeResponse = {
+  predicted_job: string;
+  fit_score: number;
+  roadmap_preferences: RoadmapPreferences;
+  required_skills: RequiredSkill[];
+  owned_skills: OwnedSkill[];
+  missing_skills: SkillGap[];
+  recommended_resources: SkillRecommendation[];
+  weekly_roadmap: WeeklyRoadmapItem[];
   report: string;
   scoring_formula: string;
   rag_scope_note: string;
