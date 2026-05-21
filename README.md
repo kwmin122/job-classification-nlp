@@ -21,12 +21,14 @@ C 파트 격차 분석 JSON
 학습자료 CSV 1행 = chunk 1개
 chunk text = job_group + skill + sub_skill + title + description + reason
 C 파트 skill_gaps = query
-BAAI/bge-m3 로컬 임베딩
+OpenAI text-embedding-3-small 임베딩
 numpy cosine similarity 검색
 추천 점수 재계산
 ```
 
 최종 설계 문서: `docs/final_rag_architecture.md`
+
+최종 임베딩 검색을 실행하려면 `OPENAI_API_KEY`가 필요합니다.
 
 중요한 역할 분리:
 
@@ -43,11 +45,12 @@ numpy cosine similarity 검색
 - 각 자료에 `type`, `level`, `language`, `reliability`, `reason` 포함
 - C 파트가 넘겨주는 `skill_gaps`를 받아 부족 역량별 Top-K 추천 생성
 - 추천 점수 공식 공개
-- GPU, 유료 LLM API 없이 실행되는 로컬 FastAPI + Next.js 대시보드
+- GPU 없이 실행되는 로컬 FastAPI + Next.js 대시보드
+- 최종 설계는 OpenAI `text-embedding-3-small` API로 학습자료와 query를 임베딩
 
 이 프로젝트의 RAG는 웹 전체 검색이 아니라, 직접 큐레이션한 `learning_resources.csv`를 검색하는 추천 RAG입니다.
 
-현재 코드의 검색기는 CPU 재현성을 우선한 `TfidfRetriever`입니다. 최종 제출 설계에서는 이를 `EmbeddingRetriever`로 교체하고, TF-IDF는 fallback으로 남깁니다.
+현재 코드의 검색기는 CPU 재현성을 우선한 `TfidfRetriever`입니다. 최종 제출 설계에서는 이를 OpenAI `text-embedding-3-small` 기반 `EmbeddingRetriever`로 교체하고, TF-IDF는 fallback으로 남깁니다.
 
 ## C 파트 입력 계약
 
@@ -85,7 +88,7 @@ recommend_score =
 정규화 기준:
 
 - `semantic_similarity`: 0~1, 현재는 로컬 TF-IDF cosine similarity
-- 최종 설계의 `semantic_similarity`: BGE-M3 dense embedding cosine similarity
+- 최종 설계의 `semantic_similarity`: `text-embedding-3-small` dense embedding cosine similarity
 - `skill_match`: 부족 역량이 자료 메타데이터에 직접 매칭되면 1, 아니면 0
 - `job_group_match`: 예측 직무군과 자료 직무군이 같으면 1, 아니면 0
 - `reliability_norm`: `reliability / 5`
@@ -99,6 +102,7 @@ recommend_score =
 ```bash
 uv venv .venv
 uv pip install --python .venv -r backend/requirements.txt
+export OPENAI_API_KEY="..."
 PYTHONPATH=backend .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
