@@ -10,10 +10,10 @@ export function SummaryStrip({ result }: Props) {
 
   return (
     <section className="summary-strip" aria-label="분석 요약">
-      <Metric label="예측 직무" value={result?.predicted_job ?? "샘플 실행 전"} />
-      <Metric label="적합도" value={result ? `${Math.round(result.fit_score)}점` : "--"} />
-      <Metric label="부족 역량" value={`${gapCount}개`} />
-      <Metric label="최우선 보완" value={topSkill} accent />
+      <Metric label="추천 직무" value={result?.predicted_job ?? "분석 전"} />
+      <Metric label="직무 적합도" value={result ? `${Math.round(result.fit_score)}점` : "--"} />
+      <Metric label="보완할 역량" value={`${gapCount}개`} />
+      <Metric label="먼저 할 일" value={topSkill} accent />
     </section>
   );
 }
@@ -34,4 +34,3 @@ function Metric({
     </div>
   );
 }
-

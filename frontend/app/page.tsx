@@ -88,38 +88,54 @@ export default function Home() {
 
   return (
     <main className="dashboard-shell">
-      <JsonInputPanel
-        value={jsonInput}
-        onChange={setJsonInput}
-        onLoadSample={handleLoadSample}
-        onAnalyze={handleAnalyze}
-        isLoading={isLoading}
-        error={error}
-      />
-      <section className="workspace" aria-label="추천 결과">
-        <header className="workspace-header">
-          <div>
-            <p className="eyebrow">Curated Learning Resource RAG</p>
-            <h2>부족 역량을 학습 계획으로 바꾸는 D 파트</h2>
-            <p>
-              공식 문서와 인기 학습 자료 80개를 검색해 추천 점수와 로드맵을 생성합니다.
-            </p>
-          </div>
-          <div className="status-chip">{result ? "분석 완료" : "샘플 대기"}</div>
-        </header>
-        <SummaryStrip result={result} />
-        <GapMatrix items={sortedSkillRecommendations} />
-        <ResourceRecommendations items={sortedSkillRecommendations} />
-        <RoadmapPanel items={result?.roadmap ?? []} />
-        <ReportPanel
-          report={result?.report ?? null}
-          formula={result?.scoring_formula ?? null}
-          ragScope={result?.rag_scope_note ?? null}
-          retrievalMode={result?.retrieval_mode ?? null}
-          embeddingModel={result?.embedding_model ?? null}
-          chunkingStrategy={result?.chunking_strategy ?? null}
+      <header className="product-topbar">
+        <div>
+          <p className="eyebrow">JD Fit Roadmap</p>
+          <h1>지원 직무에 맞춘 학습 로드맵</h1>
+          <p>
+            채용공고와 지원자 자료의 격차를 바탕으로 먼저 보완할 역량과 검증 가능한 학습 자료를 제안합니다.
+          </p>
+        </div>
+        <div className="topbar-actions" aria-label="분석 방식 요약">
+          <span className="method-chip">80개 큐레이션 자료 DB</span>
+          <span className="method-chip">부족 역량 기반 추천</span>
+        </div>
+      </header>
+
+      <div className="dashboard-grid">
+        <JsonInputPanel
+          value={jsonInput}
+          onChange={setJsonInput}
+          onLoadSample={handleLoadSample}
+          onAnalyze={handleAnalyze}
+          isLoading={isLoading}
+          error={error}
         />
-      </section>
+        <section className="workspace" aria-label="추천 결과">
+          <header className="workspace-header">
+            <div>
+              <p className="eyebrow">분석 결과</p>
+              <h2>개인 맞춤 보완 계획</h2>
+              <p>
+                부족 역량의 우선순위, 추천 자료, 실행 로드맵, 리포트를 한 화면에서 확인합니다.
+              </p>
+            </div>
+            <div className="status-chip">{result ? "로드맵 생성 완료" : "분석 자료 대기"}</div>
+          </header>
+          <SummaryStrip result={result} />
+          <GapMatrix items={sortedSkillRecommendations} />
+          <ResourceRecommendations items={sortedSkillRecommendations} />
+          <RoadmapPanel items={result?.roadmap ?? []} />
+          <ReportPanel
+            report={result?.report ?? null}
+            formula={result?.scoring_formula ?? null}
+            ragScope={result?.rag_scope_note ?? null}
+            retrievalMode={result?.retrieval_mode ?? null}
+            embeddingModel={result?.embedding_model ?? null}
+            chunkingStrategy={result?.chunking_strategy ?? null}
+          />
+        </section>
+      </div>
     </main>
   );
 }

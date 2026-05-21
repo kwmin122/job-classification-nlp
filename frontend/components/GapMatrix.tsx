@@ -6,17 +6,17 @@ type Props = {
 
 export function GapMatrix({ items }: Props) {
   if (items.length === 0) {
-    return <EmptyBlock title="격차 분석 결과 없음" body="C 파트의 skill_gaps가 들어오면 이 영역에 부족 역량이 표시됩니다." />;
+    return <EmptyBlock title="분석 결과 대기 중" body="부족 역량이 포함된 분석 데이터를 실행하면 보완 우선순위가 표시됩니다." />;
   }
 
   return (
     <section className="panel">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">C 결과 해석</p>
-          <h2>역량 격차 매트릭스</h2>
+          <p className="eyebrow">격차 분석</p>
+          <h2>보완 필요 역량</h2>
         </div>
-        <span className="hint">gap score 높은 순</span>
+        <span className="hint">부족 점수 높은 순</span>
       </div>
       <div className="table-wrap">
         <table>
@@ -25,7 +25,7 @@ export function GapMatrix({ items }: Props) {
               <th>역량</th>
               <th>중요도</th>
               <th>부족 정도</th>
-              <th>근거</th>
+              <th>판단 근거</th>
             </tr>
           </thead>
           <tbody>
@@ -68,4 +68,3 @@ function gapClass(score: number) {
   if (score >= 40) return "gap-pill gap-mid";
   return "gap-pill gap-low";
 }
-

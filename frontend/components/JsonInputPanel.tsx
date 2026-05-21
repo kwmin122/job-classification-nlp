@@ -16,13 +16,12 @@ export function JsonInputPanel({
   error
 }: Props) {
   return (
-    <aside className="input-rail" aria-label="C 결과 입력">
+    <aside className="input-rail" aria-label="분석 데이터 입력">
       <div className="rail-header">
-        <p className="eyebrow">Input Contract</p>
-        <h1>D Part RAG Demo</h1>
+        <p className="eyebrow">분석 입력</p>
+        <h1>채용 준비 데이터</h1>
         <p>
-          C 파트의 <code>skill_gaps</code> 결과를 넣으면 큐레이션된 학습자료 DB에서 추천 자료와
-          로드맵을 생성합니다.
+          직무 분석 결과를 넣으면 보완할 역량에 맞춰 학습 자료, 실행 순서, 리포트를 생성합니다.
         </p>
       </div>
       <div className="button-row">
@@ -34,7 +33,7 @@ export function JsonInputPanel({
         </button>
       </div>
       <label className="json-label" htmlFor="json-input">
-        C output JSON
+        분석 데이터 JSON
       </label>
       <textarea
         id="json-input"
@@ -44,10 +43,9 @@ export function JsonInputPanel({
       />
       {error && <p className="error-text">{error}</p>}
       <div className="pipeline-note">
-        <strong>RAG 범위</strong>
-        <p>웹 전체 검색이 아니라 80개 학습자료 DB에서 검색하는 추천 RAG입니다.</p>
+        <strong>분석 방법</strong>
+        <p>공식 문서, 강의, 실습 자료를 선별한 로컬 DB에서 관련 자료를 검색합니다.</p>
       </div>
     </aside>
   );
 }
-

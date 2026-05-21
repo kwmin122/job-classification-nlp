@@ -128,8 +128,8 @@ def recommend(c_output: COutput, top_k: int = 3) -> RecommendResponse:
             "0.1 * job_group_match + 0.1 * (reliability / 5))"
         ),
         rag_scope_note=(
-            "This is curated learning-resource DB retrieval over learning_resources.csv, "
-            "not open-web search."
+            "learning_resources.csv에 정리한 큐레이션 학습자료 DB에서 검색합니다. "
+            "웹 전체 검색 결과가 아닙니다."
         ),
         retrieval_mode=retriever_info.retrieval_mode,
         embedding_model=retriever_info.embedding_model,

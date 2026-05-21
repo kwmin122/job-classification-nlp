@@ -23,13 +23,13 @@ export function ReportPanel({
     <section className="panel report-panel">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">Generated Explanation</p>
+          <p className="eyebrow">분석 리포트</p>
           <h2>자연어 분석 리포트</h2>
         </div>
       </div>
       <pre>{report}</pre>
       <div className="formula-box">
-        <strong>추천 점수 공식</strong>
+        <strong>분석 방법</strong>
         <code>{formula}</code>
         <div className="retrieval-meta">
           <span>검색 방식: {retrievalMode}</span>

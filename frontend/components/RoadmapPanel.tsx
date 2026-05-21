@@ -13,8 +13,8 @@ export function RoadmapPanel({ items }: Props) {
     <section className="panel">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">Gap to Plan</p>
-          <h2>학습 로드맵</h2>
+          <p className="eyebrow">실행 순서</p>
+          <h2>우선순위 학습 로드맵</h2>
         </div>
       </div>
       <div className="timeline">
@@ -39,4 +39,3 @@ export function RoadmapPanel({ items }: Props) {
     </section>
   );
 }
-

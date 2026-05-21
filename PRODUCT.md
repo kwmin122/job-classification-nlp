@@ -6,15 +6,15 @@ product
 
 ## Users
 
-The primary users are NLP course teammates and presenters building a final project demo. The D-part owner uses this locally to prove that C's skill-gap output can become concrete learning recommendations, roadmaps, and a readable analysis report. Reviewers and classmates use the interface during presentation to understand the recommendation pipeline quickly.
+The primary users are job seekers, NLP course teammates, and reviewers who need to understand how a job-description analysis result becomes concrete learning recommendations. A presenter uses the app locally to show a complete flow from skill gaps to learning resources, roadmap, and readable report without exposing internal team-role boundaries.
 
 ## Product Purpose
 
-This product demonstrates the D part of a job-description skill-gap analysis project. It accepts structured gap-analysis results, searches a curated learning-resource database, ranks recommended resources, generates a learning roadmap, and presents the result in a local dashboard. Success means the vertical slice runs end to end on localhost, uses at least 80 curated resources, and explains the recommendation logic without overstating the RAG scope.
+This product demonstrates a job-description skill-gap recommendation workflow. It accepts structured gap-analysis results, searches a curated learning-resource database, ranks recommended resources, generates a learning roadmap, and presents the result in a local dashboard. Success means the vertical slice runs end to end on localhost, uses at least 80 curated resources, and explains the recommendation logic without overstating the RAG scope.
 
 ## Brand Personality
 
-Calm, credible, practical. The product should feel like a focused academic analysis tool, not a marketing landing page or a generic AI chatbot. It should make the D pipeline legible and defensible.
+Calm, credible, practical. The product should feel like a focused career analysis tool, not a marketing landing page or a generic AI chatbot. It should make the recommendation pipeline legible and defensible.
 
 ## Anti-references
 

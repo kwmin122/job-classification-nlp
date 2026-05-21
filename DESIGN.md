@@ -49,7 +49,7 @@ Cards are used only for grouped repeated items such as individual recommended re
 
 ## Interaction
 
-- Primary action: analyze sample or pasted C output.
+- Primary action: analyze sample or pasted gap-analysis data.
 - Hover states should clarify clickable resource links and buttons.
 - Focus-visible styles are required for buttons, links, and textarea.
 - Loading should use skeleton-like inline states or disabled buttons, not modal spinners.

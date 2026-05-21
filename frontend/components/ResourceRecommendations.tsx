@@ -13,10 +13,10 @@ export function ResourceRecommendations({ items }: Props) {
     <section className="panel">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">Curated DB Retrieval</p>
-          <h2>부족 역량별 추천 자료</h2>
+          <p className="eyebrow">학습자료 추천</p>
+          <h2>역량별 추천 자료</h2>
         </div>
-        <span className="hint">Top-K by normalized score</span>
+        <span className="hint">추천 점수 높은 순</span>
       </div>
       <div className="resource-groups">
         {items.map((item) => (
@@ -56,4 +56,3 @@ export function ResourceRecommendations({ items }: Props) {
     </section>
   );
 }
-

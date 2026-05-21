@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "JD Skill Gap RAG Dashboard",
-  description: "D-part local dashboard for curated learning-resource recommendations"
+  title: "JD Fit Roadmap",
+  description: "채용공고 기반 역량 격차와 학습 로드맵 추천 대시보드"
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -13,4 +13,3 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     </html>
   );
 }
-
