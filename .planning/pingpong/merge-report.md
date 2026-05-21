@@ -1,15 +1,25 @@
-## Section Classification
+# Merge Report
 
-| Section | Status | Similarity | Merge decision |
-|---|---|---:|---|
-| Objective | AGREED | 0.88 | Product-facing dashboard, no visible team-role language. |
-| Information Architecture | AGREED | 0.83 | Keep flow, rename and reprioritize around user outcome. |
-| Visual System | AGREED | 0.86 | Flatten background, reduce radii/shadows, keep tables and timeline. |
-| Component Changes | AGREED | 0.91 | Both identified the same frontend files plus report generator. |
-| Copy Changes | PARTIAL | 0.72 | Merged Korean-first labels from both variants. |
-| Risks | AGREED | 0.81 | Backend report copy and product context can reintroduce old framing. |
-| Verification | AGREED | 0.84 | Build, backend tests, forbidden-string search, local endpoint check. |
+Updated: 2026-05-21
 
-## Final Merge
+## Result
 
-The merged plan keeps the current local vertical slice and changes the browser-visible experience from a role handoff demo into a career-analysis product surface. No debate round was needed because the two model outputs converged on the same structural fix.
+The previous merge correctly removed internal D/C language from the visible dashboard, but the user clarified that this is not sufficient. The product must analyze real user inputs: job posting link/text/file plus candidate cover letter/resume/portfolio text/file.
+
+## Revised Merge Decision
+
+The accepted direction is:
+
+```text
+raw job posting + raw candidate materials
+→ text extraction
+→ job classification
+→ required/owned skill extraction
+→ missing skill + gap score calculation
+→ curated learning-resource RAG
+→ roadmap + report
+```
+
+## Consequence
+
+Any remaining document or implementation plan that treats precomputed gap data as the primary user input is outdated.

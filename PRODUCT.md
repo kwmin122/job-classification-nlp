@@ -6,28 +6,50 @@ product
 
 ## Users
 
-The primary users are job seekers, NLP course teammates, and reviewers who need to understand how a job-description analysis result becomes concrete learning recommendations. A presenter uses the app locally to show a complete flow from skill gaps to learning resources, roadmap, and readable report without exposing internal team-role boundaries.
+The primary users are job seekers preparing for a specific job posting. They provide a target job posting and their own application materials, such as a cover letter, resume, portfolio text, GitHub README, or uploaded PDF/TXT files. Reviewers and classmates use the app to understand the full NLP pipeline from raw documents to skill-gap analysis and learning-roadmap recommendation.
 
 ## Product Purpose
 
-This product demonstrates a job-description skill-gap recommendation workflow. It accepts structured gap-analysis results, searches a curated learning-resource database, ranks recommended resources, generates a learning roadmap, and presents the result in a local dashboard. Success means the vertical slice runs end to end on localhost, uses at least 80 curated resources, and explains the recommendation logic without overstating the RAG scope.
+This product analyzes a job posting and candidate materials, identifies the target job group, extracts required and owned skills, calculates missing skills with gap scores, and recommends learning resources from a curated resource database. It must produce the gap analysis from user-provided raw inputs, then use the RAG recommendation pipeline.
+
+## Input Contract
+
+The product accepts:
+
+- Job posting URL, pasted job posting text, or uploaded PDF/TXT job posting.
+- Candidate cover letter, resume, portfolio text, GitHub README text, or uploaded PDF/TXT candidate document.
+
+DOCX, HWP, and multi-file upload are expansion targets after the first stable vertical slice.
+
+## Output Contract
+
+The product returns:
+
+- Predicted job group.
+- Fit score.
+- Required skills with job-posting evidence.
+- Owned skills with candidate-evidence sentences.
+- Missing skills with `gap_score`, `gap_level`, importance, and evidence.
+- Recommended learning resources.
+- Prioritized learning roadmap.
+- Natural-language analysis report.
 
 ## Brand Personality
 
-Calm, credible, practical. The product should feel like a focused career analysis tool, not a marketing landing page or a generic AI chatbot. It should make the recommendation pipeline legible and defensible.
+Calm, credible, practical. The interface should feel like a focused career analysis tool. It should not feel like an internal team-role demo, a JSON contract tester, a generic AI chatbot, or a marketing landing page.
 
 ## Anti-references
 
-Do not make it look like a SaaS landing page, a decorative AI dashboard, or a card-heavy template full of vague metrics. Avoid gradient text, glassmorphism, nested cards, dark-blue observability styling, and decorative charts that do not explain the recommendation.
+Do not expose internal team-role language or developer-only payload contracts in the user-facing flow. Do not make the primary interaction a structured debug textarea. Avoid gradient text, glassmorphism, nested cards, decorative charts, and vague AI claims.
 
 ## Design Principles
 
-1. Show the pipeline, not magic: every recommendation should connect back to a skill gap, score, and source.
-2. Keep the RAG claim honest: describe this as curated learning-resource DB retrieval, not open-web search.
-3. Prioritize demo reliability: the app must work from sample data without paid APIs or GPUs.
-4. Make academic evaluation easy: expose formulas, data fields, and outputs clearly.
-5. Treat the dashboard as a work surface: dense enough for analysis, quiet enough for presentation.
+1. Start from the user’s real task: compare my application materials against this job posting.
+2. Show evidence: every gap should connect to a job-posting requirement and candidate-material evidence or absence.
+3. Keep the RAG claim honest: recommendations come from a curated learning-resource DB, not open-web search.
+4. Separate analysis from recommendation: first calculate gaps, then recommend resources.
+5. Keep demo reliability: text and PDF/TXT should work before broader document formats are added.
 
 ## Accessibility & Inclusion
 
-Target WCAG AA contrast, keyboard-reachable controls, visible focus states, and Korean-first labels with English technical terms where common. Use restrained motion and respect reduced-motion preferences.
+Target WCAG AA contrast, keyboard-reachable controls, visible focus states, and Korean-first labels with English technical terms where common. Avoid unnecessary motion and respect reduced-motion preferences.
