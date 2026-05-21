@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from app.schemas import RoadmapItem, SkillRecommendation
+from app.schemas import RoadmapItem, RoadmapPreferences, SkillRecommendation
 
 
 def _focus_for_gap(gap_score: float) -> str:
@@ -36,6 +36,23 @@ def _practice_project(skill: str) -> str:
     return f"{skill}을 활용한 미니 프로젝트를 만들고, 실행 방법과 결과를 README에 정리하기"
 
 
+def distribute_weeks(skills: list[str], preferences: RoadmapPreferences) -> list[dict]:
+    if not skills:
+        return []
+    weeks = []
+    for week in range(1, preferences.duration_weeks + 1):
+        skill = skills[min((week - 1) * len(skills) // preferences.duration_weeks, len(skills) - 1)]
+        weeks.append(
+            {
+                "week": week,
+                "goal": f"{skill} 학습 및 실습",
+                "skills": [skill],
+                "practice": f"{skill}을 적용한 작은 결과물을 만들고 정리하기",
+            }
+        )
+    return weeks
+
+
 def generate_roadmap(skill_recommendations: list[SkillRecommendation]) -> list[RoadmapItem]:
     sorted_items = sorted(
         skill_recommendations,
@@ -60,4 +77,3 @@ def generate_roadmap(skill_recommendations: list[SkillRecommendation]) -> list[R
             )
         )
     return roadmap
-
