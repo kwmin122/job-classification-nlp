@@ -90,6 +90,7 @@ class ResourceRecommendation(BaseModel):
     semantic_similarity: float
     skill_match: float
     job_group_match: float
+    difficulty_match: float = 0.0
     reliability_norm: float
     recommend_score: float
 

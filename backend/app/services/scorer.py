@@ -25,22 +25,35 @@ def job_group_match(predicted_job: str, resource: Resource) -> float:
     return 1.0 if predicted_job == resource.job_group else 0.0
 
 
+def difficulty_match(user_difficulty: str, resource: Resource) -> float:
+    matrix = {
+        "입문": {"beginner": 1.0, "intermediate": 0.5, "advanced": 0.0},
+        "기초": {"beginner": 0.8, "intermediate": 1.0, "advanced": 0.3},
+        "실무": {"beginner": 0.3, "intermediate": 1.0, "advanced": 0.7},
+        "심화": {"beginner": 0.0, "intermediate": 0.6, "advanced": 1.0},
+    }
+    return matrix.get(user_difficulty, {}).get(resource.level, 0.5)
+
+
 def score_resource(
     resource: Resource,
     semantic_similarity: float,
     skill: str,
     predicted_job: str,
+    user_difficulty: str = "기초",
 ) -> ResourceRecommendation:
     semantic = normalize_similarity(semantic_similarity)
     skill_score = skill_match(skill, resource)
     job_score = job_group_match(predicted_job, resource)
+    difficulty_score = difficulty_match(user_difficulty, resource)
     reliability_norm = resource.reliability / 5
 
     recommend_score = 100 * (
-        0.6 * semantic
-        + 0.2 * skill_score
-        + 0.1 * job_score
-        + 0.1 * reliability_norm
+        0.55 * semantic
+        + 0.20 * skill_score
+        + 0.10 * job_score
+        + 0.10 * difficulty_score
+        + 0.05 * reliability_norm
     )
 
     return ResourceRecommendation(
@@ -48,7 +61,7 @@ def score_resource(
         semantic_similarity=round(semantic, 4),
         skill_match=skill_score,
         job_group_match=job_score,
+        difficulty_match=difficulty_score,
         reliability_norm=round(reliability_norm, 2),
         recommend_score=round(recommend_score, 1),
     )
-
