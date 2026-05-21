@@ -8,8 +8,9 @@ Primary flow:
 
 1. User enters a target job posting.
 2. User enters or uploads their candidate materials.
-3. System extracts text and compares requirements against candidate evidence.
-4. System calculates missing skills and gap scores.
-5. System recommends learning resources and a roadmap.
+3. User chooses roadmap duration, current level, and learning intensity.
+4. System extracts text and compares requirements against candidate evidence.
+5. System calculates missing skills and gap scores.
+6. System recommends learning resources and a weekly roadmap.
 
-Developer payload input and seeded-data controls are acceptable only for development diagnostics, not for the real product UI.
+The real product UI should show the analysis path, evidence, recommendations, and roadmap without exposing internal team roles or implementation contracts.

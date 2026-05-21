@@ -2,7 +2,7 @@
 
 ## Design System Overview
 
-The interface is a local product dashboard for job-posting skill-gap analysis and learning-roadmap recommendation. It should support a real user flow: enter a job posting, enter candidate materials, run analysis, review gaps, then study the recommended roadmap.
+The interface is a local product dashboard for job-posting skill-gap analysis and personalized learning-roadmap recommendation. It should support the real user flow: enter a job posting, enter candidate materials, choose roadmap constraints, run analysis, review gaps, then study the recommended roadmap.
 
 ## Color
 
@@ -28,14 +28,14 @@ Use a system UI stack: `-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui
 
 The primary layout is a product work surface:
 
-- Input area: job posting source and candidate material source.
+- Input area: job posting source, candidate material source, roadmap preferences.
 - Analysis summary: predicted job, fit score, number of missing skills, top priority.
-- Gap evidence: required skills, owned skills, missing skills, score bars, evidence sentences.
+- Evidence area: required skills, owned skills, missing skills, score bars, evidence sentences.
 - Recommendation area: learning resources grouped by missing skill.
-- Roadmap area: priority sequence and practice project.
+- Roadmap area: week-by-week learning plan.
 - Report area: natural-language summary and method disclosure.
 
-The input area must not be a developer payload contract as the default user experience. Diagnostics can be kept only as hidden debugging tools if needed.
+The input area must start from the user's real job target and candidate materials. Any internal diagnostics should stay outside the normal product flow.
 
 ## Input Components
 
@@ -45,6 +45,9 @@ The input area must not be a developer payload contract as the default user expe
 - Candidate material text area.
 - Candidate PDF/TXT upload.
 - Optional portfolio/GitHub README text area.
+- Roadmap duration segmented control: 2주, 4주, 8주, 12주.
+- Current level segmented control: 입문, 기초, 실무, 심화.
+- Learning intensity segmented control: 가볍게, 보통, 집중.
 - Primary button: `분석 시작`.
 
 Demo-data controls are not part of the real user flow. If seeded data is needed for development, keep it outside the primary UI.
@@ -56,14 +59,15 @@ Demo-data controls are not part of the real user flow. If seeded data is needed 
 - Owned skills panel: skill, candidate evidence.
 - Gap matrix: skill, gap score, level, importance, missing reason.
 - Resource recommendation rows: title, type, level, language, reliability, recommend score, reason, URL.
-- Roadmap timeline: ordered stages by priority and learning step.
+- Weekly roadmap timeline: week number, goal, skills, resources, practice output.
 - Report panel: generated Korean summary with clear caveats.
 - Method panel: retrieval mode, embedding model, scoring formula, RAG scope.
 
 ## Interaction
 
-- The user should be able to paste text or upload files without understanding internal JSON.
-- Loading should clearly indicate whether the app is extracting text, analyzing gaps, or retrieving resources.
+- The user should be able to paste text or upload files without understanding backend contracts.
+- The roadmap preferences should be visible before analysis because they affect the recommendation.
+- Loading should clearly indicate whether the app is extracting text, analyzing gaps, retrieving resources, or generating the roadmap.
 - Errors should say what failed: URL extraction, file parsing, insufficient text, analysis failure, or recommendation failure.
 - The app should keep the user’s pasted text if an error occurs.
 
@@ -73,4 +77,4 @@ Use short 150-220ms transitions for hover, focus, panel reveal, and score bars. 
 
 ## Content
 
-Labels are Korean-first. Technical terms like RAG, gap score, embedding, and Top-K may appear only in method disclosure areas. Primary headings should use user-facing language such as `채용공고 분석`, `지원자 자료`, `보완 필요 역량`, and `학습 로드맵`.
+Labels are Korean-first. Technical terms like RAG, gap score, embedding, and Top-K may appear only in method disclosure areas. Primary headings should use user-facing language such as `채용공고 분석`, `내 지원 자료`, `학습 목표`, `보완 필요 역량`, and `주차별 학습 로드맵`.
