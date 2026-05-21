@@ -1,15 +1,38 @@
 # JD 기반 지원자 역량 분석 D 파트
 
-이 저장소는 자연어처리 기말 프로젝트 중 D 파트를 로컬에서 시연하기 위한 vertical slice입니다.
+이 저장소는 자연어처리 기말 프로젝트 중 D 파트를 로컬에서 구현하고 최종 발표로 설명하기 위한 작업 공간입니다.
 
 ```text
 C 파트 격차 분석 JSON
-→ curated learning_resources.csv 검색
+→ learning_resources.csv 기반 RAG 검색
 → 추천 점수 계산
 → 학습 로드맵 생성
 → 자연어 리포트 생성
 → 로컬 대시보드 출력
 ```
+
+## 최종 설계 기준
+
+최종 제출용 D 파트는 단순 키워드 검색이나 웹 전체 검색이 아니라, 직접 큐레이션한 한국어 학습자료 DB를 대상으로 하는 추천형 RAG입니다.
+
+최종 목표 검색 방식:
+
+```text
+학습자료 CSV 1행 = chunk 1개
+chunk text = job_group + skill + sub_skill + title + description + reason
+C 파트 skill_gaps = query
+BAAI/bge-m3 로컬 임베딩
+numpy cosine similarity 검색
+추천 점수 재계산
+```
+
+최종 설계 문서: `docs/final_rag_architecture.md`
+
+중요한 역할 분리:
+
+- C 파트: 채용공고와 지원자 텍스트를 비교해 부족 역량, 부족 정도, 근거 문장을 판단
+- D 파트: C가 넘긴 `skill_gaps`를 받아 학습자료 검색, 로드맵, 리포트, 대시보드로 변환
+- D 파트는 부족 역량을 새로 판단하지 않음
 
 ## 현재 구현 범위
 
@@ -23,6 +46,8 @@ C 파트 격차 분석 JSON
 - GPU, 유료 LLM API 없이 실행되는 로컬 FastAPI + Next.js 대시보드
 
 이 프로젝트의 RAG는 웹 전체 검색이 아니라, 직접 큐레이션한 `learning_resources.csv`를 검색하는 추천 RAG입니다.
+
+현재 코드의 검색기는 CPU 재현성을 우선한 `TfidfRetriever`입니다. 최종 제출 설계에서는 이를 `EmbeddingRetriever`로 교체하고, TF-IDF는 fallback으로 남깁니다.
 
 ## C 파트 입력 계약
 
@@ -60,11 +85,12 @@ recommend_score =
 정규화 기준:
 
 - `semantic_similarity`: 0~1, 현재는 로컬 TF-IDF cosine similarity
+- 최종 설계의 `semantic_similarity`: BGE-M3 dense embedding cosine similarity
 - `skill_match`: 부족 역량이 자료 메타데이터에 직접 매칭되면 1, 아니면 0
 - `job_group_match`: 예측 직무군과 자료 직무군이 같으면 1, 아니면 0
 - `reliability_norm`: `reliability / 5`
 
-Sentence-BERT나 Chroma/FAISS를 붙일 수 있지만, 80개 DB의 발표용 vertical slice에서는 CPU 기반 TF-IDF 검색만으로 재현성과 속도가 충분합니다.
+최종 구현에서는 Chroma 같은 별도 벡터 DB 서버를 두지 않고, 80개 리소스의 임베딩을 `.npz` 캐시로 저장한 뒤 `numpy` cosine similarity로 검색합니다. DB 규모가 작기 때문에 이 방식이 더 단순하고 발표 재현성이 높습니다.
 
 ## 실행 방법
 
@@ -118,10 +144,11 @@ PYTHONPATH=backend .venv/bin/python backend/tools/verify_resource_urls.py
 ## 주요 파일
 
 - `backend/app/data/learning_resources.csv`: 학습 자료 DB 80개
+- `docs/final_rag_architecture.md`: 최종용 RAG, 임베딩, 청킹, API 의존성 설계
 - `docs/jobkorea_skill_basis.md`: 잡코리아 기반 역량 선정 근거
 - `exports/learning_resources_catalog.csv`: 확인용 한국어 CSV
 - `backend/app/data/sample_c_output.json`: C 파트 샘플 출력
-- `backend/app/services/retriever.py`: TF-IDF 검색기
+- `backend/app/services/retriever.py`: 현재 TF-IDF fallback 검색기
 - `backend/app/services/scorer.py`: 추천 점수 공식
 - `backend/app/services/roadmap_generator.py`: 학습 로드맵 생성
 - `backend/app/services/report_generator.py`: 자연어 리포트 생성

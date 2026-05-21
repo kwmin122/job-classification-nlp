@@ -1,0 +1,396 @@
+# 최종용 D 파트 RAG 설계
+
+Generated: 2026-05-21
+
+## 결론
+
+최종 제출용 D 파트는 현재 코드의 TF-IDF 검색을 그대로 최종 주장으로 삼지 않고, 한국어/영어 기술명을 함께 처리할 수 있는 로컬 임베딩 기반 RAG로 설계한다.
+
+```text
+C 파트 skill_gaps JSON
+→ query text 생성
+→ 학습자료 chunk embedding 검색
+→ Top-K 후보 검색
+→ 추천 점수 재계산
+→ 로드맵 생성
+→ LLM 또는 템플릿 리포트 생성
+→ 로컬 대시보드 출력
+```
+
+역할 경계는 명확히 둔다.
+
+- C 파트: 채용공고와 지원자 텍스트를 비교해 `skill_gaps`를 만든다.
+- D 파트: `skill_gaps`를 입력으로 받아 학습자료 추천, 로드맵, 리포트, 대시보드를 만든다.
+- D 파트는 부족 역량을 새로 판정하지 않는다.
+
+## API 결정
+
+### 검색/임베딩
+
+외부 Embedding API는 사용하지 않는다.
+
+최종 기본값:
+
+```text
+BAAI/bge-m3
+```
+
+이유:
+
+- 한국어와 영어 기술명이 섞인 검색에 적합한 multilingual embedding 모델이다.
+- Hugging Face 모델 카드 기준 multilingual, dense/sparse/ColBERT 기능을 지원한다.
+- API key, 유료 호출, 네트워크 실패 없이 재현 가능하다.
+- 학습자료 80개 규모에서는 CPU로도 사전 임베딩 생성이 가능하다.
+
+Fallback:
+
+```text
+intfloat/multilingual-e5-small
+```
+
+이유:
+
+- 더 가볍고 빠르다.
+- 384차원 embedding이라 CPU 실행이 쉽다.
+- 최종 발표 직전 환경 문제가 생기면 안정적인 대체 모델로 쓴다.
+
+### LLM 리포트 생성
+
+LLM API는 필수 의존성으로 두지 않는다.
+
+최종 구조:
+
+```text
+ReportGenerator
+├─ template mode: 기본값, API key 없음
+└─ llm mode: 선택, API key 있을 때만 사용
+```
+
+기본 제출은 `template mode`로도 완성 가능해야 한다.
+LLM API를 붙이면 판단을 새로 시키는 용도가 아니라, 이미 계산된 결과를 자연어로 정리하는 용도로만 사용한다.
+
+선택 API 후보:
+
+| API | 사용 목적 | 최종 판단 |
+|---|---|---|
+| OpenAI/Gemini/Claude | 자연어 리포트 문장화 | 선택 |
+| OpenAI Embeddings 등 외부 embedding API | 자료 검색 임베딩 | 사용하지 않음 |
+
+즉, RAG 검색 품질은 로컬 embedding으로 만들고, LLM API는 있으면 리포트 문장만 다듬는 옵션으로 둔다.
+
+## 왜 외부 Embedding API를 안 쓰는가
+
+기말 프로젝트 최종 제출에서는 재현성이 중요하다.
+
+외부 API를 쓰면 다음 문제가 생긴다.
+
+- API key 필요
+- 호출 비용 발생 가능
+- 발표 당일 네트워크/API 제한 리스크
+- 팀원이 같은 결과를 재현하기 어려움
+
+반대로 로컬 임베딩은 한 번 설치하면 같은 CSV에서 같은 결과를 낼 수 있다.
+
+## 청킹 설계
+
+현재 RAG DB는 긴 PDF 문서가 아니라 학습자료 메타데이터 DB다. 따라서 일반 문서형 RAG처럼 500자 단위로 자르는 방식은 맞지 않다.
+
+최종 청킹 기준:
+
+```text
+CSV 1행 = chunk 1개
+```
+
+각 chunk는 하나의 학습자료를 의미한다.
+
+```json
+{
+  "chunk_id": "BE009",
+  "resource_id": "BE009",
+  "job_group": "백엔드 개발자",
+  "skill": "Docker",
+  "sub_skill": "컨테이너",
+  "type": "강의",
+  "level": "beginner",
+  "language": "한국어",
+  "text": "백엔드 개발자 Docker 컨테이너 인프런 Docker 강의 모음 Docker 컨테이너와 백엔드 배포 강의를 한국어로 찾아 학습한다 Docker CI CD 환경 경험 요구 대응"
+}
+```
+
+### chunk text 구성
+
+임베딩에 넣는 텍스트:
+
+```text
+job_group + skill + sub_skill + title + description + reason
+```
+
+포함하지 않는 필드:
+
+- URL
+- estimated_time
+- free_or_paid
+
+이 필드는 검색 의미에는 약하고, 추천 결과 표시용 metadata로만 쓴다.
+
+긴 PDF나 강의 전문을 직접 넣는 구조로 확장하면 그때는 500~800자 단위 청킹을 검토한다. 현재 최종 제출 범위는 메타데이터 기반 80개 학습자료 DB이므로 1행 1chunk가 맞다.
+
+## Query 설계
+
+C 파트가 넘기는 부족 역량 1개마다 query를 만든다.
+
+입력:
+
+```json
+{
+  "predicted_job": "백엔드 개발자",
+  "skill": "Docker",
+  "gap_score": 82,
+  "gap_level": "높음",
+  "importance": "필수",
+  "evidence": "JD에는 Docker 기반 배포 경험이 요구되지만 지원자 텍스트에는 컨테이너 기반 배포 경험이 나타나지 않음"
+}
+```
+
+query text:
+
+```text
+백엔드 개발자 필수 부족 역량 Docker
+JD 요구사항과 지원자 근거: JD에는 Docker 기반 배포 경험이 요구되지만 지원자 텍스트에는 컨테이너 기반 배포 경험이 나타나지 않음
+한국어 학습자료 추천
+```
+
+## 임베딩 저장 설계
+
+최종 구조:
+
+```text
+backend/app/data/learning_resources.csv
+backend/app/cache/resource_embeddings.npz
+backend/app/cache/resource_index_meta.json
+```
+
+저장 내용:
+
+- `resource_embeddings.npz`: normalized dense embedding matrix
+- `resource_index_meta.json`: embedding 순서와 resource id 매핑
+
+DB가 80개라서 Chroma 같은 별도 서버형 vector DB는 필요 없다.
+
+선택지:
+
+| 방식 | 최종 판단 |
+|---|---|
+| numpy matrix | 기본값 |
+| FAISS | 선택, 검색 최적화 필요할 때 |
+| Chroma | 과함 |
+| SQLite VSS | 과함 |
+
+최종 제출은 `numpy matrix + cosine similarity`로 충분하다.
+FAISS는 시간이 남으면 붙인다.
+
+## 검색 점수 설계
+
+기존 점수 공식을 유지하되, `semantic_similarity`만 TF-IDF에서 dense embedding cosine similarity로 교체한다.
+
+```text
+recommend_score =
+100 * (
+  0.60 * dense_similarity
++ 0.20 * skill_match
++ 0.10 * job_group_match
++ 0.10 * reliability_norm
+)
+```
+
+정규화:
+
+- `dense_similarity`: cosine similarity를 0~1 범위로 변환
+- `skill_match`: skill 또는 sub_skill 직접 매칭이면 1, 아니면 0
+- `job_group_match`: 예측 직무군과 자료 직무군이 같으면 1, 아니면 0
+- `reliability_norm`: reliability / 5
+
+## 검색 절차
+
+부족 역량마다 다음 순서로 검색한다.
+
+```text
+1. query embedding 생성
+2. 전체 80개 chunk와 cosine similarity 계산
+3. dense similarity 기준 Top-10 후보 추출
+4. skill/job_group/reliability를 반영해 recommend_score 재계산
+5. skill_match가 있는 자료를 우선 선택
+6. Top-K 추천 자료 반환
+```
+
+최종 기본값:
+
+```text
+top_k = 3
+candidate_k = 10
+```
+
+## 로드맵 생성 설계
+
+로드맵은 LLM이 임의로 판단하지 않는다. `gap_score`, `gap_level`, `importance`, 추천 자료를 기반으로 규칙적으로 생성한다.
+
+우선순위:
+
+```text
+gap_score 높은 순
+필수 > 우대
+job_group_match 있는 자료 우선
+```
+
+단계:
+
+```text
+1. 개념 이해
+2. 한국어 자료 1~2개 학습
+3. 작은 실습
+4. 기존 포트폴리오에 적용
+5. README/면접 답변 근거 정리
+```
+
+## 리포트 생성 설계
+
+LLM을 사용할 경우 프롬프트는 아래 원칙을 지킨다.
+
+- C 파트가 준 `skill_gaps`를 사실로 취급한다.
+- LLM이 부족 역량을 새로 판단하지 않는다.
+- 추천 자료 목록 밖의 자료를 지어내지 않는다.
+- gap_score와 evidence를 반드시 언급한다.
+- 마지막에 한계점을 적는다.
+
+프롬프트 입력:
+
+```json
+{
+  "predicted_job": "...",
+  "fit_score": 72,
+  "matched_skills": ["..."],
+  "skill_recommendations": [...],
+  "roadmap": [...]
+}
+```
+
+출력:
+
+```text
+1. 전체 요약
+2. 가장 먼저 보완할 역량
+3. 부족 정도와 근거
+4. 추천 학습 순서
+5. 추천 자료
+6. 실습 프로젝트
+7. 한계점
+```
+
+## C 파트 연결 계약
+
+C는 반드시 아래 형식으로 넘긴다.
+
+```json
+{
+  "predicted_job": "백엔드 개발자",
+  "fit_score": 72,
+  "matched_skills": ["Java", "Spring Boot", "MySQL"],
+  "skill_gaps": [
+    {
+      "skill": "Docker",
+      "gap_score": 82,
+      "gap_level": "높음",
+      "importance": "필수",
+      "evidence": "JD에는 Docker 기반 배포 경험이 요구되지만 지원자 텍스트에는 컨테이너 기반 배포 경험이 나타나지 않음"
+    }
+  ]
+}
+```
+
+`missing_skills`만 넘기는 방식은 최종 계약에서 받지 않는다.
+이유는 D 파트가 학습 우선순위를 만들려면 `gap_score`, `importance`, `evidence`가 필요하기 때문이다.
+
+## 최종 구현 단계
+
+### Step 1. Embedding retriever 추가
+
+새 파일:
+
+```text
+backend/app/services/embedding_retriever.py
+```
+
+역할:
+
+- CSV row를 chunk text로 변환
+- embedding 생성
+- cache 저장/로드
+- cosine similarity 검색
+
+### Step 2. 기존 TfidfRetriever를 fallback으로 유지
+
+```text
+retriever_mode = embedding | tfidf
+```
+
+최종 기본값은 `embedding`.
+
+### Step 3. requirements 추가
+
+```text
+sentence-transformers
+torch
+numpy
+```
+
+선택:
+
+```text
+faiss-cpu
+```
+
+### Step 4. API 응답에 검색 방식 표시
+
+응답에 아래 필드를 추가한다.
+
+```json
+{
+  "retrieval_mode": "embedding",
+  "embedding_model": "BAAI/bge-m3",
+  "chunking_strategy": "one_resource_row_per_chunk"
+}
+```
+
+### Step 5. 검증
+
+필수 검증:
+
+```bash
+PYTHONPATH=backend .venv/bin/python -m compileall backend/app backend/tools
+PYTHONPATH=backend .venv/bin/python backend/tools/verify_resource_urls.py
+PYTHONPATH=backend .venv/bin/python backend/tools/build_embeddings.py
+curl -X POST http://127.0.0.1:8000/recommend?top_k=3 ...
+cd frontend && npm run build
+```
+
+## 발표에서 말할 문장
+
+> 최종 시스템에서는 학습자료 DB의 각 행을 하나의 chunk로 보고, 직무군, 부족 역량, 자료 설명, 선정 이유를 합쳐 임베딩합니다. C 파트가 넘긴 부족 역량과 근거 문장도 query로 임베딩한 뒤, cosine similarity로 관련 자료를 검색합니다. 이후 기술명 직접 매칭, 직무군 일치, 자료 신뢰도를 함께 반영해 최종 추천 점수를 계산합니다. 이 구조는 웹 전체 검색 RAG가 아니라, 잡코리아 요구역량 기반으로 만든 한국어 학습자료 DB에 대한 추천형 RAG입니다.
+
+## 현재 구현과 최종 설계 차이
+
+| 항목 | 현재 구현 | 최종 설계 |
+|---|---|---|
+| 검색 방식 | TF-IDF cosine | BGE-M3 dense embedding cosine |
+| 청킹 | CSV 1행 | CSV 1행 유지 |
+| 벡터 저장 | 없음 | `.npz` cache |
+| 벡터 DB | 없음 | numpy 기본, FAISS 선택 |
+| LLM 리포트 | 템플릿 | 템플릿 기본, LLM API 선택 |
+| 외부 API 의존 | 없음 | 없음, LLM만 선택 |
+| 재현성 | 높음 | 높음 |
+
+## 참고 근거
+
+- BAAI/bge-m3 Hugging Face model card: https://huggingface.co/BAAI/bge-m3
+- intfloat/multilingual-e5-small Hugging Face model card: https://huggingface.co/intfloat/multilingual-e5-small
+- Sentence Transformers documentation: https://www.sbert.net/
