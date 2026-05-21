@@ -1,0 +1,34 @@
+{
+  "required_keywords": ["필수", "필요", "자격요건", "요구", "must", "required"],
+  "preferred_keywords": ["우대", "있으면 좋", "preferred", "plus"],
+  "negation_patterns": [
+    "경험은 아직 없습니다",
+    "경험이 아직 없습니다",
+    "경험은 없습니다",
+    "경험이 없습니다",
+    "경험 없음",
+    "사용 경험은 없습니다",
+    "사용 경험이 없습니다",
+    "다뤄본 적 없습니다",
+    "해본 적 없습니다",
+    "보유하고 있지 않습니다",
+    "보유하지 않습니다",
+    "미보유",
+    "부족합니다"
+  ],
+  "gap_scores": {
+    "required_missing": 90,
+    "preferred_missing": 65,
+    "explicit_negation_bonus": 5,
+    "max": 100
+  },
+  "gap_levels": [
+    { "min": 70, "label": "높음" },
+    { "min": 40, "label": "중간" },
+    { "min": 0, "label": "낮음" }
+  ],
+  "importance_weights": {
+    "필수": 1.0,
+    "우대": 0.5
+  }
+}

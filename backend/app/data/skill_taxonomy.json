@@ -1,0 +1,63 @@
+{
+  "job_groups": [
+    {
+      "name": "데이터 분석가",
+      "classifier_keywords": ["데이터 분석", "데이터 분석가", "SQL", "Pandas", "Tableau", "BI", "통계", "A/B", "시각화", "BigQuery"],
+      "skills": [
+        { "name": "Python", "aliases": ["Python", "파이썬"] },
+        { "name": "SQL", "aliases": ["SQL", "쿼리"] },
+        { "name": "Pandas", "aliases": ["Pandas", "판다스"] },
+        { "name": "통계", "aliases": ["통계", "가설검정", "회귀분석"] },
+        { "name": "A/B 테스트", "aliases": ["A/B 테스트", "AB 테스트", "실험 설계"] },
+        { "name": "Tableau", "aliases": ["Tableau", "태블로"] },
+        { "name": "데이터 시각화", "aliases": ["데이터 시각화", "시각화", "대시보드"] },
+        { "name": "BigQuery", "aliases": ["BigQuery", "빅쿼리"] }
+      ]
+    },
+    {
+      "name": "AI/ML 엔지니어",
+      "classifier_keywords": ["AI", "ML", "머신러닝", "딥러닝", "PyTorch", "TensorFlow", "MLOps", "LLM", "RAG", "NLP", "자연어처리"],
+      "skills": [
+        { "name": "Python", "aliases": ["Python", "파이썬"] },
+        { "name": "Machine Learning", "aliases": ["Machine Learning", "머신러닝", "ML"] },
+        { "name": "Deep Learning", "aliases": ["Deep Learning", "딥러닝"] },
+        { "name": "PyTorch", "aliases": ["PyTorch", "파이토치"] },
+        { "name": "TensorFlow", "aliases": ["TensorFlow", "텐서플로"] },
+        { "name": "NLP", "aliases": ["NLP", "자연어처리"] },
+        { "name": "LLM", "aliases": ["LLM", "대규모 언어모델"] },
+        { "name": "RAG", "aliases": ["RAG", "검색 증강 생성"] },
+        { "name": "Docker", "aliases": ["Docker", "도커", "컨테이너"] },
+        { "name": "MLOps", "aliases": ["MLOps", "모델 배포", "모델 운영"] }
+      ]
+    },
+    {
+      "name": "백엔드 개발자",
+      "classifier_keywords": ["백엔드", "Backend", "Spring", "Spring Boot", "Java", "REST API", "서버", "API", "Docker", "AWS", "CI/CD"],
+      "skills": [
+        { "name": "Java", "aliases": ["Java", "자바"] },
+        { "name": "Spring Boot", "aliases": ["Spring Boot", "스프링 부트", "Spring"] },
+        { "name": "REST API", "aliases": ["REST API", "RESTful API", "API"] },
+        { "name": "SQL", "aliases": ["SQL", "RDBMS", "DB", "데이터베이스"] },
+        { "name": "MySQL", "aliases": ["MySQL", "MariaDB"] },
+        { "name": "PostgreSQL", "aliases": ["PostgreSQL", "Postgres"] },
+        { "name": "Docker", "aliases": ["Docker", "도커", "컨테이너"] },
+        { "name": "AWS", "aliases": ["AWS", "EC2", "RDS", "클라우드"] },
+        { "name": "CI/CD", "aliases": ["CI/CD", "CI CD", "GitHub Actions", "Jenkins", "배포 자동화"] }
+      ]
+    },
+    {
+      "name": "프론트엔드 개발자",
+      "classifier_keywords": ["프론트엔드", "Frontend", "React", "Next.js", "TypeScript", "JavaScript", "UI", "웹", "CSS"],
+      "skills": [
+        { "name": "JavaScript", "aliases": ["JavaScript", "JS", "자바스크립트"] },
+        { "name": "TypeScript", "aliases": ["TypeScript", "TS", "타입스크립트"] },
+        { "name": "React", "aliases": ["React", "리액트"] },
+        { "name": "Next.js", "aliases": ["Next.js", "Next", "넥스트"] },
+        { "name": "CSS", "aliases": ["CSS", "스타일링"] },
+        { "name": "Tailwind CSS", "aliases": ["Tailwind CSS", "Tailwind", "테일윈드"] },
+        { "name": "React Query", "aliases": ["React Query", "TanStack Query"] },
+        { "name": "Testing Library", "aliases": ["Testing Library", "컴포넌트 테스트", "UI 테스트"] }
+      ]
+    }
+  ]
+}

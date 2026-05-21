@@ -38,7 +38,7 @@ Course Context: 자연어처리 기말 프로젝트
 - 현재 수준: 입문, 기초, 실무, 심화
 - 학습 강도: 가볍게, 보통, 집중
 
-DOCX, HWP, 복수 파일 업로드는 확장 기능으로 둔다. 첫 안정 버전은 URL, 텍스트, PDF/TXT 입력을 우선 지원한다.
+DOCX, HWP, 복수 파일 업로드는 확장 기능으로 둔다. 현재 구현된 안정 세로 조각은 채용공고 본문 텍스트와 지원자 자료 텍스트 입력을 우선 지원한다. URL, PDF/TXT 파일 추출은 다음 단계의 입력 어댑터로 분리한다.
 
 ## 3. 출력 결과
 
@@ -162,25 +162,35 @@ recommend_score =
 구현되어 있는 것:
 
 - 학습자료 DB 80개
-- 리소스 검색
-- 추천 점수 계산
-- 기본 로드맵 생성
-- 기본 리포트 생성
-- 로컬 대시보드 일부
+- `learning_resources.csv` 기반 추천형 RAG 검색
+- OpenAI `text-embedding-3-small` 임베딩 검색, API key가 없을 때 TF-IDF fallback
+- 1행 1자료 기준 chunking
+- 추천 점수 계산: 의미 유사도, 역량 일치, 직무군 일치, 난이도 일치, 신뢰도 반영
+- 채용공고 텍스트와 지원자 텍스트를 받는 `/analyze` 통합 API
+- `skill_taxonomy.json` 기반 직무군/역량 후보 로딩
+- `analyzer_rules.json` 기반 부정 표현, 필수/우대, gap score 기준 로딩
+- 부족 역량, gap score, fit score 계산
+- 사용자가 선택한 기간/난이도/강도를 반영한 주차별 로드맵 생성
+- 자연어 리포트 생성
+- 실제 사용자 관점의 로컬 Next.js 대시보드
 
 아직 필요한 것:
 
-- 채용공고 URL/텍스트/파일 입력 UI
-- 지원자 자료 텍스트/파일 입력 UI
-- 로드맵 기간, 현재 수준, 학습 강도 선택 UI
+- 채용공고 URL 입력 어댑터
+- 채용공고 PDF/TXT 파일 업로드와 텍스트 추출
+- 지원자 자료 PDF/TXT 파일 업로드와 텍스트 추출
 - URL 본문 추출
-- PDF/TXT 텍스트 추출
-- 요구 역량 추출
-- 보유 역량 추출
-- 부족 역량과 gap_score 계산
-- 사용자 선호 기반 추천 점수 반영
-- 주차별 로드맵 생성
-- 최종 `/analyze` 통합 API
+- B팀 직무 분류 모델과의 실제 연결
+- C팀 Ko-Sentence-BERT 기반 의미 유사도 격차 분석과의 실제 연결
+- LLM API 기반 리포트 생성. 현재는 계산 결과를 템플릿으로 설명한다.
+
+하드코딩 금지 기준:
+
+- 제품 결과를 만들기 위해 코드 안에 특정 직무, 특정 역량, 특정 점수를 박지 않는다.
+- 역량 후보와 직무군 키워드는 `backend/app/data/skill_taxonomy.json`에서 관리한다.
+- 부정 표현, 필수/우대 판정, gap score 기준은 `backend/app/data/analyzer_rules.json`에서 관리한다.
+- 로컬 서버 주소는 코드에 고정하지 않고 `BACKEND_ORIGIN`, `NEXT_PUBLIC_API_URL`, `ALLOWED_ORIGINS`, `ALLOW_LOCALHOST_CORS`로 주입한다.
+- 테스트 fixture와 문서 예시는 검증/설명용으로만 사용하고, 실제 `/analyze` 결과 생성 경로에는 사용하지 않는다.
 
 ## 8. 실행 방법
 
@@ -190,7 +200,7 @@ recommend_score =
 uv venv .venv
 uv pip install --python .venv -r backend/requirements.txt
 export OPENAI_API_KEY="..."
-PYTHONPATH=backend .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8010
+PYTHONPATH=backend .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port <BACKEND_PORT>
 ```
 
 프론트엔드:
@@ -198,8 +208,10 @@ PYTHONPATH=backend .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --p
 ```bash
 cd frontend
 npm install
-NEXT_PUBLIC_API_URL=http://127.0.0.1:8010 npm run dev -- --hostname 127.0.0.1 --port 3010
+BACKEND_ORIGIN=http://127.0.0.1:<BACKEND_PORT> npm run dev -- --hostname 127.0.0.1 --port <FRONTEND_PORT>
 ```
+
+프론트는 기본적으로 `/api`를 호출하고, Next.js rewrite가 `BACKEND_ORIGIN`으로 프록시한다. 배포나 팀원 환경에서 포트가 바뀌어도 코드 수정 없이 환경값만 바꾸면 된다.
 
 ## 9. 평가 계획
 

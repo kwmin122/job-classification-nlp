@@ -8,7 +8,6 @@ from app.schemas import Resource
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data"
 RESOURCE_PATH = DATA_DIR / "learning_resources.csv"
-SAMPLE_PATH = DATA_DIR / "sample_c_output.json"
 
 
 @lru_cache(maxsize=1)

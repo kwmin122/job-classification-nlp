@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import json
+import os
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,7 +19,7 @@ from app.services.embedding_retriever import (
     RetrieverInfo,
     build_retriever,
 )
-from app.services.resource_loader import SAMPLE_PATH, load_resources
+from app.services.resource_loader import load_resources
 from app.services.retriever import TfidfRetriever
 from app.services.roadmap_generator import distribute_weeks, generate_roadmap
 from app.services.report_generator import generate_product_report, generate_report
@@ -29,9 +29,21 @@ from app.services.text_extractor import extract_from_text_source
 
 app = FastAPI(title="JD Skill Gap RAG API", version="0.1.0")
 
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", "").split(",")
+    if origin.strip()
+]
+local_cors_regex = (
+    r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$"
+    if os.getenv("ALLOW_LOCALHOST_CORS", "1") == "1"
+    else None
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=allowed_origins,
+    allow_origin_regex=local_cors_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -41,12 +53,6 @@ app.add_middleware(
 @app.get("/health")
 def health() -> dict[str, str | int]:
     return {"status": "ok", "resource_count": len(load_resources())}
-
-
-@app.get("/sample")
-def sample() -> dict:
-    with SAMPLE_PATH.open("r", encoding="utf-8") as file:
-        return json.load(file)
 
 
 @app.get("/resources")
@@ -104,7 +110,13 @@ def _build_skill_recommendations(
         ]
         scored.sort(key=lambda item: item.recommend_score, reverse=True)
         skill_matched = [item for item in scored if item.skill_match > 0]
-        selected = skill_matched[:top_k]
+        job_matched = [item for item in skill_matched if item.job_group_match > 0]
+        selected = job_matched[:top_k]
+        if len(selected) < top_k:
+            selected_resource_ids = {item.resource.id for item in selected}
+            selected.extend(
+                item for item in skill_matched if item.resource.id not in selected_resource_ids
+            )
         if len(selected) < top_k:
             selected_resource_ids = {item.resource.id for item in selected}
             selected.extend(

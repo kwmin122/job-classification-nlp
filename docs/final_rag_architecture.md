@@ -60,7 +60,7 @@ URL 입력은 가능한 경우 HTML 본문을 추출한다. 채용 사이트 구
 - 기술명 표기 정규화
 - 너무 짧거나 의미 없는 문장 제거
 
-DOCX/HWP는 확장 기능이다. 첫 안정 버전은 URL, 텍스트, PDF/TXT를 우선한다.
+DOCX/HWP는 확장 기능이다. 현재 구현된 안정 세로 조각은 텍스트 입력을 우선 지원한다. URL과 PDF/TXT는 같은 `/analyze` 계약에 붙일 입력 어댑터로 남겨 둔다.
 
 ## 4. 직무 분류
 
@@ -113,6 +113,8 @@ gap score는 다음 요소를 조합한다.
 - 의미 유사도
 - 근거 문장 존재 여부
 - 직무별 필수 역량 여부
+
+현재 세로 조각에서는 C팀의 최종 Ko-Sentence-BERT 격차 분석기가 아직 연결되지 않았으므로, `skill_taxonomy.json`과 `analyzer_rules.json`을 읽어 기술명 근거와 부정 표현을 기준으로 1차 gap score를 계산한다. 고정된 `gap_score=80`을 반환하지 않고, 필수/우대 여부와 지원자 자료의 명시적 부정 표현 여부를 반영한다.
 
 ## 6. RAG 검색 대상
 
@@ -247,26 +249,36 @@ recommend_score =
 구현되어 있는 것:
 
 - 학습자료 DB 80개
-- 리소스 검색
+- `learning_resources.csv` 기반 추천형 RAG 검색
+- OpenAI `text-embedding-3-small` 임베딩 검색과 TF-IDF fallback
 - 추천 점수 계산
-- 기본 로드맵 생성
-- 기본 리포트 생성
-- 대시보드 일부
+- 사용자 기간/난이도/강도 기반 주차별 로드맵 생성
+- 계산 결과 기반 자연어 리포트 생성
+- `/analyze` 통합 API
+- `skill_taxonomy.json` 기반 직무군/역량 후보 로딩
+- `analyzer_rules.json` 기반 부정 표현, 중요도, gap score 기준 로딩
+- 실제 사용자 관점의 로컬 대시보드
 
 아직 필요한 것:
 
-- 원본 채용공고 입력 UI
-- 원본 지원자 자료 입력 UI
-- 로드맵 기간/난이도/강도 선택 UI
+- 채용공고 URL 입력 어댑터
+- PDF/TXT 파일 업로드와 텍스트 추출
 - URL 본문 추출
-- PDF/TXT 텍스트 추출
-- 요구 역량 추출
-- 보유 역량 추출
-- gap score 직접 계산
-- 난이도 선호를 반영한 추천 점수
-- 주차별 로드맵 생성
-- `/analyze` 통합 API
+- B팀 직무 분류 모델 결과 연결
+- C팀 Ko-Sentence-BERT 기반 의미 유사도 격차 분석 결과 연결
+- LLM API 기반 리포트 생성. 현재는 분석 결과를 템플릿으로 설명한다.
 
-## 13. 발표용 설명
+## 13. 하드코딩 방지 기준
+
+제품 결과 생성 경로에서 특정 답을 박아두지 않는다.
+
+- 역량 후보와 직무군 분류 키워드는 `backend/app/data/skill_taxonomy.json`에서 관리한다.
+- 부정 표현, 필수/우대 판정, gap score 기준은 `backend/app/data/analyzer_rules.json`에서 관리한다.
+- 학습자료는 코드 배열이 아니라 `backend/app/data/learning_resources.csv`에서 관리한다.
+- 추천 점수는 `backend/app/services/scorer.py`에서 계산하고, 신뢰도는 `reliability / 5`로 정규화한다.
+- 샘플 endpoint는 제품 API에서 제거한다. 실제 흐름은 사용자가 입력한 `/analyze` 요청만 기준으로 한다.
+- 로컬 포트와 API origin은 코드 고정값이 아니라 환경변수와 Next rewrite로 연결한다.
+
+## 14. 발표용 설명
 
 > 사용자는 채용공고와 자신의 자소서, 이력서, 포트폴리오 자료를 입력하고 원하는 학습 기간과 난이도를 선택합니다. 시스템은 채용공고의 요구 역량과 지원자 자료의 보유 역량을 비교해 부족 역량과 부족 정도를 계산한 뒤, 직접 구축한 한국어 학습자료 DB에서 관련 자료를 검색하고 주차별 학습 로드맵과 자연어 분석 리포트를 생성합니다.
