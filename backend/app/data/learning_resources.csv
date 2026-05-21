@@ -19,8 +19,8 @@ DA017,데이터 분석가,Machine Learning,분석 모델링,Google 머신러닝 
 DA018,데이터 분석가,데이터 시각화,Python 시각화,인프런 데이터 시각화 강의 모음,Python과 BI 기반 데이터 시각화 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=%EB%8D%B0%EC%9D%B4%ED%84%B0+%EC%8B%9C%EA%B0%81%ED%99%94,강의,intermediate,한국어,무료,5시간,3,Tableau BI 외 Python 시각화 역량 보완
 DA019,데이터 분석가,데이터 분석,실무 채널,나도코딩 YouTube,Python과 데이터 분석 기초를 한국어 영상으로 보완한다,https://www.youtube.com/@nadocoding,유튜브,beginner,한국어,무료,6시간,3,한국어 입문자에게 접근성이 높은 인기 개발 채널
 DA020,데이터 분석가,데이터 분석,실무 채널,생활코딩 YouTube,데이터와 웹 기초를 한국어 강의로 보완한다,https://www.youtube.com/@coohde,유튜브,beginner,한국어,무료,6시간,3,기초 이해가 약한 지원자에게 적합한 한국어 채널
-ML001,AI/ML 엔지니어,Python,AI 개발 기초,Python 공식 한국어 튜토리얼,AI ML 개발에 필요한 Python 기본 문법을 한국어 공식 문서로 익힌다,https://docs.python.org/ko/3/tutorial/,공식문서,beginner,한국어,무료,6시간,5,AI ML 공고에서 Python은 기본 전제
-ML002,AI/ML 엔지니어,Machine Learning,기초 모델링,Google 머신러닝 단기집중과정 한국어,머신러닝 기본 개념과 모델 평가를 한국어로 학습한다,https://developers.google.com/machine-learning/crash-course?hl=ko,공식학습,beginner,한국어,무료,8시간,5,머신러닝 기본 경험을 빠르게 만들 수 있음
+ML001,AI/ML 엔지니어,Python,AI 개발 기초,Python 공식 HOWTO 한국어,AI ML 개발에 필요한 Python 활용 주제를 한국어 공식 문서로 익힌다,https://docs.python.org/ko/3/howto/index.html,공식문서,beginner,한국어,무료,6시간,5,AI ML 공고에서 Python은 기본 전제
+ML002,AI/ML 엔지니어,Machine Learning,기초 모델링,Google 머신러닝 입문 한국어,머신러닝 기본 개념과 모델 평가를 한국어 Google 자료로 학습한다,https://developers.google.com/machine-learning/intro-to-ml?hl=ko,공식학습,beginner,한국어,무료,8시간,5,머신러닝 기본 경험을 빠르게 만들 수 있음
 ML003,AI/ML 엔지니어,Machine Learning,입문 강의,모두를 위한 딥러닝 시즌2 PyTorch,머신러닝과 딥러닝 기초를 한국어 강의 코드로 학습한다,https://github.com/deeplearningzerotoall/PyTorch,오픈소스,beginner,한국어,무료,10시간,4,한국어 ML 입문 자료로 널리 쓰이는 강의 코드
 ML004,AI/ML 엔지니어,PyTorch,딥러닝 프레임워크,PyTorch 한국어 튜토리얼,Tensor Dataset Autograd 모델 학습 루프를 한국어 공식 튜토리얼로 익힌다,https://tutorials.pytorch.kr/,공식문서,beginner,한국어,무료,6시간,5,잡코리아 ML AI 공고에서 PyTorch 요구가 반복됨
 ML005,AI/ML 엔지니어,TensorFlow,딥러닝 프레임워크,TensorFlow 튜토리얼 한국어,TensorFlow 모델 학습 평가 저장 흐름을 한국어 공식 문서로 익힌다,https://www.tensorflow.org/tutorials?hl=ko,공식문서,beginner,한국어,무료,6시간,5,TensorFlow도 AI 공고에서 PyTorch와 함께 반복됨
@@ -34,7 +34,7 @@ ML012,AI/ML 엔지니어,LangChain,LLM 앱,테디노트 LangChain YouTube 검색
 ML013,AI/ML 엔지니어,vLLM,LLM 서빙,인프런 vLLM 강의 모음,vLLM과 LLM 서빙 관련 한국어 강의를 찾아 학습한다,https://www.inflearn.com/ko/search?s=vLLM,강의,advanced,한국어,무료,5시간,3,vLLM 요구가 있는 최신 ML 공고 대응
 ML014,AI/ML 엔지니어,MLflow,MLOps,인프런 MLflow 강의 모음,MLflow 실험 추적과 MLOps 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=MLflow,강의,intermediate,한국어,무료,6시간,3,MLOps 운영 역량 보완
 ML015,AI/ML 엔지니어,DVC,버전관리,인프런 DVC 강의 모음,데이터와 모델 버전관리 관련 한국어 강의를 찾아 학습한다,https://www.inflearn.com/ko/search?s=DVC,강의,intermediate,한국어,무료,5시간,3,모델 재현성과 협업 역량 보완
-ML016,AI/ML 엔지니어,Docker,모델 실행환경,인프런 Docker 강의 모음,Docker 컨테이너와 실행 환경 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Docker,강의,beginner,한국어,무료,4시간,3,ML 배포와 MLOps에서 컨테이너 이해가 필요
+ML016,AI/ML 엔지니어,Docker,모델 실행환경,테디노트 Docker YouTube 검색,Docker 컨테이너와 실행 환경을 한국어 영상 자료로 찾아 학습한다,https://www.youtube.com/results?search_query=%ED%85%8C%EB%94%94%EB%85%B8%ED%8A%B8+Docker,유튜브,beginner,한국어,무료,4시간,3,ML 배포와 MLOps에서 컨테이너 이해가 필요
 ML017,AI/ML 엔지니어,SageMaker,클라우드 ML,Amazon SageMaker 한국어 문서,SageMaker 기반 모델 학습 배포 환경을 한국어 AWS 문서로 이해한다,https://docs.aws.amazon.com/ko_kr/sagemaker/latest/dg/whatis.html,공식문서,intermediate,한국어,무료,6시간,5,AI ML 공고의 클라우드 운영 요구 보완
 ML018,AI/ML 엔지니어,Spark,대용량 데이터,인프런 Spark 강의 모음,Spark 기반 대용량 데이터 처리 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Spark,강의,intermediate,한국어,무료,6시간,3,빅데이터 AI 공고의 Spark Hadoop 요구 대응
 ML019,AI/ML 엔지니어,통계,모델 이해,혁펜하임 YouTube,수학 통계 머신러닝 개념을 한국어 영상으로 보완한다,https://www.youtube.com/@hyukppen,유튜브,beginner,한국어,무료,6시간,3,ML 개념 설명력을 높이기 좋은 한국어 채널
@@ -76,6 +76,6 @@ FE014,프론트엔드 개발자,Jest,테스트,코딩앙마 Jest YouTube 검색,
 FE015,프론트엔드 개발자,Testing Library,UI 테스트,인프런 Testing Library 강의 모음,사용자 관점의 컴포넌트 테스트 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Testing+Library,강의,intermediate,한국어,무료,4시간,3,React 테스트 신뢰도를 높이는 기본 자료
 FE016,프론트엔드 개발자,Playwright,E2E 테스트,인프런 Playwright 강의 모음,브라우저 기반 E2E 테스트 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Playwright,강의,intermediate,한국어,무료,5시간,3,포트폴리오에서 품질 역량을 보여주기 좋음
 FE017,프론트엔드 개발자,접근성,웹 접근성,MDN 접근성 한국어,시맨틱 마크업 키보드 접근성 ARIA 기본을 한국어 문서로 학습한다,https://developer.mozilla.org/ko/docs/Learn/Accessibility,공식문서,beginner,한국어,무료,4시간,5,프론트엔드 완성도를 높이는 핵심 보완 역량
-FE018,프론트엔드 개발자,API 연동,OpenAPI/Swagger,Microsoft REST API 설계 한국어,백엔드 API 스펙을 읽고 연동하는 기본 구조를 한국어 문서로 익힌다,https://learn.microsoft.com/ko-kr/azure/architecture/best-practices/api-design,공식문서,beginner,한국어,무료,3시간,5,Swagger OpenAPI 요구 대응
+FE018,프론트엔드 개발자,API 연동,OpenAPI/Swagger,인프런 OpenAPI 강의 모음,백엔드 API 스펙을 읽고 연동하는 기본 구조를 한국어 강의로 찾아 학습한다,https://www.inflearn.com/ko/search?s=OpenAPI,강의,beginner,한국어,무료,3시간,3,Swagger OpenAPI 요구 대응
 FE019,프론트엔드 개발자,CSS,실무 채널,드림코딩 YouTube,HTML CSS JavaScript React 실무 감각을 한국어 영상으로 보완한다,https://www.youtube.com/@dream-coding,유튜브,beginner,한국어,무료,6시간,3,프론트엔드 입문자에게 인기 있는 한국어 채널
 FE020,프론트엔드 개발자,Frontend,실무 채널,노마드 코더 YouTube,React Next TypeScript 웹 개발 흐름을 한국어 영상으로 복습한다,https://www.youtube.com/@nomadcoders,유튜브,beginner,한국어,무료,6시간,3,프론트엔드 입문자에게 인기 있는 한국어 채널
