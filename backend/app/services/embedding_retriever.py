@@ -14,6 +14,7 @@ from app.services.resource_loader import DATA_DIR, resource_search_text
 from app.services.retriever import TfidfRetriever
 
 DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
+DEFAULT_LOCAL_EMBEDDING_MODEL = "BAAI/bge-m3"
 CHUNKING_STRATEGY = "one_resource_row_per_chunk"
 CACHE_DIR = DATA_DIR.parent / "cache"
 EMBEDDINGS_FILENAME = "resource_embeddings.npz"
@@ -39,26 +40,52 @@ def build_retriever(
     *,
     api_key: str | None = None,
     model: str = DEFAULT_EMBEDDING_MODEL,
+    local_model: str = DEFAULT_LOCAL_EMBEDDING_MODEL,
+    local_embedder: Embedder | None = None,
+    cache_dir: Path = CACHE_DIR,
 ) -> tuple[Retriever, RetrieverInfo]:
-    key = api_key or os.getenv("OPENAI_API_KEY")
-    if not key:
+    key = os.getenv("OPENAI_API_KEY") if api_key is None else api_key
+    if key:
+        try:
+            return (
+                EmbeddingRetriever(
+                    resources=resources,
+                    api_key=key,
+                    model=model,
+                    cache_dir=cache_dir,
+                ),
+                RetrieverInfo(
+                    retrieval_mode="embedding",
+                    embedding_model=model,
+                    chunking_strategy=CHUNKING_STRATEGY,
+                ),
+            )
+        except Exception:
+            pass
+
+    try:
+        return (
+            EmbeddingRetriever(
+                resources=resources,
+                model=local_model,
+                embedder=local_embedder or BgeM3Embedder(model=local_model),
+                cache_dir=cache_dir,
+            ),
+            RetrieverInfo(
+                retrieval_mode="bge_m3_fallback",
+                embedding_model=local_model,
+                chunking_strategy=CHUNKING_STRATEGY,
+            ),
+        )
+    except Exception:
         return (
             TfidfRetriever(resources),
             RetrieverInfo(
-                retrieval_mode="tfidf_fallback",
+                retrieval_mode="tfidf_last_resort",
                 embedding_model="none",
                 chunking_strategy=CHUNKING_STRATEGY,
             ),
         )
-
-    return (
-        EmbeddingRetriever(resources=resources, api_key=key, model=model),
-        RetrieverInfo(
-            retrieval_mode="embedding",
-            embedding_model=model,
-            chunking_strategy=CHUNKING_STRATEGY,
-        ),
-    )
 
 
 class EmbeddingRetriever:
@@ -139,6 +166,25 @@ class OpenAIEmbedder:
         client = OpenAI(api_key=self.api_key)
         response = client.embeddings.create(model=self.model, input=texts)
         return [item.embedding for item in response.data]
+
+
+class BgeM3Embedder:
+    def __init__(self, *, model: str = DEFAULT_LOCAL_EMBEDDING_MODEL) -> None:
+        self.model = model
+        self.encoder = None
+
+    def __call__(self, texts: list[str]) -> list[list[float]]:
+        if self.encoder is None:
+            from sentence_transformers import SentenceTransformer
+
+            self.encoder = SentenceTransformer(self.model)
+        embeddings = self.encoder.encode(
+            texts,
+            convert_to_numpy=True,
+            normalize_embeddings=False,
+            show_progress_bar=False,
+        )
+        return embeddings.tolist()
 
 
 def _normalize_matrix(matrix: np.ndarray) -> np.ndarray:

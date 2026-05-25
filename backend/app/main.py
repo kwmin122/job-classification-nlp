@@ -20,7 +20,6 @@ from app.services.embedding_retriever import (
     build_retriever,
 )
 from app.services.resource_loader import load_resources
-from app.services.retriever import TfidfRetriever
 from app.services.roadmap_generator import distribute_weeks, generate_roadmap
 from app.services.report_generator import generate_product_report, generate_report
 from app.services.scorer import score_resource
@@ -69,12 +68,7 @@ def _build_skill_recommendations(
     try:
         retriever, retriever_info = build_retriever(resources)
     except Exception:
-        retriever = TfidfRetriever(resources)
-        retriever_info = RetrieverInfo(
-            retrieval_mode="tfidf_fallback",
-            embedding_model="none",
-            chunking_strategy=CHUNKING_STRATEGY,
-        )
+        retriever, retriever_info = build_retriever(resources, api_key="")
 
     skill_recommendations: list[SkillRecommendation] = []
     sorted_gaps = sorted(c_output.skill_gaps, key=lambda gap: gap.gap_score, reverse=True)
@@ -91,9 +85,11 @@ def _build_skill_recommendations(
         try:
             candidates = retriever.search(query, limit=max(12, top_k * 4))
         except Exception:
+            from app.services.retriever import TfidfRetriever
+
             retriever = TfidfRetriever(resources)
             retriever_info = RetrieverInfo(
-                retrieval_mode="tfidf_fallback",
+                retrieval_mode="tfidf_last_resort",
                 embedding_model="none",
                 chunking_strategy=CHUNKING_STRATEGY,
             )

@@ -5,7 +5,12 @@ import unittest
 from pathlib import Path
 
 from app.schemas import Resource
-from app.services.embedding_retriever import EmbeddingRetriever, RetrieverInfo, build_retriever
+from app.services.embedding_retriever import (
+    DEFAULT_LOCAL_EMBEDDING_MODEL,
+    EmbeddingRetriever,
+    RetrieverInfo,
+    build_retriever,
+)
 from app.services.retriever import TfidfRetriever
 
 
@@ -65,16 +70,49 @@ class EmbeddingRetrieverTest(unittest.TestCase):
         self.assertEqual(result[0][0].id, "BE001")
         self.assertGreater(result[0][1], 0.9)
 
-    def test_build_retriever_uses_tfidf_fallback_without_api_key(self) -> None:
+    def test_build_retriever_uses_bge_m3_fallback_without_api_key(self) -> None:
         resources = [resource("BE001", "Docker", "컨테이너 배포 학습")]
 
-        retriever, info = build_retriever(resources, api_key=None)
+        def embedder(texts: list[str]) -> list[list[float]]:
+            return [[1.0, 0.0] for _ in texts]
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            retriever, info = build_retriever(
+                resources,
+                api_key="",
+                local_embedder=embedder,
+                cache_dir=Path(temp_dir),
+            )
+
+        self.assertIsInstance(retriever, EmbeddingRetriever)
+        self.assertEqual(
+            info,
+            RetrieverInfo(
+                retrieval_mode="bge_m3_fallback",
+                embedding_model=DEFAULT_LOCAL_EMBEDDING_MODEL,
+                chunking_strategy="one_resource_row_per_chunk",
+            ),
+        )
+
+    def test_build_retriever_uses_tfidf_only_when_local_fallback_fails(self) -> None:
+        resources = [resource("BE001", "Docker", "컨테이너 배포 학습")]
+
+        def broken_embedder(texts: list[str]) -> list[list[float]]:
+            raise RuntimeError("local model unavailable")
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            retriever, info = build_retriever(
+                resources,
+                api_key="",
+                local_embedder=broken_embedder,
+                cache_dir=Path(temp_dir),
+            )
 
         self.assertIsInstance(retriever, TfidfRetriever)
         self.assertEqual(
             info,
             RetrieverInfo(
-                retrieval_mode="tfidf_fallback",
+                retrieval_mode="tfidf_last_resort",
                 embedding_model="none",
                 chunking_strategy="one_resource_row_per_chunk",
             ),

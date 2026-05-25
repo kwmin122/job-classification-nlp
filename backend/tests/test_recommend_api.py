@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.services.embedding_retriever import RetrieverInfo
+from app.services.resource_loader import load_resources
 
 
 def recommend_payload() -> dict:
@@ -29,20 +30,32 @@ def recommend_payload() -> dict:
 
 class RecommendApiTest(unittest.TestCase):
     def test_recommend_response_exposes_retrieval_metadata(self) -> None:
-        previous_key = os.environ.pop("OPENAI_API_KEY", None)
-        try:
-            client = TestClient(app)
+        class StableRetriever:
+            def search(self, query: str, limit: int = 8):
+                from app.services.resource_loader import load_resources
 
+                return [(resource, 0.9) for resource in load_resources()[:limit]]
+
+        client = TestClient(app)
+
+        with patch(
+            "app.main.build_retriever",
+            return_value=(
+                StableRetriever(),
+                RetrieverInfo(
+                    retrieval_mode="bge_m3_fallback",
+                    embedding_model="BAAI/bge-m3",
+                    chunking_strategy="one_resource_row_per_chunk",
+                ),
+            ),
+        ):
             response = client.post("/recommend", json=recommend_payload())
 
-            self.assertEqual(response.status_code, 200)
-            body = response.json()
-            self.assertEqual(body["retrieval_mode"], "tfidf_fallback")
-            self.assertEqual(body["embedding_model"], "none")
-            self.assertEqual(body["chunking_strategy"], "one_resource_row_per_chunk")
-        finally:
-            if previous_key is not None:
-                os.environ["OPENAI_API_KEY"] = previous_key
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(body["retrieval_mode"], "bge_m3_fallback")
+        self.assertEqual(body["embedding_model"], "BAAI/bge-m3")
+        self.assertEqual(body["chunking_strategy"], "one_resource_row_per_chunk")
 
     def test_recommend_falls_back_when_embedding_search_fails(self) -> None:
         class BrokenRetriever:
@@ -66,7 +79,7 @@ class RecommendApiTest(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         body = response.json()
-        self.assertEqual(body["retrieval_mode"], "tfidf_fallback")
+        self.assertEqual(body["retrieval_mode"], "tfidf_last_resort")
         self.assertEqual(body["embedding_model"], "none")
 
     def test_recommend_prefers_same_job_group_for_same_skill(self) -> None:
@@ -88,7 +101,25 @@ class RecommendApiTest(unittest.TestCase):
 
         try:
             client = TestClient(app)
-            response = client.post("/recommend", json=payload)
+            class AwsRetriever:
+                def search(self, query: str, limit: int = 8):
+                    resources = [
+                        resource for resource in load_resources() if resource.skill == "AWS"
+                    ]
+                    return [(resource, 0.9) for resource in resources[:limit]]
+
+            with patch(
+                "app.main.build_retriever",
+                return_value=(
+                    AwsRetriever(),
+                    RetrieverInfo(
+                        retrieval_mode="bge_m3_fallback",
+                        embedding_model="BAAI/bge-m3",
+                        chunking_strategy="one_resource_row_per_chunk",
+                    ),
+                ),
+            ):
+                response = client.post("/recommend", json=payload)
         finally:
             if previous_key is not None:
                 os.environ["OPENAI_API_KEY"] = previous_key

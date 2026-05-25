@@ -141,7 +141,7 @@ job_group + skill + sub_skill + title + description + reason + level + type
 - 발표 재현성이 좋음
 - 비용과 구현 복잡도가 낮음
 
-API key가 없거나 실패하면 TF-IDF 검색으로 fallback한다. fallback은 데모 안정성을 위한 장치이지 최종 성능 주장 모델이 아니다.
+API key가 없거나 OpenAI 임베딩 호출이 실패하면 무료 로컬 임베딩 모델인 `BAAI/bge-m3`로 fallback한다. `BAAI/bge-m3`는 한국어와 영어 기술명이 섞인 query를 의미 기반으로 검색할 수 있어 TF-IDF보다 추천 품질을 높일 가능성이 크다. 로컬 모델 로딩까지 실패한 경우에만 TF-IDF를 마지막 안전장치로 사용한다.
 
 ## 8. 추천 점수
 
@@ -250,7 +250,7 @@ recommend_score =
 
 - 학습자료 DB 80개
 - `learning_resources.csv` 기반 추천형 RAG 검색
-- OpenAI `text-embedding-3-small` 임베딩 검색과 TF-IDF fallback
+- OpenAI `text-embedding-3-small` 임베딩 검색과 `BAAI/bge-m3` 로컬 임베딩 fallback
 - 추천 점수 계산
 - 사용자 기간/난이도/강도 기반 주차별 로드맵 생성
 - 계산 결과 기반 자연어 리포트 생성

@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+from datetime import date
 from pathlib import Path
 
 
@@ -67,7 +68,7 @@ def main() -> None:
     sections = [
         "# Evaluation Results",
         "",
-        "Generated: 2026-05-21",
+        f"Generated: {date.today().isoformat()}",
         "",
     ]
     failed = False

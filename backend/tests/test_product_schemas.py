@@ -48,8 +48,8 @@ class ProductSchemaTest(unittest.TestCase):
             report="분석 리포트",
             scoring_formula="formula",
             rag_scope_note="curated db",
-            retrieval_mode="tfidf_fallback",
-            embedding_model="none",
+            retrieval_mode="bge_m3_fallback",
+            embedding_model="BAAI/bge-m3",
             chunking_strategy="one resource row per chunk",
         )
         self.assertEqual(response.report, "분석 리포트")

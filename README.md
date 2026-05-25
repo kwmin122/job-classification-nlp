@@ -155,7 +155,7 @@ recommend_score =
 - `difficulty_match`: 사용자가 선택한 현재 수준과 자료 난이도가 맞으면 1, 가까우면 0.5, 멀면 0
 - `reliability_norm`: `reliability / 5`
 
-최종 검색은 OpenAI `text-embedding-3-small` 기반 임베딩 검색을 목표로 한다. API key가 없거나 실패하면 TF-IDF 검색으로 fallback할 수 있다.
+최종 검색은 OpenAI `text-embedding-3-small` 기반 임베딩 검색을 목표로 한다. API key가 없거나 실패하면 무료 로컬 임베딩 모델인 `BAAI/bge-m3`로 fallback한다. 로컬 모델 로딩까지 실패한 경우에만 TF-IDF를 마지막 안전장치로 사용한다.
 
 ## 7. 현재 구현 상태
 
@@ -163,7 +163,7 @@ recommend_score =
 
 - 학습자료 DB 80개
 - `learning_resources.csv` 기반 추천형 RAG 검색
-- OpenAI `text-embedding-3-small` 임베딩 검색, API key가 없을 때 TF-IDF fallback
+- OpenAI `text-embedding-3-small` 임베딩 검색, API key가 없을 때 `BAAI/bge-m3` 로컬 임베딩 fallback
 - 1행 1자료 기준 chunking
 - 추천 점수 계산: 의미 유사도, 역량 일치, 직무군 일치, 난이도 일치, 신뢰도 반영
 - 채용공고 텍스트와 지원자 텍스트를 받는 `/analyze` 통합 API
