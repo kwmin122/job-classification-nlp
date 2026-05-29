@@ -1,61 +1,85 @@
 {
-  "_comment": "C파트 역량 판정 규칙. 코드 수정 없이 이 파일만 수정해서 기준 변경 가능.",
-  "_version": "1.0",
-
-  "importance": {
-    "required_keywords":  ["필수", "must", "required", "반드시", "필요"],
-    "preferred_keywords": ["우대", "preferred", "우선", "경험자 우대", "있으면 좋음", "plus"],
-    "default":            "필수"
-  },
-
-  "negation_patterns": [
-    "경험이\\s*부족",
-    "경험\\s*없",
-    "해\\s*본\\s*적\\s*없",
-    "못\\s*해",
-    "모르",
-    "익숙하지\\s*않",
-    "다뤄\\s*보지\\s*않",
-    "구축해\\s*본\\s*경험이\\s*부족",
-    "부족합니다",
-    "없습니다",
-    "못했",
-    "하지\\s*않았",
-    "들어본\\s*적",
-    "들어본\\s*정도",
-    "사용해\\s*본\\s*경험은\\s*없",
-    "공부한\\s*적이\\s*없"
-  ],
-
-  "experience_verb_patterns": [
-    "개발", "구현", "배포", "설계", "분석", "활용",
-    "사용", "적용", "구축", "운영", "담당", "수행",
-    "진행", "작성", "제작",
-    "경험\\s*있", "경험했", "해\\s*왔",
-    "했습니다", "했고", "했으며", "하였"
-  ],
-
-  "thresholds": {
-    "skill_match":      0.45,
-    "jd_extract":       0.65,
-    "candidate_anchor": 0.30,
-    "owned_skill":      0.35,
-    "experience_verb_penalty": 0.6
-  },
-
-  "gap_score": {
-    "floor": {
-      "필수": 85,
-      "우대": 65
+    "_comment": "C파트 역량 판정 규칙. 코드 수정 없이 이 파일만 수정해서 기준 변경 가능.",
+    "_version": "1.0",
+    "importance": {
+        "required_keywords": [
+            "필수",
+            "must",
+            "required",
+            "반드시",
+            "필요"
+        ],
+        "preferred_keywords": [
+            "우대",
+            "preferred",
+            "우선",
+            "경험자 우대",
+            "있으면 좋음",
+            "plus"
+        ],
+        "default": "필수"
     },
-    "levels": {
-      "high":   70,
-      "medium": 40
+    "negation_patterns": [
+        "경험이\\s*부족",
+        "경험\\s*없",
+        "해\\s*본\\s*적\\s*없",
+        "못\\s*해",
+        "모르",
+        "익숙하지\\s*않",
+        "다뤄\\s*보지\\s*않",
+        "구축해\\s*본\\s*경험이\\s*부족",
+        "부족합니다",
+        "없습니다",
+        "못했",
+        "하지\\s*않았",
+        "들어본\\s*적",
+        "들어본\\s*정도",
+        "사용해\\s*본\\s*경험은\\s*없",
+        "공부한\\s*적이\\s*없"
+    ],
+    "experience_verb_patterns": [
+        "개발",
+        "구현",
+        "배포",
+        "설계",
+        "분석",
+        "활용",
+        "사용",
+        "적용",
+        "구축",
+        "운영",
+        "담당",
+        "수행",
+        "진행",
+        "작성",
+        "제작",
+        "경험\\s*있",
+        "경험했",
+        "해\\s*왔",
+        "했습니다",
+        "했고",
+        "했으며",
+        "하였"
+    ],
+    "thresholds": {
+        "skill_match": 0.45,
+        "jd_extract": 0.7,
+        "candidate_anchor": 0.3,
+        "owned_skill": 0.35,
+        "experience_verb_penalty": 0.6
+    },
+    "gap_score": {
+        "floor": {
+            "필수": 85,
+            "우대": 65
+        },
+        "levels": {
+            "high": 70,
+            "medium": 40
+        }
+    },
+    "fit_score": {
+        "required_weight": 70,
+        "preferred_weight": 30
     }
-  },
-
-  "fit_score": {
-    "required_weight":  70,
-    "preferred_weight": 30
-  }
 }
