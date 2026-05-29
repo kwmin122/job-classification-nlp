@@ -1,6 +1,28 @@
 from __future__ import annotations
 
 import re
+import shutil
+import subprocess
+import tempfile
+from dataclasses import dataclass
+from html.parser import HTMLParser
+from io import BytesIO
+from pathlib import Path
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlparse
+from urllib.request import Request, urlopen
+
+
+class TextExtractionError(ValueError):
+    pass
+
+
+@dataclass(frozen=True)
+class TextExtractionResult:
+    text: str
+    source_type: str
+    extractor: str
+    warnings: list[str]
 
 
 def clean_text(value: str) -> str:
@@ -9,3 +31,240 @@ def clean_text(value: str) -> str:
 
 def extract_from_text_source(value: str) -> str:
     return clean_text(value)
+
+
+def extract_text_input(value: str) -> TextExtractionResult:
+    text = clean_text(value)
+    if not text:
+        raise TextExtractionError("text is empty")
+    return TextExtractionResult(
+        text=text,
+        source_type="text",
+        extractor="direct_text",
+        warnings=[],
+    )
+
+
+def extract_file_bytes(
+    content: bytes,
+    *,
+    filename: str | None = None,
+    content_type: str | None = None,
+) -> TextExtractionResult:
+    if not content:
+        raise TextExtractionError("file is empty")
+
+    lowered_name = (filename or "").lower()
+    lowered_type = (content_type or "").lower()
+    if lowered_name.endswith(".pdf") or lowered_type == "application/pdf":
+        return extract_pdf_bytes(content)
+    if lowered_name.endswith(".txt") or lowered_type.startswith("text/"):
+        return extract_txt_bytes(content)
+    raise TextExtractionError("only PDF and TXT files are supported")
+
+
+def extract_pdf_bytes(content: bytes) -> TextExtractionResult:
+    warnings: list[str] = []
+    extractor = "pdf_text_extractor"
+
+    # Stage 1: PyPDF2
+    try:
+        text, pypdf_warnings = _extract_pdf_with_pypdf(content)
+        warnings.extend(pypdf_warnings)
+    except TextExtractionError:
+        text = ""
+        warnings.append("PyPDF2 추출 실패 후 pdftotext fallback을 사용했습니다.")
+
+    # Stage 2: pdftotext (시스템 커맨드)
+    if not text:
+        text = _extract_pdf_with_pdftotext(content)
+        if text and not any("pdftotext" in w for w in warnings):
+            warnings.append("PyPDF2 결과가 비어 있어 pdftotext fallback을 사용했습니다.")
+
+    # Stage 3: OCR (스캔 PDF)
+    if not text:
+        text, ocr_warnings = _extract_pdf_with_ocr(content)
+        if text:
+            extractor = "tesseract-ocr"
+            warnings.extend(ocr_warnings)
+
+    if not text:
+        raise TextExtractionError(
+            "PDF에서 텍스트를 추출하지 못했습니다. "
+            "스캔 PDF라면 직접 붙여넣어 주세요."
+        )
+    return TextExtractionResult(
+        text=text,
+        source_type="pdf",
+        extractor=extractor,
+        warnings=warnings,
+    )
+
+
+def _extract_pdf_with_pypdf(content: bytes) -> tuple[str, list[str]]:
+    try:
+        from PyPDF2 import PdfReader
+
+        reader = PdfReader(BytesIO(content))
+        page_texts = [(page.extract_text() or "") for page in reader.pages]
+    except Exception as exc:  # pragma: no cover - PyPDF2 has broad parser exceptions
+        raise TextExtractionError("PyPDF2 PDF text extraction failed") from exc
+
+    warnings: list[str] = []
+    empty_pages = sum(1 for page_text in page_texts if not page_text.strip())
+    if empty_pages:
+        warnings.append(f"{empty_pages}개 페이지에서 텍스트를 찾지 못했습니다.")
+    return clean_text("\n".join(page_texts)), warnings
+
+
+def _extract_pdf_with_pdftotext(content: bytes) -> str:
+    executable = shutil.which("pdftotext")
+    if executable is None:
+        return ""
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        input_path = Path(tmp_dir) / "input.pdf"
+        output_path = Path(tmp_dir) / "output.txt"
+        input_path.write_bytes(content)
+        completed = subprocess.run(
+            [executable, "-layout", str(input_path), str(output_path)],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        if completed.returncode != 0 or not output_path.exists():
+            return ""
+        return clean_text(output_path.read_text(encoding="utf-8", errors="replace"))
+
+
+def extract_txt_bytes(content: bytes) -> TextExtractionResult:
+    warnings: list[str] = []
+    text: str | None = None
+    for encoding in ("utf-8", "cp949"):
+        try:
+            text = content.decode(encoding)
+            if encoding != "utf-8":
+                warnings.append("UTF-8 디코딩 실패 후 CP949로 읽었습니다.")
+            break
+        except UnicodeDecodeError:
+            continue
+    if text is None:
+        raise TextExtractionError("TXT 인코딩을 해석하지 못했습니다.")
+
+    cleaned = clean_text(text)
+    if not cleaned:
+        raise TextExtractionError("TXT 파일에 분석할 텍스트가 없습니다.")
+    return TextExtractionResult(
+        text=cleaned,
+        source_type="txt",
+        extractor="txt_decoder",
+        warnings=warnings,
+    )
+
+
+def extract_url(url: str, *, timeout_seconds: int = 10, max_bytes: int = 2_000_000) -> TextExtractionResult:
+    parsed = urlparse(url)
+    if parsed.scheme not in {"http", "https"}:
+        raise TextExtractionError("URL은 http 또는 https로 시작해야 합니다.")
+
+    request = Request(
+        url,
+        headers={
+            "User-Agent": "Mozilla/5.0 (compatible; JD-Fit-Roadmap/0.1; +local-project)",
+        },
+    )
+    try:
+        with urlopen(request, timeout=timeout_seconds) as response:
+            raw = response.read(max_bytes + 1)
+            content_type = response.headers.get("Content-Type", "")
+    except (HTTPError, URLError, TimeoutError) as exc:
+        raise TextExtractionError("URL 본문을 가져오지 못했습니다. 채용공고 본문을 직접 붙여넣어 주세요.") from exc
+
+    warnings: list[str] = []
+    if len(raw) > max_bytes:
+        raw = raw[:max_bytes]
+        warnings.append("URL 응답이 커서 앞부분만 추출했습니다.")
+
+    html = _decode_html(raw, content_type)
+    text = extract_visible_text_from_html(html)
+    if len(text) < 20:
+        raise TextExtractionError("URL에서 충분한 본문을 추출하지 못했습니다. 채용공고 본문을 직접 붙여넣어 주세요.")
+    return TextExtractionResult(
+        text=text,
+        source_type="url",
+        extractor="html_parser",
+        warnings=warnings,
+    )
+
+
+def extract_visible_text_from_html(html: str) -> str:
+    parser = _VisibleTextParser()
+    parser.feed(html)
+    parser.close()
+    return clean_text(" ".join(parser.parts))
+
+
+def _decode_html(raw: bytes, content_type: str) -> str:
+    charset_match = re.search(r"charset=([\w.-]+)", content_type, flags=re.IGNORECASE)
+    encodings = [charset_match.group(1)] if charset_match else []
+    encodings.extend(["utf-8", "cp949"])
+    for encoding in encodings:
+        try:
+            return raw.decode(encoding)
+        except (LookupError, UnicodeDecodeError):
+            continue
+    return raw.decode("utf-8", errors="replace")
+
+
+def _extract_pdf_with_ocr(content: bytes) -> tuple[str, list[str]]:
+    """pdf2image + pytesseract OCR. 패키지 미설치 시 빈 문자열 반환 (graceful skip)."""
+    try:
+        from pdf2image import convert_from_bytes
+        import pytesseract
+    except ImportError:
+        return "", []
+
+    try:
+        images = convert_from_bytes(content, dpi=200)
+        parts: list[str] = []
+        for img in images:
+            text = pytesseract.image_to_string(img, lang="kor+eng")
+            if text.strip():
+                parts.append(text.strip())
+        result = clean_text("\n".join(parts))
+        warnings = (
+            [
+                "스캔 PDF를 OCR로 처리했습니다. "
+                "텍스트 인식 정확도가 낮을 수 있으니 미리보기에서 확인 후 수정하세요."
+            ]
+            if result
+            else []
+        )
+        return result, warnings
+    except Exception:
+        return "", []
+
+
+class _VisibleTextParser(HTMLParser):
+    ignored_tags = {"script", "style", "noscript", "svg", "nav", "footer", "header"}
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.parts: list[str] = []
+        self._ignore_depth = 0
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag.lower() in self.ignored_tags:
+            self._ignore_depth += 1
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag.lower() in self.ignored_tags and self._ignore_depth:
+            self._ignore_depth -= 1
+
+    def handle_data(self, data: str) -> None:
+        if self._ignore_depth:
+            return
+        text = data.strip()
+        if text:
+            self.parts.append(text)
