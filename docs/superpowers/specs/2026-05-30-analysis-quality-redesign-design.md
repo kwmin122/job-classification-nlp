@@ -18,7 +18,7 @@
 
 **확정 사실:**
 1. 잡코리아 GI_Read는 **Next.js**. 본문 데이터는 정적 HTML의 `<script>self.__next_f.push(...)</script>` RSC 페이로드에 JSON으로 인라인됨. 현재 `_VisibleTextParser`가 `<script>`를 버려서 **메타데이터(접수기간·복지·주소)만 추출** → 이것이 1·3·4·7번 문제의 단일 근본 원인.
-2. 표준 공고는 `skills` 배열(`skillTypeCode:"HARD_SKILL"`)과 `workFields`(직무명)를 **일관되게** 제공. 이것이 요구 기술의 정확한 소스.
+2. 표준 공고는 `skills` 배열(`skillTypeCode:"HARD_SKILL"`)과 `workFields`(직무명)를 **일관되게** 제공. 태그는 **정밀(precision)이 높다**(실재하는 요구). 단 **재현율(recall)은 보장 못 함** — 광고주가 일부 기술을 누락(under-tag)할 수 있음. 그래서 본문 텍스트가 함께 있으면 보완 머지(아래 "텍스트 보완").
 3. JSON-LD `JobPosting.description`은 85~95자 회사·위치 메타 요약 → **기술 본문 아님, 사용 안 함**.
 4. 광고주 상세 본문(주요업무)은 **대부분 이미지** → 긴 텍스트 본문에 의존 불가.
 5. `PageGbn=HH`(헤드헌팅/외부 등록) 공고는 RSC·JSON-LD·skills **전부 없음** → fallback + 경고 필수.
@@ -126,17 +126,31 @@ def _extract_jobkorea_workfield(payload: str) -> str | None:
 /analyze 핸들러:
   job_extracted = extract (text/url)
   if job_extracted.structured_skills:
-      required_skill_names = [normalize_skill_name(s) for s in structured_skills]  # 정규화
-      # C파트에 "명시 스킬" 모드로 전달
-      c_result = run_c_part_analysis(..., explicit_required_skills=required_skill_names)
+      norm = [normalize_skill_name(s) for s in structured_skills]   # 정규화
+      analyzable = _filter_analyzable_skills(norm)                   # ↓ relevance 필터 (BLOCK 2)
+      # 직무 분류 입력 보강 (BLOCK 1): 노이즈 메타 대신 직무명+기술 신호 강화
+      classify_input = " ".join(filter(None, [job_extracted.job_title, *norm])) + "\n" + job_extracted.text
+      c_result = run_c_part_analysis(..., explicit_required_skills=analyzable)
   else:
+      classify_input = job_extracted.text
       c_result = run_c_part_analysis(...)  # 기존 sim 기반
+  classification = classify_job(classify_input)
 ```
+
+**BLOCK 1 — 직무 분류 입력 보강 (실측 확정)**: `classify_job`이 잡코리아 메타데이터 블롭으로 돌면 49244543이 AI 0.46 vs 데이터분석 0.40(차이 0.06, 불안정). `workFields`(직무명)+정규화 skills를 입력 앞에 붙이면 AI 신호(LLMOps·ChatGPT·AI Agent·Python)가 강해져 안정. **모델 재학습 아님 — 입력 텍스트 구성만 변경(D 역할 모델 불변).** 검증: 3 공고 재실행해 predicted_job 확인.
+
+**BLOCK 2 — relevance 필터 (실측 확정)**: 49244543 배열에 `Notion·Slack·API`가 섞임 — 4주 로드맵 대상이 아님("Slack 학습 및 실습" 방지). `_filter_analyzable_skills`:
+- **블랙리스트 제외**: 협업/일반 도구 `{Notion, Slack, Jira, Confluence, Figma(비FE문맥), API, Git, Excel}` 등 → 분석 대상에서 제외
+- **화이트리스트 우선**: taxonomy `skills` 또는 추천DB에 매핑되는 기술만 gap 분석·로드맵 대상
+- 매핑 안 되는 기술은 `required_skills`에 **표시는 하되**(공고 요구 투명성) gap/로드맵에선 제외
+- `structured_skills` 전체는 응답에 별도 노출(공고가 요구한 전체 기술) — 분석 대상과 구분
 
 `run_c_part_analysis`에 `explicit_required_skills: list[str] | None = None` 파라미터 추가:
 - 주어지면 `extract_required_skills` 대신 그 목록을 required로 사용. **importance는 전부 "필수"로 간주** (잡코리아 skills 배열은 필수/우대를 구분하지 않으므로). → fit_score는 필수 그룹 평균 coverage로 계산됨.
 - 각 required skill의 evidence는 "공고 명시 기술: {skill}" (노이즈 원문 없음 → 3·4·7 해결).
 - 지원자 충족도(coverage)는 기존처럼 지원자 문장 sim으로 계산.
+
+**텍스트 보완 머지 (사용자 선택 "skills 우선 + 텍스트 보완")**: skills 외에 본문 텍스트도 있으면(드묾 — 본문 대부분 이미지), 본문에서 taxonomy keyword_hit으로 추가 검출된 기술을 required에 **합집합**(under-tag 보완). 본문 없으면 skills만. → recall 보강.
 
 > **정합성(advisor 지적)**: owned/partial/missing 분류와 fit_score가 **coverage 단일 소스**를 쓰도록 영역 D에서 통합.
 
@@ -155,6 +169,9 @@ coverage(0~100) = clamp((best_sim - BASELINE) / (STRONG - BASELINE), 0, 1) * 100
                   + (경험동사 있으면 +EXP_BONUS, 상한 100)
   BASELINE, STRONG, EXP_BONUS = 구현 시작 시 실제 sim 분포 측정 후 확정
   (초기값 후보 BASELINE≈0.25, STRONG≈0.55, EXP_BONUS≈15 — 측정으로 교체)
+  ⚠️ SHARPEN(advisor): explicit-skills 모드의 coverage는 sim(맨 스킬 단어 "AI Agent" ↔ 지원자 문장)이
+     주 경로다. 이 분포는 문장↔문장 sim과 다르므로, BASELINE/STRONG은 반드시
+     "맨 스킬 단어 → 지원자 문장" 경로에서 측정해 보정한다.
 
 gap_score = 100 - coverage   # 하위 호환 위해 필드 유지
 ```
@@ -182,7 +199,9 @@ gap_score = 100 - coverage   # 하위 호환 위해 필드 유지
 
 **재설계**:
 ```
-N = 부족+보완 스킬 수 (gap 큰 순 정렬), W = duration_weeks
+대상 = 분석 가능(analyzable) 스킬 중 gap>0 만, gap 큰 순. 로드맵은 상위 N=min(스킬수, W, 5)개로 캡.
+   (BLOCK 2 연계: Notion/Slack 등은 이미 analyzable에서 제외돼 로드맵에 안 들어옴)
+N = 캡 적용 스킬 수, W = duration_weeks
 if N >= W:  주차당 1스킬 (상위 W개)
 if N <  W:  각 스킬에 연속 주차 배분 + 주차 내 단계(phase) 차등
   PHASES = ["기초 개념·환경", "핵심 기능 실습", "미니 프로젝트 적용", "정리·면접 대비"]
@@ -257,7 +276,7 @@ npm --prefix frontend run e2e
 ```
 
 **성공 기준**:
-1. 49244543 → required_skills = [API, Node.js, Python, RPA, LLMOps, ChatGPT, AI Agent](정규화) , MLflow 등 노이즈 0
+1. 49244543 → 공고 요구 기술(표시) = 정규화된 skills 전체; **분석·로드맵 대상** = Python·LLMOps·ChatGPT·AI Agent·RPA 등(Notion·Slack·API 제외); MLflow 등 taxonomy 억지 추출 0; predicted_job = AI/ML(분류 입력 보강 후 안정)
 2. evidence·report에 "접수기간/복지/주소" 노이즈 문장 0
 3. 4주 로드맵 goal 4개 상이
 4. 추천 카드에 추천 이유 표시
