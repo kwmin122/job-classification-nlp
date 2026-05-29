@@ -6,7 +6,7 @@
 
 **Architecture:** 백엔드 3개 파일(pipeline.py, analyzer_rules.json, skill_taxonomy.json, text_extractor.py, requirements.txt) + 프론트엔드 3개 파일(types.ts, JobPostingInputPanel.tsx, page.tsx) + E2E spec. 각 Task는 독립적으로 빌드+테스트 통과.
 
-**Tech Stack:** Python 3.13, FastAPI, Ko-Sentence-RoBERTa, pdfplumber, pytesseract, Next.js 16, React 19, Playwright
+**Tech Stack:** Python 3.13, FastAPI, Ko-Sentence-RoBERTa, pdf2image, pytesseract, Next.js 16, React 19, Playwright
 
 ---
 
@@ -14,12 +14,12 @@
 
 | 파일 | 변경 유형 | 내용 |
 |------|----------|------|
-| `backend/app/services/c_part/analyzer_rules.json` | 수정 | `jd_extract` 0.28 → 0.62 |
-| `backend/app/services/c_part/skill_taxonomy.json` | 수정 | Korean aliases 14개 추가 |
+| `backend/app/services/c_part/analyzer_rules.json` | 수정 | `jd_extract` 0.28 → 0.65 (실측: max false-positive=0.594) |
+| `backend/app/services/c_part/skill_taxonomy.json` | 수정 | Korean aliases 13개 추가 ("스프링" 단독 제외) |
 | `backend/app/services/c_part/pipeline.py` | 수정 | `_REVERSE_ALIASES`, `_keyword_hit_any()`, 3개 라인 교체 |
 | `backend/tests/test_c_part_pipeline.py` | 수정 | 과다 추출 테스트 2개 추가 |
 | `backend/app/services/text_extractor.py` | 수정 | `_extract_pdf_with_ocr()` 추가, `extract_pdf_bytes()` 갱신 |
-| `backend/requirements.txt` | 수정 | pdfplumber, pdf2image, pytesseract 추가 |
+| `backend/requirements.txt` | 수정 | pdf2image, pytesseract 추가 (pdfplumber 미사용이므로 제외) |
 | `backend/tests/test_text_extractor.py` | 수정 | OCR mock 테스트 2개 추가 |
 | `frontend/lib/types.ts` | 수정 | `JobInputMode` 타입 좁힘 |
 | `frontend/components/JobPostingInputPanel.tsx` | 수정 | file 탭 제거, `onFileChange` prop 제거, URL placeholder 개선 |
@@ -37,12 +37,13 @@
 
 - [ ] **Step 1: 현재 값 확인 후 변경**
 
-  `analyzer_rules.json`의 `thresholds.jd_extract` 값을 `0.28`에서 `0.62`로 변경.
+  `analyzer_rules.json`의 `thresholds.jd_extract` 값을 `0.28`에서 `0.65`로 변경.
+  (실측 근거: 최대 false-positive인 OpenAPI sim=0.594. margin=0.056 확보.)
 
   ```json
   "thresholds": {
     "skill_match": 0.45,
-    "jd_extract": 0.62,
+    "jd_extract": 0.65,
     "candidate_anchor": 0.3,
     "owned_skill": 0.35,
     "experience_verb_penalty": 0.6
@@ -77,7 +78,6 @@
 
   ```json
   "스프링 부트": "Spring Boot",
-  "스프링": "Spring Boot",
   "자바": "Java",
   "도커": "Docker",
   "쿠버네티스": "Kubernetes",
@@ -126,6 +126,8 @@
   파일 내 `SKILL_ALIASES = _TAXONOMY["aliases"]` 라인 바로 아래에 다음을 추가한다.
 
   ```python
+  import re as _re  # (파일 상단에 이미 import re 있으므로 이 줄은 추가하지 않음)
+
   # 역방향 alias 맵: 정규화된 스킬명 → {alias1, alias2, ...}  (모듈 로드 시 1회 생성)
   _REVERSE_ALIASES: dict[str, set[str]] = {}
   for _alias, _norm in SKILL_ALIASES.items():
@@ -133,12 +135,20 @@
 
 
   def _keyword_hit_any(skill: str, sentence: str) -> bool:
-      """정규화된 스킬명 + 모든 alias(한국어 포함)가 sentence에 등장하는지 확인."""
-      sl = sentence.lower()
-      if skill.lower() in sl:
+      """word-boundary regex로 스킬명 + alias가 sentence에 등장하는지 확인.
+
+      substring 'in' 대신 (?<!\\w)term(?!\\w) 사용:
+        - "Java" in "JavaScript"  → False  (substring 방식은 True)
+        - "Git"  in "GitHub"      → False  (substring 방식은 True)
+      """
+      def _hit(term: str, text: str) -> bool:
+          pattern = rf'(?<!\w){re.escape(term)}(?!\w)'
+          return bool(re.search(pattern, text, re.IGNORECASE))
+
+      if _hit(skill, sentence):
           return True
       for alias in _REVERSE_ALIASES.get(skill, set()):
-          if alias.lower() in sl:
+          if _hit(alias, sentence):
               return True
       return False
   ```
@@ -174,24 +184,34 @@
   keyword_hit = _keyword_hit_any(skill, sentence)
   ```
 
-- [ ] **Step 5: 검증 (빠른 구문 체크)**
+- [ ] **Step 5: 검증 — word-boundary + Korean alias 확인**
 
   ```bash
   PYTHONPATH=backend .venv/bin/python -c "
   from app.services.c_part.pipeline import _keyword_hit_any, _REVERSE_ALIASES
-  assert _keyword_hit_any('Spring Boot', '스프링 부트 개발 경험')
-  assert _keyword_hit_any('Docker', '도커 컨테이너 배포')
-  assert _keyword_hit_any('Spring Boot', 'Spring Boot 기반 API 개발')
-  assert not _keyword_hit_any('Kotlin', 'Java Spring Boot REST API')
-  print('_keyword_hit_any OK')
-  print('Spring Boot aliases:', _REVERSE_ALIASES.get('Spring Boot'))
+
+  # 한국어 alias 매칭
+  assert _keyword_hit_any('Spring Boot', '스프링 부트 개발 경험'), 'Korean alias fail'
+  assert _keyword_hit_any('Docker', '도커 컨테이너 배포'), 'Korean alias fail'
+  assert _keyword_hit_any('Spring Boot', 'Spring Boot 기반 API 개발'), 'English keyword fail'
+
+  # word-boundary: substring 방식에서 false positive였던 케이스
+  assert not _keyword_hit_any('Java', 'JavaScript TypeScript 개발'), 'Java/JavaScript boundary fail'
+  assert not _keyword_hit_any('Git', 'GitHub Actions CI/CD 파이프라인'), 'Git/GitHub boundary fail'
+
+  # 정상 매칭
+  assert _keyword_hit_any('Java', 'Java Spring Boot 개발'), 'Java exact match fail'
+  assert _keyword_hit_any('Git', 'Git 버전 관리 경험'), 'Git exact match fail'
+
+  print('모든 _keyword_hit_any 검증 통과')
+  print('Spring Boot aliases:', sorted(_REVERSE_ALIASES.get('Spring Boot', set())))
   "
   ```
 
   Expected:
   ```
-  _keyword_hit_any OK
-  Spring Boot aliases: {'스프링 부트', '스프링', 'spring boot', 'SpringBoot', 'springboot'}
+  모든 _keyword_hit_any 검증 통과
+  Spring Boot aliases: ['SpringBoot', 'spring boot', 'springboot', '스프링 부트']
   ```
 
 - [ ] **Step 6: 커밋**
@@ -210,8 +230,8 @@
 
 - [ ] **Step 1: 테스트 클래스에 2개 메서드 추가**
 
-  기존 테스트 클래스 내부에 아래 두 메서드를 추가한다.
-  (경고: 이 테스트들은 실제 모델 추론이 필요해 각 ~30초 소요됨)
+  기존 테스트 클래스 내부에 아래 세 메서드를 추가한다.
+  (경고: 처음 두 테스트는 실제 모델 추론이 필요해 각 ~30초 소요됨)
 
   ```python
   def test_extract_required_skills_no_overextraction(self) -> None:
@@ -276,6 +296,22 @@
       assert "Kubernetes" in skill_names, (
           f"'쿠버네티스' → 'Kubernetes' alias 매칭 실패: {skill_names}"
       )
+
+  def test_keyword_hit_word_boundary_no_false_positive(self) -> None:
+      """Java/Git 등이 JavaScript/GitHub에서 잘못 추출되지 않아야 한다."""
+      from app.services.c_part.pipeline import _keyword_hit_any
+
+      # word-boundary: 이전 substring 방식의 false positive 케이스
+      assert not _keyword_hit_any("Java", "JavaScript TypeScript 개발 경험"), \
+          "Java must not match inside JavaScript"
+      assert not _keyword_hit_any("Git", "GitHub Actions, GitLab CI/CD 사용"), \
+          "Git must not match inside GitHub/GitLab"
+
+      # 정상 매칭: 단어 경계에서 정확히 있는 경우
+      assert _keyword_hit_any("Java", "Java와 Spring Boot 기반 REST API 개발"), \
+          "Java exact match must pass"
+      assert _keyword_hit_any("Git", "Git, SVN 버전 관리 경험 보유"), \
+          "Git exact match must pass"
   ```
 
 - [ ] **Step 2: 테스트 실행 (느림 — ~2분 예상)**
@@ -286,7 +322,7 @@
     backend.tests.test_c_part_pipeline -v 2>&1 | tail -15
   ```
 
-  Expected: 기존 3개 + 신규 2개 모두 `OK`
+  Expected: 기존 3개 + 신규 3개 모두 `OK`
 
 - [ ] **Step 3: 전체 백엔드 테스트**
 
@@ -294,13 +330,13 @@
   PYTHONPATH=backend .venv/bin/python -m unittest discover -s backend/tests 2>&1 | grep -E "^(Ran|OK|FAIL|ERROR)"
   ```
 
-  Expected: `Ran 43 tests` / `OK`
+  Expected: `Ran 44 tests` / `OK`
 
 - [ ] **Step 4: 커밋**
 
   ```bash
   git add backend/tests/test_c_part_pipeline.py
-  git commit -m "test(c-part): add over-extraction and Korean alias tests"
+  git commit -m "test(c-part): add over-extraction, Korean alias, and word-boundary tests"
   ```
 
 ---
@@ -418,10 +454,9 @@
 
 - [ ] **Step 1: requirements.txt에 OCR 패키지 추가**
 
-  파일 끝에 아래 3줄 추가:
+  파일 끝에 아래 2줄 추가 (pdfplumber는 코드에서 사용하지 않으므로 제외):
 
   ```
-  pdfplumber>=0.11
   pdf2image>=1.17
   pytesseract>=0.3.10
   ```
@@ -476,7 +511,7 @@
   PYTHONPATH=backend .venv/bin/python -m unittest discover -s backend/tests 2>&1 | grep -E "^(Ran|OK|FAIL|ERROR)"
   ```
 
-  Expected: `Ran 45 tests` / `OK`
+  Expected: `Ran 46 tests` / `OK`
 
 - [ ] **Step 4: 커밋**
 
@@ -653,9 +688,58 @@
   **SetupPage 컴포넌트에서 제거된 props 정리:**
   - `SetupPage` props 타입에서 `isJobExtracting`, `setIsJobExtracting`, `onExtractJobFile` 제거
   - `SetupPage` 함수 시그니처에서 동일 제거
-  - `<JobPostingInputPanel>` JSX에서 `onFileChange={handleExtractJobFile}` prop 전달 라인만 삭제. `isExtracting={isJobExtracting}` 는 **유지** (URL fetch 로딩 표시에 계속 사용).
+  **page.tsx의 SetupPage props 타입에서 onExtractJobFile 제거:**
+  ```typescript
+  // SetupPage 컴포넌트 props 타입에서 아래 항목 삭제:
+  onExtractJobFile: (f: File) => void;
 
-  요약: `handleExtractJobFile` 함수와 `onFileChange` prop 전달 1줄만 제거. `isJobExtracting` state와 URL fetch handler는 건드리지 않는다.
+  // SetupPage 함수 파라미터에서도 삭제:
+  // Before:
+  function SetupPage({
+    ...
+    onExtractJobFile,
+    ...
+  }: { ... onExtractJobFile: (f: File) => void; ... }) {
+  // After: onExtractJobFile 제거
+
+  // SetupPage JSX 내 JobPostingInputPanel 호출에서 제거:
+  // Before:
+  <JobPostingInputPanel
+    ...
+    onFileChange={onExtractJobFile}
+    isExtracting={isJobExtracting}
+    ...
+  />
+  // After: onFileChange 줄만 삭제, isExtracting={isJobExtracting} 유지
+  ```
+
+  **Home 컴포넌트에서 handleExtractJobFile 함수 전체 삭제:**
+  ```typescript
+  // 삭제할 함수 전체:
+  async function handleExtractJobFile(file: File) {
+    setJobExtractionError(null);
+    setIsJobExtracting(true);
+    try {
+      const extracted = await extractJobPostingFromFile(file);
+      ...
+    } finally {
+      setIsJobExtracting(false);
+    }
+  }
+  ```
+
+  **Home 컴포넌트의 SetupPage JSX 호출에서 prop 제거:**
+  ```typescript
+  // Before:
+  <SetupPage
+    ...
+    onExtractJobFile={handleExtractJobFile}
+    ...
+  />
+  // After: onExtractJobFile 줄 삭제
+  ```
+
+  요약: `handleExtractJobFile` 함수, `onExtractJobFile` prop 선언/전달 3곳만 제거. `isJobExtracting` state와 `handleExtractJobUrl` handler는 건드리지 않는다.
 
 - [ ] **Step 4: TypeScript 빌드 확인**
 
@@ -816,7 +900,7 @@
   PYTHONPATH=backend .venv/bin/python -m unittest discover -s backend/tests 2>&1 | grep -E "^(Ran|OK|FAIL|ERROR)"
   ```
 
-  Expected: `Ran 45 tests` / `OK`
+  Expected: `Ran 46 tests` / `OK`
 
 - [ ] **프론트엔드 빌드**
 
