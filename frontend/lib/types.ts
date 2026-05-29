@@ -6,10 +6,21 @@ export type SkillGap = {
   evidence: string;
 };
 
+export type PartialSkill = {
+  skill: string;
+  evidence: string;
+  evidence_strength: string;
+  gap_score: number;
+  gap_level: string;
+  importance: string;
+  note: string;
+};
+
 export type COutput = {
   predicted_job: string;
   fit_score: number;
   matched_skills: string[];
+  partial_skills: PartialSkill[];
   skill_gaps: SkillGap[];
 };
 
@@ -41,6 +52,7 @@ export type ResourceRecommendation = {
 };
 
 export type SkillRecommendation = {
+  target_type: "gap" | "partial";
   skill: string;
   gap_score: number;
   gap_level: string;
@@ -77,6 +89,31 @@ export type RecommendResponse = {
 };
 
 export type SourceType = "url" | "text" | "file";
+export type JobInputMode = "text" | "url";
+export type CandidateInputMode = "text" | "file";
+
+export type ExtractedText = {
+  kind: "job_posting" | "candidate_material";
+  source_type: "text" | "url" | "pdf" | "txt";
+  label: string | null;
+  source_name: string | null;
+  text: string;
+  char_count: number;
+  warnings: string[];
+  extractor: string;
+};
+
+export type CandidateMaterialDraft = {
+  id: string;
+  label: string;
+  sourceMode: CandidateInputMode;
+  text: string;
+  sourceName?: string;
+  extractor?: string;
+  warnings: string[];
+  error: string | null;
+  isExtracting: boolean;
+};
 
 export type RoadmapPreferences = {
   duration_weeks: 2 | 4 | 8 | 12;
@@ -96,6 +133,7 @@ export type AnalyzeRequest = {
     text: string;
   }>;
   roadmap_preferences: RoadmapPreferences;
+  openai_api_key?: string;
 };
 
 export type EvidenceItem = {
@@ -124,10 +162,14 @@ export type WeeklyRoadmapItem = {
 
 export type AnalyzeResponse = {
   predicted_job: string;
+  job_label: string | null;
+  job_probabilities: Record<string, number>;
+  classifier_source: string;
   fit_score: number;
   roadmap_preferences: RoadmapPreferences;
   required_skills: RequiredSkill[];
   owned_skills: OwnedSkill[];
+  partial_skills: PartialSkill[];
   missing_skills: SkillGap[];
   recommended_resources: SkillRecommendation[];
   weekly_roadmap: WeeklyRoadmapItem[];
