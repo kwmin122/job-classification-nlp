@@ -1,6 +1,12 @@
 import unittest
 
-from app.services.text_extractor import clean_text, extract_from_text_source
+from app.services.text_extractor import (
+    clean_text,
+    extract_file_bytes,
+    extract_from_text_source,
+    extract_text_input,
+    extract_visible_text_from_html,
+)
 
 
 class TextExtractorTest(unittest.TestCase):
@@ -10,3 +16,76 @@ class TextExtractorTest(unittest.TestCase):
     def test_extract_from_text_source_returns_clean_text(self) -> None:
         result = extract_from_text_source("  Spring Boot   API 개발  ")
         self.assertEqual(result, "Spring Boot API 개발")
+
+    def test_extract_text_input_returns_metadata(self) -> None:
+        result = extract_text_input("  Docker   AWS  ")
+        self.assertEqual(result.text, "Docker AWS")
+        self.assertEqual(result.source_type, "text")
+        self.assertEqual(result.extractor, "direct_text")
+
+    def test_extract_txt_bytes_supports_cp949(self) -> None:
+        result = extract_file_bytes(
+            "백엔드 개발자 Docker 배포 경험".encode("cp949"),
+            filename="resume.txt",
+            content_type="text/plain",
+        )
+        self.assertEqual(result.source_type, "txt")
+        self.assertIn("Docker", result.text)
+        self.assertTrue(result.warnings)
+
+    def test_extract_visible_text_from_html_ignores_navigation_and_script(self) -> None:
+        html = """
+        <html>
+          <body>
+            <nav>메뉴</nav>
+            <main>
+              <h1>백엔드 개발자 채용</h1>
+              <p>Docker와 AWS 배포 경험이 필요합니다.</p>
+            </main>
+            <script>console.log("ignore")</script>
+          </body>
+        </html>
+        """
+        result = extract_visible_text_from_html(html)
+        self.assertIn("백엔드 개발자 채용", result)
+        self.assertIn("Docker와 AWS", result)
+        self.assertNotIn("console", result)
+        self.assertNotIn("메뉴", result)
+
+    def test_extract_pdf_bytes_falls_back_to_ocr_when_pypdf_returns_empty(self) -> None:
+        """PyPDF2와 pdftotext가 모두 빈 결과를 내면 OCR을 시도해야 한다."""
+        from unittest.mock import patch
+        from app.services.text_extractor import extract_pdf_bytes
+
+        with (
+            patch(
+                "app.services.text_extractor._extract_pdf_with_pypdf",
+                return_value=("", []),
+            ),
+            patch(
+                "app.services.text_extractor._extract_pdf_with_pdftotext",
+                return_value="",
+            ),
+            patch(
+                "app.services.text_extractor._extract_pdf_with_ocr",
+                return_value=("추출된 텍스트", ["스캔 PDF를 OCR로 처리했습니다."]),
+            ),
+        ):
+            result = extract_pdf_bytes(b"fake-pdf")
+
+        assert result.text == "추출된 텍스트"
+        assert result.extractor == "tesseract-ocr"
+        assert any("OCR" in w for w in result.warnings)
+
+    def test_extract_pdf_with_ocr_returns_empty_on_import_error(self) -> None:
+        """pdf2image 미설치 시 예외 없이 빈 문자열을 반환해야 한다."""
+        import sys
+        from unittest.mock import patch
+        from app.services.text_extractor import _extract_pdf_with_ocr
+
+        # sys.modules에 None을 넣으면 해당 모듈 import 시 ImportError 발생
+        with patch.dict(sys.modules, {"pdf2image": None}):
+            text, warnings = _extract_pdf_with_ocr(b"fake-pdf")
+
+        assert text == ""
+        assert warnings == []
