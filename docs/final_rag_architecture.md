@@ -1,7 +1,7 @@
 # 최종 분석 및 RAG 학습 로드맵 설계
 
-Generated: 2026-05-21
-Status: User-centered architecture target
+Generated: 2026-05-28
+Status: Implemented vertical slice
 
 ## 1. 핵심 방향
 
@@ -71,16 +71,32 @@ DOCX/HWP는 확장 기능이다. 현재 구현된 안정 세로 조각은 텍스
 - 백엔드 개발자
 - 프론트엔드 개발자
 
-모델 비교는 수업 내용 연결과 실제 실험을 위해 유지한다.
+모델 비교는 수업 내용 연결과 실제 실험을 위해 유지한다. 현재 백엔드는 A/B가 확정한 soft voting 앙상블을 직무 분류 기준으로 사용한다.
 
 | 모델 | 역할 | 평가 |
 |---|---|---|
 | TF-IDF + SVM | baseline | Accuracy, Macro F1 |
 | LSTM | 순서 정보 반영 비교 | Accuracy, Macro F1 |
 | Text-CNN | 기술 표현 패턴 비교 | Accuracy, Macro F1 |
-| KoBERT/BERT | 최종 후보 | Accuracy, Macro F1 |
+| FastText LSTM | 단어 임베딩 보강 비교 | Accuracy, Macro F1 |
 
-성능 수치는 실제 실험 후 기록한다.
+A/B 최종 앙상블:
+
+```text
+0.1 * TF-IDF+SVM
++ 0.5 * LSTM
++ 0.3 * Text-CNN
++ 0.1 * FastText LSTM
+```
+
+라벨 매핑:
+
+| 모델 라벨 | 화면 표시 |
+|---|---|
+| ai | AI/ML 엔지니어 |
+| backend | 백엔드 개발자 |
+| data_analyst | 데이터 분석가 |
+| frontend | 프론트엔드 개발자 |
 
 ## 5. 역량 추출과 격차 분석
 
@@ -114,7 +130,13 @@ gap score는 다음 요소를 조합한다.
 - 근거 문장 존재 여부
 - 직무별 필수 역량 여부
 
-현재 세로 조각에서는 C팀의 최종 Ko-Sentence-BERT 격차 분석기가 아직 연결되지 않았으므로, `skill_taxonomy.json`과 `analyzer_rules.json`을 읽어 기술명 근거와 부정 표현을 기준으로 1차 gap score를 계산한다. 고정된 `gap_score=80`을 반환하지 않고, 필수/우대 여부와 지원자 자료의 명시적 부정 표현 여부를 반영한다.
+현재 세로 조각에서는 C 파이프라인을 `backend/app/services/c_part/` 내부에 패키징해 사용한다. A/B 앙상블이 반환한 `job_label`을 C의 `b_predicted_job`으로 넘기고, C는 taxonomy 기반 요구 역량 추출과 Ko-Sentence-RoBERTa 임베딩 비교로 다음 세 그룹을 반환한다.
+
+| 그룹 | 의미 | D 추천 처리 |
+|---|---|---|
+| `owned_skills` | 충분히 충족한 역량 | 추천 제외 |
+| `partial_skills` | 일부 경험은 있으나 기준 미달 | 낮은 우선순위 보완 추천 |
+| `skill_gaps` | 근거가 없거나 크게 부족한 역량 | 높은 우선순위 추천 |
 
 ## 6. RAG 검색 대상
 
@@ -141,7 +163,7 @@ job_group + skill + sub_skill + title + description + reason + level + type
 - 발표 재현성이 좋음
 - 비용과 구현 복잡도가 낮음
 
-API key가 없거나 OpenAI 임베딩 호출이 실패하면 무료 로컬 임베딩 모델인 `BAAI/bge-m3`로 fallback한다. `BAAI/bge-m3`는 한국어와 영어 기술명이 섞인 query를 의미 기반으로 검색할 수 있어 TF-IDF보다 추천 품질을 높일 가능성이 크다. 로컬 모델 로딩까지 실패한 경우에만 TF-IDF를 마지막 안전장치로 사용한다.
+API key가 없거나 OpenAI 임베딩 호출이 실패하면 로컬 임베딩 모델인 `jhgan/ko-sroberta-multitask`로 fallback한다. 로컬 모델 로딩까지 실패한 경우에만 TF-IDF를 마지막 안전장치로 사용한다. (실제 fallback 체인: `text-embedding-3-small` → `jhgan/ko-sroberta-multitask` → TF-IDF)
 
 ## 8. 추천 점수
 
@@ -194,6 +216,7 @@ recommend_score =
 - 적합도
 - 요구 역량
 - 보유 역량
+- 일부 경험은 있으나 보완할 역량
 - 부족 역량과 gap score
 - 부족하다고 판단한 근거
 - 사용자가 선택한 기간과 난이도
@@ -234,9 +257,12 @@ recommend_score =
 ```json
 {
   "predicted_job": "백엔드 개발자",
+  "job_label": "backend",
+  "classifier_source": "ab_ensemble",
   "fit_score": 78,
   "required_skills": [],
   "owned_skills": [],
+  "partial_skills": [],
   "missing_skills": [],
   "recommended_resources": [],
   "weekly_roadmap": [],
@@ -248,15 +274,19 @@ recommend_score =
 
 구현되어 있는 것:
 
-- 학습자료 DB 80개
+- 학습자료 DB 86개
 - `learning_resources.csv` 기반 추천형 RAG 검색
-- OpenAI `text-embedding-3-small` 임베딩 검색과 `BAAI/bge-m3` 로컬 임베딩 fallback
+- OpenAI `text-embedding-3-small` 임베딩 검색과 `jhgan/ko-sroberta-multitask` 로컬 임베딩 fallback
 - 추천 점수 계산
 - 사용자 기간/난이도/강도 기반 주차별 로드맵 생성
 - 계산 결과 기반 자연어 리포트 생성
 - `/analyze` 통합 API
-- `skill_taxonomy.json` 기반 직무군/역량 후보 로딩
-- `analyzer_rules.json` 기반 부정 표현, 중요도, gap score 기준 로딩
+- A/B 앙상블 직무 분류 연결
+- C 파이프라인 backend 패키징
+- C `partial_skills` / `skill_gaps` / `owned_skills` 결과를 D 추천 정책으로 연결
+- `backend/app/services/c_part/skill_taxonomy.json` 기반 직무군/역량 후보 로딩
+- `backend/app/services/c_part/analyzer_rules.json` 기반 부정 표현, 중요도, gap score 기준 로딩
+- C taxonomy와 학습자료 DB 간 누락 skill audit
 - 실제 사용자 관점의 로컬 대시보드
 
 아직 필요한 것:
@@ -264,16 +294,15 @@ recommend_score =
 - 채용공고 URL 입력 어댑터
 - PDF/TXT 파일 업로드와 텍스트 추출
 - URL 본문 추출
-- B팀 직무 분류 모델 결과 연결
-- C팀 Ko-Sentence-BERT 기반 의미 유사도 격차 분석 결과 연결
 - LLM API 기반 리포트 생성. 현재는 분석 결과를 템플릿으로 설명한다.
+- 실제 운영 환경에서 C 임베딩 모델 `jhgan/ko-sroberta-multitask` 캐시 또는 다운로드 보장
 
 ## 13. 하드코딩 방지 기준
 
 제품 결과 생성 경로에서 특정 답을 박아두지 않는다.
 
-- 역량 후보와 직무군 분류 키워드는 `backend/app/data/skill_taxonomy.json`에서 관리한다.
-- 부정 표현, 필수/우대 판정, gap score 기준은 `backend/app/data/analyzer_rules.json`에서 관리한다.
+- 역량 후보와 직무군 분류 키워드는 `backend/app/services/c_part/skill_taxonomy.json`에서 관리한다.
+- 부정 표현, 필수/우대 판정, gap score 기준은 `backend/app/services/c_part/analyzer_rules.json`에서 관리한다.
 - 학습자료는 코드 배열이 아니라 `backend/app/data/learning_resources.csv`에서 관리한다.
 - 추천 점수는 `backend/app/services/scorer.py`에서 계산하고, 신뢰도는 `reliability / 5`로 정규화한다.
 - 샘플 endpoint는 제품 API에서 제거한다. 실제 흐름은 사용자가 입력한 `/analyze` 요청만 기준으로 한다.
