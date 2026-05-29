@@ -76,7 +76,7 @@ def _keyword_hit_any(skill: str, sentence: str) -> bool:
       - "Git"  in "GitHub"      → False  (substring 방식은 True)
     """
     def _hit(term: str, text: str) -> bool:
-        pattern = rf'(?<!\w){re.escape(term)}(?!\w)'
+        pattern = rf'(?<![A-Za-z0-9]){re.escape(term)}(?![A-Za-z0-9])'
         return bool(re.search(pattern, text, re.IGNORECASE))
 
     if _hit(skill, sentence):
