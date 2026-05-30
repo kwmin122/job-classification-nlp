@@ -115,6 +115,34 @@ COV_OWNED_THR  = 70      # coverage >= 이 값 → owned
 COV_PARTIAL_LO = 40      # 40 <= coverage < 70 → partial
                          # coverage < 40 → missing
 
+# ── relevance 필터 상수 ───────────────────────────────────────────────
+_WHITELIST_SKILLS: set[str] = {
+    s.lower()
+    for group in _TAXONOMY.get("skills", {}).values()
+    for s in group
+}
+
+_BLACKLIST_SKILLS: set[str] = {
+    "notion", "slack", "jira", "confluence", "figma",
+    "api", "git", "github", "gitlab", "excel", "powerpoint",
+    "google docs", "google sheets", "teams", "zoom",
+}
+
+
+def _filter_analyzable_skills(skills: list[str]) -> list[str]:
+    """
+    1. 블랙리스트 제외 (협업/일반 도구)
+    2. 화이트리스트(taxonomy skills 배열)에 있는 기술만 포함
+    화이트리스트 미매핑 기술은 제외 (structured_skills에는 별도 표시)
+    """
+    result = []
+    for s in skills:
+        if s.lower() in _BLACKLIST_SKILLS:
+            continue
+        if s.lower() in _WHITELIST_SKILLS:
+            result.append(s)
+    return result
+
 MODEL_NAME = "jhgan/ko-sroberta-multitask"
 
 # ─────────────────────────────────────────────────────────────────────
@@ -481,6 +509,8 @@ def run_c_part_analysis(
     jd_input: str,
     candidate_input: str,
     threshold: float = THR_SKILL_MATCH,  # kept for backward compat; no longer used for classification (coverage-based)
+    *,
+    explicit_required_skills: list[str] | None = None,  # NEW: from RSC skills array
 ) -> dict:
     """
     B파트 직무 라벨 + JD + 지원자 서류 → D파트 표준 입력 JSON 자동 생성.
@@ -552,10 +582,25 @@ def run_c_part_analysis(
         print(f"[C파트] 지원자 문장 {len(candidate_sentences)}개 임베딩 중...")
         candidate_vectors = [get_embedding(s) for s in candidate_sentences]
 
-        # ── 4. JD 요구 역량 자동 추출 ────────────────────────────────
-        print("[C파트] JD 요구 역량 추출 중...")
-        required_skills = extract_required_skills(job_key, jd_sentences, jd_vectors)
-        print(f"[C파트] 요구 역량 {len(required_skills)}개 추출")
+        # ── 4. JD 요구 역량 결정 ────────────────────────────────────
+        if explicit_required_skills is not None:
+            print(f"[C파트] 명시 스킬 {len(explicit_required_skills)}개 사용 (RSC 직접 주입)")
+            # explicit 모드: 스킬명을 직접 embed해 skill_vec 생성
+            # importance = 모두 "필수" (잡코리아 skills 배열은 필수/우대 미구분)
+            explicit_vecs = [get_embedding(s) for s in explicit_required_skills]
+            required_skills = [
+                {
+                    "skill":          s,
+                    "importance":     "필수",
+                    "source_sentence": s,  # 스킬명 자체가 source
+                    "_skill_vec":     v,
+                }
+                for s, v in zip(explicit_required_skills, explicit_vecs)
+            ]
+        else:
+            print("[C파트] JD 요구 역량 추출 중...")
+            required_skills = extract_required_skills(job_key, jd_sentences, jd_vectors)
+            print(f"[C파트] 요구 역량 {len(required_skills)}개 추출")
 
         # ── 5. 지원자 보유 역량 후보 탐색 (내부용) ──────────────────────
         # [v5] extract_owned_skills()는 후보 맵 구성용으로만 사용.
