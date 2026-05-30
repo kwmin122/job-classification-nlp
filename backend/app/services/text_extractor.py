@@ -301,6 +301,17 @@ def extract_url(url: str, *, timeout_seconds: int = 10, max_bytes: int = 2_000_0
                     structured_skills=[],
                     job_title=job_title,
                 )
+            # Playwright fallback: S3 URL 만료 또는 부재 시 브라우저 렌더링 시도
+            pw_text = _extract_with_playwright(url)
+            if len(pw_text) >= 200:
+                return TextExtractionResult(
+                    text=pw_text,
+                    source_type="url",
+                    extractor="jobkorea_playwright",
+                    warnings=warnings,
+                    structured_skills=[],
+                    job_title=job_title,
+                )
             return TextExtractionResult(
                 text=visible,
                 source_type="url",
