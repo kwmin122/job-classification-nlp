@@ -117,6 +117,7 @@ class TestJobkoreaRscParsing(unittest.TestCase):
         payload = _decode_jobkorea_rsc(html)
         title = _extract_jobkorea_workfield(payload)
         self.assertIsNotNone(title)
+        self.assertIn("AI", title)  # must contain "AI" for 49244543 posting
 
     def test_skills_extracted_backend_nodejs(self) -> None:
         html = self._load("jobkorea_43134476.html")

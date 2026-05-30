@@ -225,7 +225,7 @@ def extract_url(url: str, *, timeout_seconds: int = 10, max_bytes: int = 2_000_0
     html = _decode_html(raw, content_type)
 
     # ── 잡코리아 RSC 분기 ─────────────────────────────────────────────
-    host = urlparse(url).hostname or ""
+    host = parsed.hostname or ""
     if host.endswith("jobkorea.co.kr"):
         payload = _decode_jobkorea_rsc(html)
         skills = _extract_jobkorea_skills(payload)
