@@ -296,6 +296,16 @@ def _missing_skills_from_c_output(c_output: COutput) -> list[MissingSkill]:
     ]
 
 
+def _determine_jd_quality(
+    structured_skills: list[str],
+    required_count: int,
+) -> str:
+    """공고 품질 판정: structured_skills 없고 required_skills < 3 → weak."""
+    if not structured_skills and required_count < 3:
+        return "weak"
+    return "ok"
+
+
 def _c_output_from_result(result: dict) -> COutput:
     if result.get("status") != "success":
         raise HTTPException(status_code=422, detail=result.get("message", "C analysis failed"))
@@ -388,6 +398,10 @@ def analyze(request: AnalyzeRequest, top_k: int = 3) -> AnalyzeResponse:
     c_output = _c_output_from_result(c_result)
     predicted_job = c_output.predicted_job
     required_skills = _required_skills_from_c(c_result)
+    jd_quality = _determine_jd_quality(
+        structured_skills=job_structured_skills,
+        required_count=len(c_result.get("required_skills", [])),
+    )
     owned_skills = _owned_skills_from_c(c_result)
     missing_skills = _missing_skills_from_c_output(c_output)
 
@@ -422,6 +436,7 @@ def analyze(request: AnalyzeRequest, top_k: int = 3) -> AnalyzeResponse:
         weekly_roadmap=weekly_roadmap,
         preferences=request.roadmap_preferences,
         owned_skills_count=len(owned_skills),
+        jd_quality=jd_quality,
     )
 
     return AnalyzeResponse(
@@ -447,4 +462,5 @@ def analyze(request: AnalyzeRequest, top_k: int = 3) -> AnalyzeResponse:
         embedding_model=retriever_info.embedding_model,
         chunking_strategy=retriever_info.chunking_strategy,
         structured_skills=job_structured_skills,
+        jd_quality=jd_quality,
     )

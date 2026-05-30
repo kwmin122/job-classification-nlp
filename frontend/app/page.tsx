@@ -492,8 +492,15 @@ function DashboardPage({
         </div>
       </div>
 
+      {/* jd_quality 경고 배너 */}
+      {result.jd_quality === "weak" && (
+        <div className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-amber-800 text-sm mb-4">
+          ⚠️ 이 공고에서 명확한 기술 요구를 찾지 못했습니다. 개발 직무 공고인지 확인하거나 본문을 직접 붙여넣어 주세요.
+        </div>
+      )}
+
       {/* Dashboard content */}
-      <div className="dash-content">
+      <div className={result.jd_quality === "weak" ? "dash-content opacity-40 pointer-events-none select-none" : "dash-content"}>
         {/* KPI Row */}
         <section className="score-board" aria-label="요약 점수">
           <div className={`metric-card ${scoreTone(result.fit_score)}`}>
