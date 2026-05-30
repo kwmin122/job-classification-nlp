@@ -49,10 +49,10 @@ def score_resource(
     reliability_norm = resource.reliability / 5
 
     recommend_score = 100 * (
-        0.55 * semantic
+        0.50 * semantic
         + 0.20 * skill_score
-        + 0.10 * job_score
-        + 0.10 * difficulty_score
+        + 0.05 * job_score
+        + 0.20 * difficulty_score
         + 0.05 * reliability_norm
     )
 

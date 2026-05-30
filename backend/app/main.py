@@ -335,8 +335,8 @@ def recommend(c_output: COutput, top_k: int = 3) -> RecommendResponse:
         roadmap=roadmap,
         report=report,
         scoring_formula=(
-            "100 * (0.55 * semantic_similarity + 0.20 * skill_match + "
-            "0.10 * job_group_match + 0.10 * difficulty_match + 0.05 * (reliability / 5))"
+            "100 * (0.50 * semantic_similarity + 0.20 * skill_match + "
+            "0.05 * job_group_match + 0.20 * difficulty_match + 0.05 * (reliability / 5))"
         ),
         rag_scope_note=(
             "learning_resources.csv에 정리한 큐레이션 학습자료 DB에서 검색합니다. "
@@ -454,8 +454,8 @@ def analyze(request: AnalyzeRequest, top_k: int = 3) -> AnalyzeResponse:
         weekly_roadmap=weekly_roadmap,
         report=report,
         scoring_formula=(
-            "100 * (0.55 * semantic_similarity + 0.20 * skill_match + "
-            "0.10 * job_group_match + 0.10 * difficulty_match + 0.05 * (reliability / 5))"
+            "100 * (0.50 * semantic_similarity + 0.20 * skill_match + "
+            "0.05 * job_group_match + 0.20 * difficulty_match + 0.05 * (reliability / 5))"
         ),
         rag_scope_note="learning_resources.csv에 정리한 큐레이션 학습자료 DB에서 검색합니다.",
         retrieval_mode=retriever_info.retrieval_mode,
