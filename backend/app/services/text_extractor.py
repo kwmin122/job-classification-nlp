@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import json
 import re
 import shutil
 import subprocess
 import tempfile
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from html.parser import HTMLParser
 from io import BytesIO
 from pathlib import Path
@@ -23,6 +24,8 @@ class TextExtractionResult:
     source_type: str
     extractor: str
     warnings: list[str]
+    structured_skills: list[str] = field(default_factory=list)
+    job_title: str | None = None
 
 
 def clean_text(value: str) -> str:
@@ -163,6 +166,39 @@ def extract_txt_bytes(content: bytes) -> TextExtractionResult:
     )
 
 
+def _decode_jobkorea_rsc(html: str) -> str:
+    """self.__next_f.push([N, "...JSON..."]) 청크들을 합쳐 RSC 페이로드 반환."""
+    chunks = re.findall(r'self\.__next_f\.push\(\[\d+,("(?:[^"\\]|\\.)*")\]\)', html)
+    out = []
+    for c in chunks:
+        try:
+            out.append(json.loads(c))
+        except Exception:
+            pass
+    return "".join(out)
+
+
+def _extract_jobkorea_skills(payload: str) -> list[str]:
+    """RSC 페이로드에서 HARD_SKILL name 목록 추출 (순서 유지, 중복 제거)."""
+    pairs = re.findall(
+        r'\{"name":"([^"]+)","rank":\d+,"manualInput":(?:true|false),"skillTypeCode":"HARD_SKILL"\}',
+        payload,
+    )
+    seen: set[str] = set()
+    result: list[str] = []
+    for name in pairs:
+        if name not in seen:
+            seen.add(name)
+            result.append(name)
+    return result
+
+
+def _extract_jobkorea_workfield(payload: str) -> str | None:
+    """RSC 페이로드에서 첫 번째 workField(직무명) 추출."""
+    m = re.search(r'"workFields":\["([^"]+)"', payload)
+    return m.group(1) if m else None
+
+
 def extract_url(url: str, *, timeout_seconds: int = 10, max_bytes: int = 2_000_000) -> TextExtractionResult:
     parsed = urlparse(url)
     if parsed.scheme not in {"http", "https"}:
@@ -187,6 +223,36 @@ def extract_url(url: str, *, timeout_seconds: int = 10, max_bytes: int = 2_000_0
         warnings.append("URL 응답이 커서 앞부분만 추출했습니다.")
 
     html = _decode_html(raw, content_type)
+
+    # ── 잡코리아 RSC 분기 ─────────────────────────────────────────────
+    host = urlparse(url).hostname or ""
+    if host.endswith("jobkorea.co.kr"):
+        payload = _decode_jobkorea_rsc(html)
+        skills = _extract_jobkorea_skills(payload)
+        job_title = _extract_jobkorea_workfield(payload)
+        visible = extract_visible_text_from_html(html)
+        if skills:
+            return TextExtractionResult(
+                text=visible or f"[잡코리아 공고] {job_title or ''}",
+                source_type="url",
+                extractor="jobkorea_rsc",
+                warnings=warnings,
+                structured_skills=skills,
+                job_title=job_title,
+            )
+        else:
+            return TextExtractionResult(
+                text=visible,
+                source_type="url",
+                extractor="jobkorea_meta_only",
+                warnings=warnings + [
+                    "이 공고에서 구조화된 기술 정보를 찾지 못했습니다. "
+                    "본문을 직접 붙여넣어 주세요."
+                ],
+                structured_skills=[],
+                job_title=job_title,
+            )
+
     text = extract_visible_text_from_html(html)
     if len(text) < 20:
         raise TextExtractionError("URL에서 충분한 본문을 추출하지 못했습니다. 채용공고 본문을 직접 붙여넣어 주세요.")

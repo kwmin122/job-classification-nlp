@@ -1,6 +1,10 @@
 import unittest
+from pathlib import Path
 
 from app.services.text_extractor import (
+    _decode_jobkorea_rsc,
+    _extract_jobkorea_skills,
+    _extract_jobkorea_workfield,
     clean_text,
     extract_file_bytes,
     extract_from_text_source,
@@ -89,3 +93,55 @@ class TextExtractorTest(unittest.TestCase):
 
         assert text == ""
         assert warnings == []
+
+
+class TestJobkoreaRscParsing(unittest.TestCase):
+    """fixture HTML을 사용한 잡코리아 RSC 파싱 단위 테스트 (네트워크 의존 없음)."""
+
+    FIXTURE_DIR = Path(__file__).parent / "fixtures"
+
+    def _load(self, name: str) -> str:
+        return (self.FIXTURE_DIR / name).read_text(encoding="utf-8", errors="replace")
+
+    def test_skills_extracted_ai_posting(self) -> None:
+        html = self._load("jobkorea_49244543.html")
+        payload = _decode_jobkorea_rsc(html)
+        skills = _extract_jobkorea_skills(payload)
+        self.assertIn("Python", skills)
+        self.assertIn("LLMOps", skills)
+        self.assertIn("AI Agent", skills)
+        self.assertIn("RPA", skills)
+
+    def test_workfield_extracted_ai_posting(self) -> None:
+        html = self._load("jobkorea_49244543.html")
+        payload = _decode_jobkorea_rsc(html)
+        title = _extract_jobkorea_workfield(payload)
+        self.assertIsNotNone(title)
+
+    def test_skills_extracted_backend_nodejs(self) -> None:
+        html = self._load("jobkorea_43134476.html")
+        payload = _decode_jobkorea_rsc(html)
+        skills = _extract_jobkorea_skills(payload)
+        self.assertIn("Node.js", skills)
+        self.assertIn("Go", skills)
+        self.assertIn("NoSQL", skills)
+
+    def test_skills_extracted_backend_java(self) -> None:
+        html = self._load("jobkorea_48391099.html")
+        payload = _decode_jobkorea_rsc(html)
+        skills = _extract_jobkorea_skills(payload)
+        self.assertIn("JAVA", skills)
+        self.assertIn("Spring Boot", skills)
+
+    def test_no_duplicate_skills(self) -> None:
+        html = self._load("jobkorea_49244543.html")
+        payload = _decode_jobkorea_rsc(html)
+        skills = _extract_jobkorea_skills(payload)
+        self.assertEqual(len(skills), len(set(skills)))
+
+    def test_hh_posting_returns_empty_skills(self) -> None:
+        """RSC 없는 HTML → 빈 skills 반환."""
+        html_no_rsc = "<html><body><p>헤드헌팅 공고 본문</p></body></html>"
+        payload = _decode_jobkorea_rsc(html_no_rsc)
+        skills = _extract_jobkorea_skills(payload)
+        self.assertEqual(skills, [])
