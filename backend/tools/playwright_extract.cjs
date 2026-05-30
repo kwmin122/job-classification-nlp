@@ -46,7 +46,7 @@ async function extractText(page) {
 
         // 'load' 사용: 일부 페이지는 광고 트래커로 인해 networkidle에 도달하지 못함
         await page.goto(url, {
-            waitUntil: 'load',
+            waitUntil: 'domcontentloaded',
             timeout: timeoutMs,
         });
         await page.waitForTimeout(2000);
@@ -65,7 +65,7 @@ async function extractText(page) {
         for (const iframeSrc of iframeSrcs) {
             try {
                 const iframePage = await context.newPage();
-                await iframePage.goto(iframeSrc, { waitUntil: 'networkidle', timeout: timeoutMs });
+                await iframePage.goto(iframeSrc, { waitUntil: 'domcontentloaded', timeout: timeoutMs });
                 await iframePage.waitForTimeout(2000);
                 const iframeText = await extractText(iframePage);
                 if (iframeText) parts.push(iframeText);
