@@ -199,6 +199,16 @@ def _extract_jobkorea_workfield(payload: str) -> str | None:
     return m.group(1) if m else None
 
 
+def _extract_jobkorea_description_url(payload: str) -> str | None:
+    """RSC 페이로드에서 job-hub S3 공고 본문 HTML pre-signed URL 추출.
+
+    잡코리아는 스킬 등록란이 비어있는 공고의 상세 본문을 S3 pre-signed URL로 제공.
+    URL은 페이지 로드 시점부터 900초(15분) 유효. CDN 캐시 환경에서는 만료돼 403.
+    """
+    m = re.search(r'(https://job-hub-files[^\s"\'<>]+\.html[^\s"\'<>]*)', payload)
+    return m.group(1) if m else None
+
+
 def extract_url(url: str, *, timeout_seconds: int = 10, max_bytes: int = 2_000_000) -> TextExtractionResult:
     parsed = urlparse(url)
     if parsed.scheme not in {"http", "https"}:
@@ -241,6 +251,30 @@ def extract_url(url: str, *, timeout_seconds: int = 10, max_bytes: int = 2_000_0
                 job_title=job_title,
             )
         else:
+            # skills=[] → S3 description URL 시도 (pre-signed, 페이지가 fresh하면 접근 가능)
+            jd_body = ""
+            desc_url = _extract_jobkorea_description_url(payload)
+            if desc_url:
+                try:
+                    desc_req = Request(
+                        desc_url,
+                        headers={"User-Agent": "Mozilla/5.0 (compatible; JD-Fit-Roadmap/0.1)"},
+                    )
+                    with urlopen(desc_req, timeout=8) as desc_resp:
+                        desc_html = desc_resp.read(500_000).decode("utf-8", errors="replace")
+                    jd_body = extract_visible_text_from_html(desc_html)
+                except Exception:
+                    pass  # 403 (만료) 또는 네트워크 오류 → fallback
+
+            if jd_body:
+                return TextExtractionResult(
+                    text=(visible + " " + jd_body).strip(),
+                    source_type="url",
+                    extractor="jobkorea_description",
+                    warnings=warnings,
+                    structured_skills=[],
+                    job_title=job_title,
+                )
             return TextExtractionResult(
                 text=visible,
                 source_type="url",
