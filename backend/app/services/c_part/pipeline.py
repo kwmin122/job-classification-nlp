@@ -457,7 +457,7 @@ def _compute_fit_score(
     없는 그룹은 존재하는 그룹으로만 재배분.
     """
     required_covs  = [skill_coverage_map.get(s, 0.0) for s in required_skills if importance_map.get(s) == "필수"]
-    preferred_covs = [skill_coverage_map.get(s, 0.0) for s in required_skills if importance_map.get(s) != "필수"]
+    preferred_covs = [skill_coverage_map.get(s, 0.0) for s in required_skills if importance_map.get(s) == "우대"]
 
     if required_covs and preferred_covs:
         score = (float(np.mean(required_covs)) * (FIT_W_REQUIRED / 100.0)
@@ -480,7 +480,7 @@ def run_c_part_analysis(
     b_predicted_job: str,
     jd_input: str,
     candidate_input: str,
-    threshold: float = THR_SKILL_MATCH,
+    threshold: float = THR_SKILL_MATCH,  # kept for backward compat; no longer used for classification (coverage-based)
 ) -> dict:
     """
     B파트 직무 라벨 + JD + 지원자 서류 → D파트 표준 입력 JSON 자동 생성.
