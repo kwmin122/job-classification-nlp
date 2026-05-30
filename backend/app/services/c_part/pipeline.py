@@ -615,6 +615,11 @@ def run_c_part_analysis(
         skill_coverage_map: dict[str, float] = {}
         importance_map_local: dict[str, str] = {}
 
+        # explicit 모드에서는 의미적 오탐 방지를 위해 candidate pool 임계값을 높임.
+        # (THR_CAND_ANCHOR=0.3은 text 모드용 — explicit 모드에서는 "자동화" 문장이
+        # RPA의 best evidence로 선택되는 false positive가 발생)
+        _cand_pool_threshold = 0.50 if explicit_required_skills is not None else THR_CAND_ANCHOR
+
         # [v7] JD 요구 문장 벡터 사전 캐시 (source_sentence → vec)
         # source_sentence가 jd_sentences에 있으면 이미 계산된 벡터 재사용
         jd_sent_vec_map = dict(zip(jd_sentences, jd_vectors))
@@ -648,7 +653,7 @@ def run_c_part_analysis(
                 keyword_hit = _keyword_hit_any(skill, sentence)
                 has_exp_v   = has_experience_verb(sentence)
 
-                if keyword_hit or sim >= THR_CAND_ANCHOR:
+                if keyword_hit or sim >= _cand_pool_threshold:
                     # 경험 동사 없는 단순 키워드 등장 → 유사도 감쇄
                     if keyword_hit and not has_exp_v:
                         sim *= EXP_VERB_PENALTY
