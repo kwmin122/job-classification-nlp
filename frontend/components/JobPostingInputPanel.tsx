@@ -1,5 +1,17 @@
 import type { JobInputMode } from "@/lib/types";
 
+const extractorLabel = (extractor: string): string => {
+  const labels: Record<string, string> = {
+    jobkorea_rsc: "잡코리아 (구조화)",
+    jobkorea_description: "잡코리아 (S3 본문)",
+    jobkorea_playwright: "잡코리아 (동적 렌더링)",
+    jobkorea_meta_only: "잡코리아 (메타데이터만)",
+    playwright: "동적 렌더링",
+    html_parser: "HTML 파싱",
+  };
+  return labels[extractor] ?? extractor;
+};
+
 type Props = {
   value: string;
   onChange: (value: string) => void;
@@ -122,7 +134,7 @@ function ExtractionStatus({
     <div className={error ? "extraction-status error" : "extraction-status"}>
       {sourceName || extractor ? (
         <span>
-          {sourceName ? sourceName : "텍스트"} {extractor ? `· ${extractor}` : ""}
+          {sourceName ? sourceName : "텍스트"} {extractor ? `· ${extractorLabel(extractor)}` : ""}
         </span>
       ) : null}
       {warnings.map((warning) => (
