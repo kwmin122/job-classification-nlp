@@ -268,8 +268,12 @@ def extract_url(url: str, *, timeout_seconds: int = 10, max_bytes: int = 2_000_0
         job_title = _extract_jobkorea_workfield(payload)
         visible = extract_visible_text_from_html(html)
         if skills:
+            # RSC에 skills가 있어도 visible이 너무 짧으면 iframe 본문이 누락된 것 → Playwright 보완
+            body = visible if len(visible) >= 500 else ""
+            if not body:
+                body = _extract_with_playwright(url)
             return TextExtractionResult(
-                text=visible or f"[잡코리아 공고] {job_title or ''}",
+                text=body or visible or f"[잡코리아 공고] {job_title or ''}",
                 source_type="url",
                 extractor="jobkorea_rsc",
                 warnings=warnings,
