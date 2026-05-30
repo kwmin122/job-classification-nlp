@@ -4,6 +4,7 @@ export type SkillGap = {
   gap_level: string;
   importance: string;
   evidence: string;
+  coverage: number; // NEW
 };
 
 export type PartialSkill = {
@@ -14,6 +15,16 @@ export type PartialSkill = {
   gap_level: string;
   importance: string;
   note: string;
+  coverage: number; // NEW
+};
+
+export type MissingSkill = {
+  skill: string;
+  gap_score: number;
+  gap_level: string;
+  importance: string;
+  evidence: string;
+  coverage: number; // NEW
 };
 
 export type COutput = {
@@ -170,7 +181,7 @@ export type AnalyzeResponse = {
   required_skills: RequiredSkill[];
   owned_skills: OwnedSkill[];
   partial_skills: PartialSkill[];
-  missing_skills: SkillGap[];
+  missing_skills: MissingSkill[];
   recommended_resources: SkillRecommendation[];
   weekly_roadmap: WeeklyRoadmapItem[];
   report: string;
@@ -179,4 +190,6 @@ export type AnalyzeResponse = {
   retrieval_mode: string;
   embedding_model: string;
   chunking_strategy: string;
+  jd_quality: "ok" | "weak"; // NEW
+  structured_skills: string[]; // NEW
 };
