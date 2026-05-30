@@ -1,5 +1,7 @@
+import subprocess as _subprocess
 import unittest
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 from app.services.text_extractor import (
     _decode_jobkorea_rsc,
@@ -146,3 +148,42 @@ class TestJobkoreaRscParsing(unittest.TestCase):
         payload = _decode_jobkorea_rsc(html_no_rsc)
         skills = _extract_jobkorea_skills(payload)
         self.assertEqual(skills, [])
+
+
+class TestExtractWithPlaywright(unittest.TestCase):
+    """_extract_with_playwright 단위 테스트 — subprocess mock, 네트워크 없음."""
+
+    def _call(self, stdout: str, returncode: int = 0, side_effect=None) -> str:
+        from app.services.text_extractor import _extract_with_playwright
+
+        mock_result = MagicMock()
+        mock_result.returncode = returncode
+        mock_result.stdout = stdout
+        mock_result.stderr = ""
+        with patch("app.services.text_extractor.subprocess.run") as mock_run:
+            if side_effect:
+                mock_run.side_effect = side_effect
+            else:
+                mock_run.return_value = mock_result
+            return _extract_with_playwright("https://example.com")
+
+    def test_returns_text_on_success(self) -> None:
+        result = self._call("Python LLMOps LangChain RAG 개발 경험")
+        self.assertIn("Python", result)
+        self.assertIn("LLMOps", result)
+
+    def test_returns_empty_on_nonzero_exit(self) -> None:
+        result = self._call("", returncode=1)
+        self.assertEqual(result, "")
+
+    def test_returns_empty_on_timeout(self) -> None:
+        result = self._call("", side_effect=_subprocess.TimeoutExpired("node", 30))
+        self.assertEqual(result, "")
+
+    def test_returns_empty_on_file_not_found(self) -> None:
+        result = self._call("", side_effect=FileNotFoundError("node not found"))
+        self.assertEqual(result, "")
+
+    def test_cleans_whitespace(self) -> None:
+        result = self._call("AI 엔지니어\n\n  담당업무  \n생성형 AI")
+        self.assertNotIn("  ", result)

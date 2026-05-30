@@ -209,6 +209,32 @@ def _extract_jobkorea_description_url(payload: str) -> str | None:
     return m.group(1) if m else None
 
 
+def _extract_with_playwright(url: str, timeout_seconds: int = 32) -> str:
+    """Node.js Playwright로 URL을 렌더링해 본문 텍스트 반환.
+
+    JS 렌더링 후 DOM(iframe 포함)에서 텍스트를 추출하므로 동적 콘텐츠도 포함.
+    Chromium이 없거나 timeout 초과 시 빈 문자열 반환 (caller가 fallback 처리).
+    """
+    script_path = Path(__file__).parent.parent.parent / "tools" / "playwright_extract.cjs"
+    if not script_path.exists():
+        return ""
+
+    try:
+        result = subprocess.run(
+            ["node", str(script_path), url, str(timeout_seconds * 1000 - 3000)],
+            capture_output=True,
+            timeout=timeout_seconds,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            return clean_text(result.stdout)
+        return ""
+    except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
+        return ""
+
+
 def extract_url(url: str, *, timeout_seconds: int = 10, max_bytes: int = 2_000_000) -> TextExtractionResult:
     parsed = urlparse(url)
     if parsed.scheme not in {"http", "https"}:
