@@ -1025,6 +1025,7 @@ details[open] > summary::after { content: " ▾"; }
 .reveal-4 { animation: fadeUp 0.35s ease both 360ms;  }
 .reveal-5 { animation: fadeUp 0.35s ease both 480ms;  }
 .reveal-6 { animation: fadeUp 0.35s ease both 600ms;  }
+.reveal-7 { animation: fadeUp 0.35s ease both 720ms;  }
 
 /* ── Actionable Summary ──────────────────────────────────────── */
 .actionable-summary {

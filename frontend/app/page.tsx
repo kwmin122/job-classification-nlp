@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -30,21 +30,25 @@ import type {
 /* ─── constants ─────────────────────────────────────────────────── */
 const ANALYSIS_STEPS = ["입력 확인", "역량 비교", "자료 매칭", "로드맵 출력"];
 
-/* ─── hooks ─────────────────────────────────────────────────────── */
-function useCountUp(target: number, duration = 1000): number {
-  const [current, setCurrent] = useState(0);
+/* ─── AnimatedNumber ────────────────────────────────────────────── */
+function AnimatedNumber({ value }: { value: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
-    if (target === 0) { setCurrent(0); return; }
+    const el = ref.current;
+    if (!el) return;
+    const rounded = Math.round(value);
+    el.textContent = "0";
+    if (rounded === 0) return;
     let frame = 0;
-    const totalFrames = Math.round(duration / 16);
+    const totalFrames = Math.round(1000 / 16);
     const timer = setInterval(() => {
       frame++;
-      setCurrent(Math.round((frame / totalFrames) * target));
+      el.textContent = String(Math.round((frame / totalFrames) * rounded));
       if (frame >= totalFrames) clearInterval(timer);
     }, 16);
     return () => clearInterval(timer);
-  }, [target, duration]);
-  return current;
+  }, [value]);
+  return <span ref={ref}>{Math.round(value)}</span>;
 }
 
 const createCandidate = (id: string): CandidateMaterialDraft => ({
@@ -463,7 +467,7 @@ function DashboardPage({
     ...result.partial_skills.map((s) => ({ ...s, target_type: "partial" as const })),
   ];
 
-  const animatedScore = useCountUp(result.fit_score);
+  const roundedScore = Math.round(result.fit_score);
 
   const gapChartData = gapRows
     .slice(0, 8)
@@ -477,7 +481,7 @@ function DashboardPage({
           <p className="eyebrow">분석 결과</p>
           <h1>
             {result.predicted_job} 직무 · 적합도{" "}
-            {animatedScore.toFixed(0)}점
+            <AnimatedNumber value={result.fit_score} />점
           </h1>
           <p>
             부족 역량 {result.missing_skills.length}개 · 보완 필요{" "}
@@ -507,13 +511,13 @@ function DashboardPage({
       <div className={result.jd_quality === "weak" ? "dash-content opacity-40 pointer-events-none select-none" : "dash-content"}>
         {/* KPI Row */}
         <section className="score-board reveal-1" aria-label="요약 점수">
-          <div className={`metric-card ${scoreTone(result.fit_score)}`}>
+          <div className={`metric-card ${scoreTone(roundedScore)}`}>
             <span>예측 직무</span>
             <strong>{result.predicted_job}</strong>
           </div>
-          <div className={`metric-card ${scoreTone(result.fit_score)}`}>
+          <div className={`metric-card ${scoreTone(roundedScore)}`}>
             <span>적합도</span>
-            <strong>{animatedScore.toFixed(0)}점</strong>
+            <strong><AnimatedNumber value={result.fit_score} />점</strong>
           </div>
           <div className="metric-card tone-risk">
             <span>부족 역량</span>
@@ -536,13 +540,13 @@ function DashboardPage({
             <div className="fit-gauge-wrap">
               <FitGauge score={result.fit_score} />
               <div className="fit-gauge-meta">
-                <strong>{result.fit_score.toFixed(0)}</strong>
+                <strong><AnimatedNumber value={result.fit_score} /></strong>
                 <span>/ 100점</span>
                 <div className="fit-gauge-chips">
-                  <span className={`state-pill ${scoreTone(result.fit_score)}`}>
-                    {result.fit_score >= 75
+                  <span className={`state-pill ${scoreTone(roundedScore)}`}>
+                    {roundedScore >= 75
                       ? "지원 적합"
-                      : result.fit_score >= 45
+                      : roundedScore >= 45
                         ? "보완 후 지원"
                         : "추가 준비 필요"}
                   </span>
@@ -744,46 +748,63 @@ function DashboardPage({
         </div>
 
         {/* Actionable Summary */}
-        <ActionableSummary result={result} />
+        <ActionableSummary result={result} jdQuality={result.jd_quality ?? ""} />
       </div>
     </div>
   );
 }
 
 /* ─── Actionable Summary ────────────────────────────────────────── */
-function ActionableSummary({ result }: { result: AnalyzeResponse }) {
+function ActionableSummary({ result, jdQuality }: { result: AnalyzeResponse; jdQuality: string }) {
   const { fit_score, predicted_job, missing_skills, partial_skills, weekly_roadmap, recommended_resources } = result;
 
+  if (jdQuality === "weak") {
+    return (
+      <div className="actionable-summary reveal-7">
+        <p className="eyebrow">다음 할 일</p>
+        <p className="summary-lead">공고 품질이 낮아 역량 분석이 불확실합니다.</p>
+        <p className="summary-body">공고 본문을 직접 붙여넣어 재분석하면 더 정확한 결과를 얻을 수 있습니다.</p>
+      </div>
+    );
+  }
+
+  const roundedFitScore = Math.round(fit_score);
   const statusLabel =
-    fit_score >= 75 ? "지원 가능한 수준입니다" :
-    fit_score >= 45 ? "보완 후 지원을 권장합니다" :
+    roundedFitScore >= 75 ? "지원 가능한 수준입니다" :
+    roundedFitScore >= 45 ? "보완 후 지원을 권장합니다" :
     "추가 준비가 필요합니다";
 
-  const topGap = missing_skills[0] ?? partial_skills[0];
-  const topResource = recommended_resources[0]?.recommendations[0]?.resource;
+  // Sort by gap_score desc — same order as recommended_resources (backend guarantee)
+  const allGaps = [...missing_skills, ...partial_skills].sort((a, b) => b.gap_score - a.gap_score);
+  const topGap = allGaps[0] ?? null;
+  // Look up the resource for topGap's specific skill to prevent index mismatch
+  const topResource = topGap
+    ? (recommended_resources.find((r) => r.skill === topGap.skill)?.recommendations[0]?.resource ?? null)
+    : null;
   const week1 = weekly_roadmap[0];
 
-  const lines: string[] = [
-    `${predicted_job} 포지션 기준 적합도 ${fit_score.toFixed(0)}점 — ${statusLabel}.`,
+  const lines: Array<{ key: string; text: string; lead: boolean }> = [
+    { key: "status", lead: true, text: `${predicted_job} 포지션 기준 적합도 ${roundedFitScore}점 — ${statusLabel}.` },
   ];
 
   if (topGap) {
     const resourceNote = topResource ? ` 추천 자료: 《${topResource.title}》` : "";
-    lines.push(`가장 먼저 보완할 역량은 ${topGap.skill}입니다.${resourceNote}`);
+    lines.push({ key: "gap", lead: false, text: `가장 먼저 보완할 역량은 ${topGap.skill}입니다.${resourceNote}` });
   } else {
-    lines.push("공고 요건을 모두 충족하고 있습니다.");
+    lines.push({ key: "gap", lead: false, text: "공고 요건을 모두 충족하고 있습니다." });
   }
 
   if (week1) {
-    lines.push(`1주차 목표: ${week1.goal} — ${week1.practice}`);
+    const practiceNote = week1.practice ? ` — ${week1.practice}` : "";
+    lines.push({ key: "week1", lead: false, text: `1주차 목표: ${week1.goal}${practiceNote}` });
   }
 
   return (
-    <div className="actionable-summary reveal-6">
+    <div className="actionable-summary reveal-7">
       <p className="eyebrow">다음 할 일</p>
-      {lines.map((line, i) => (
-        <p key={i} className={i === 0 ? "summary-lead" : "summary-body"}>
-          {line}
+      {lines.map(({ key, text, lead }) => (
+        <p key={key} className={lead ? "summary-lead" : "summary-body"}>
+          {text}
         </p>
       ))}
     </div>
