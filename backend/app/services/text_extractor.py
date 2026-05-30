@@ -325,8 +325,20 @@ def extract_url(url: str, *, timeout_seconds: int = 10, max_bytes: int = 2_000_0
             )
 
     text = extract_visible_text_from_html(html)
-    if len(text) < 20:
-        raise TextExtractionError("URL에서 충분한 본문을 추출하지 못했습니다. 채용공고 본문을 직접 붙여넣어 주세요.")
+    if len(text) < 200:
+        # 정적 HTML이 너무 짧음 → JS 렌더링 시도 (SPA/CSR 사이트 대응)
+        pw_text = _extract_with_playwright(url)
+        if len(pw_text) >= 200:
+            return TextExtractionResult(
+                text=pw_text,
+                source_type="url",
+                extractor="playwright",
+                warnings=warnings,
+            )
+        if len(text) < 20:
+            raise TextExtractionError(
+                "URL에서 충분한 본문을 추출하지 못했습니다. 채용공고 본문을 직접 붙여넣어 주세요."
+            )
     return TextExtractionResult(
         text=text,
         source_type="url",
