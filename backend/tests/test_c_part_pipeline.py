@@ -197,5 +197,256 @@ class CPartPipelineTest(unittest.TestCase):
             self.assertLessEqual(covs[i], covs[i + 1])
 
 
+class TestJdCandSimRegressionUnit(unittest.TestCase):
+    """
+    회귀 테스트: jd_cand_sim false positive 버그.
+
+    sim = max(jd_cand_sim, skill_sim) 를 sim = skill_sim 으로 교체한 수정을
+    구조적으로 고정합니다. fake_embedding을 써서 결정론적입니다.
+
+    시나리오:
+      JD 문장: "Python AI 프로그래밍 필수" → 벡터 [1, 1] (python=1, ai_general=1)
+      지원자:  "AI 기술 학습 중" →            벡터 [0, 1] (ai_general만 있음)
+      스킬:    "Python"         →            벡터 [1, 0]
+
+      jd_cand_sim = cosine([1,1]/√2, [0,1]) ≈ 0.707   ← 높음 (같은 AI 도메인)
+      skill_sim   = cosine([1,0],    [0,1]) = 0         ← 낮음
+
+      구 코드: sim=0.707 → coverage 100% → Python owned  (버그)
+      수정 후: sim=0     → coverage 0%   → Python missing (정상)
+    """
+
+    def setUp(self) -> None:
+        self.original_embed = pipeline.get_embedding
+        pipeline.get_embedding = self._fake_embed
+
+    def tearDown(self) -> None:
+        pipeline.get_embedding = self.original_embed
+
+    @staticmethod
+    def _fake_embed(text: str) -> np.ndarray:
+        v = np.zeros(2)
+        t = text.lower()
+        if "python" in t:
+            v[0] = 1.0
+        if any(w in t for w in ("ai", "인공지능", "machine", "ml", "llm")):
+            v[1] = 1.0
+        norm = np.linalg.norm(v)
+        return v / norm if norm > 1e-9 else np.array([0.0, 1.0])
+
+    def test_same_domain_candidate_does_not_own_unmentioned_skill(self) -> None:
+        """
+        지원자가 'AI 기술'만 언급했을 때 Python은 missing이어야 한다.
+        jd_cand_sim 이 쓰이면 0.707로 owned가 되는 버그가 재발한다.
+        """
+        result = pipeline.run_c_part_analysis(
+            b_predicted_job="ai",
+            jd_input="Python AI 프로그래밍 경험이 필수입니다.",
+            candidate_input="AI 기술을 학습 중입니다. 관련 분야에 관심이 있습니다.",
+            explicit_required_skills=["Python"],
+        )
+        self.assertEqual(result["status"], "success")
+        owned = {x["skill"] for x in result["owned_skills"]}
+        missing = {x["skill"] for x in result["skill_gaps"]}
+        # 핵심 회귀 어서션
+        self.assertNotIn("Python", owned, "Python이 owned — jd_cand_sim 버그 재발")
+        self.assertIn("Python", missing, "Python이 missing에 없음")
+
+    def test_concordant_candidate_still_owns_skill_after_fix(self) -> None:
+        """
+        지원자가 실제로 Python을 언급하면 수정 후에도 owned이어야 한다.
+        """
+        result = pipeline.run_c_part_analysis(
+            b_predicted_job="ai",
+            jd_input="Python AI 프로그래밍 경험이 필수입니다.",
+            candidate_input="Python으로 AI 모델을 개발했습니다.",
+            explicit_required_skills=["Python"],
+        )
+        self.assertEqual(result["status"], "success")
+        owned = {x["skill"] for x in result["owned_skills"]}
+        self.assertIn("Python", owned, "Python이 owned가 아님 — 수정이 과도하게 제한함")
+
+
+class TestSkillMatchingIntegration(unittest.TestCase):
+    """
+    스킬 매칭 통합 테스트 — 실제 임베딩 모델 사용, 네트워크 없음.
+
+    모든 케이스에서 예측을 먼저 작성하고 어서션으로 검증합니다.
+    """
+
+    # ── 공통 픽스처 ─────────────────────────────────────────────────────
+    AI_JD = (
+        "AI/ML 엔지니어 채용. "
+        "Python 등 AI 프로그래밍 숙련자 필수. "
+        "LangChain, RAG 파이프라인 구축 경험 필수. "
+        "MLOps 환경에서 Docker 기반 모델 배포 경험 우대. "
+        "AI Agent 설계 및 운영 경험 우대."
+    )
+    FRONTEND_JD = (
+        "프론트엔드 개발자 채용. "
+        "React와 TypeScript 경험 필수. "
+        "Next.js SSR/SSG 구현 경험 우대. "
+        "CSS 반응형 UI 설계 경험 필수."
+    )
+
+    AI_RESUME = (
+        "Python으로 LLM 기반 AI 서비스를 개발했습니다. "
+        "LangChain 프레임워크로 RAG 파이프라인을 구축했습니다. "
+        "MLOps 워크플로우를 설계하고 Docker 컨테이너로 모델을 배포했습니다. "
+        "AI Agent 시스템을 설계하고 운영했습니다."
+    )
+    FRONTEND_RESUME = (
+        "React와 TypeScript로 SPA를 개발했습니다. "
+        "Next.js SSR로 성능을 최적화했습니다. "
+        "CSS-in-JS로 반응형 UI를 구현했습니다."
+    )
+    FRONTEND_LETTER = (  # 유저가 보고한 실제 버그 케이스
+        "저는 AI 기술과 프론트엔드 개발을 함께 학습하며, "
+        "사용자가 쉽게 활용할 수 있는 웹 서비스를 만드는 개발자가 되고자 준비해왔습니다. "
+        "HTML, CSS, JavaScript, React를 공부했고, "
+        "API 연동과 반응형 화면 구성, 기본적인 UI/UX 설계에 관심을 가지고 프로젝트를 진행했습니다."
+    )
+    BACKEND_RESUME = (
+        "Java와 Spring Boot로 REST API를 설계하고 구현했습니다. "
+        "MySQL과 Redis를 활용한 백엔드 서비스를 개발했습니다. "
+        "Docker로 컨테이너 환경을 구성했습니다."
+    )
+
+    AI_EXPLICIT = ["Python", "LangChain", "MLOps", "Docker", "AI Agent", "RAG"]
+    FRONTEND_EXPLICIT = ["React", "TypeScript", "Next.js", "CSS"]
+
+    # ── text-path 케이스 (structured_skills=[], explicit=None) ──────────
+
+    def test_discordant_frontend_letter_vs_ai_job_text_path(self) -> None:
+        """
+        예측: 프론트엔드 자소서 + AI 공고 → Python∉owned, Docker∉owned, fit<30
+        이 케이스가 100점을 반환했던 원래 버그.
+        """
+        result = pipeline.run_c_part_analysis(
+            b_predicted_job="ai",
+            jd_input=self.AI_JD,
+            candidate_input=self.FRONTEND_LETTER,
+            explicit_required_skills=None,
+        )
+        self.assertEqual(result["status"], "success")
+        owned = {x["skill"] for x in result["owned_skills"]}
+        fit = result["fit_score"]
+
+        self.assertNotIn("Python", owned,  "Python owned — 버그 재발 가능성")
+        self.assertNotIn("LangChain", owned, "LangChain owned — 버그 재발 가능성")
+        self.assertNotIn("Docker", owned,  "Docker owned — 버그 재발 가능성")
+        self.assertNotIn("MLOps", owned,   "MLOps owned — 버그 재발 가능성")
+        self.assertLess(fit, 30, f"fit={fit} — 불일치 케이스인데 너무 높음")
+
+    def test_concordant_ai_resume_vs_ai_job_text_path(self) -> None:
+        """
+        예측: AI 이력서 + AI 공고 → Python∈owned, LangChain∈owned, fit>70
+        """
+        result = pipeline.run_c_part_analysis(
+            b_predicted_job="ai",
+            jd_input=self.AI_JD,
+            candidate_input=self.AI_RESUME,
+            explicit_required_skills=None,
+        )
+        self.assertEqual(result["status"], "success")
+        owned = {x["skill"] for x in result["owned_skills"]}
+        fit = result["fit_score"]
+
+        self.assertIn("Python", owned,    "Python not owned — 일치 케이스에서 누락")
+        self.assertIn("LangChain", owned, "LangChain not owned — 일치 케이스에서 누락")
+        self.assertGreater(fit, 70, f"fit={fit} — 일치 케이스인데 너무 낮음")
+
+    # ── explicit-path 케이스 (structured_skills 있음) ──────────────────
+
+    def test_discordant_frontend_letter_vs_ai_job_explicit_path(self) -> None:
+        """
+        예측: 프론트엔드 자소서 + AI 공고(explicit) → Python∉owned, fit<30
+        """
+        result = pipeline.run_c_part_analysis(
+            b_predicted_job="ai",
+            jd_input=self.AI_JD,
+            candidate_input=self.FRONTEND_LETTER,
+            explicit_required_skills=self.AI_EXPLICIT,
+        )
+        self.assertEqual(result["status"], "success")
+        owned = {x["skill"] for x in result["owned_skills"]}
+        fit = result["fit_score"]
+
+        self.assertNotIn("Python", owned,   "Python owned — explicit 경로 오탐")
+        self.assertNotIn("LangChain", owned, "LangChain owned — explicit 경로 오탐")
+        self.assertLess(fit, 30, f"fit={fit} — explicit 불일치인데 너무 높음")
+
+    def test_concordant_ai_resume_vs_ai_job_explicit_path(self) -> None:
+        """
+        예측: AI 이력서 + AI 공고(explicit) → Python∈owned, LangChain∈owned, fit>70
+        """
+        result = pipeline.run_c_part_analysis(
+            b_predicted_job="ai",
+            jd_input=self.AI_JD,
+            candidate_input=self.AI_RESUME,
+            explicit_required_skills=self.AI_EXPLICIT,
+        )
+        self.assertEqual(result["status"], "success")
+        owned = {x["skill"] for x in result["owned_skills"]}
+        fit = result["fit_score"]
+
+        self.assertIn("Python", owned,    "Python not owned — explicit 일치 케이스 누락")
+        self.assertIn("LangChain", owned, "LangChain not owned — explicit 일치 케이스 누락")
+        self.assertGreater(fit, 70, f"fit={fit} — explicit 일치인데 너무 낮음")
+
+    def test_discordant_backend_resume_vs_ai_job_explicit_path(self) -> None:
+        """
+        예측: 백엔드 이력서 + AI 공고(explicit) → Docker∈owned, LangChain∉owned
+        Docker는 명시적 언급 → owned. LangChain은 언급 없음 → missing.
+        """
+        result = pipeline.run_c_part_analysis(
+            b_predicted_job="ai",
+            jd_input=self.AI_JD,
+            candidate_input=self.BACKEND_RESUME,
+            explicit_required_skills=self.AI_EXPLICIT,
+        )
+        self.assertEqual(result["status"], "success")
+        owned = {x["skill"] for x in result["owned_skills"]}
+
+        self.assertIn("Docker", owned,       "Docker not owned — 백엔드 이력서에 명시됨")
+        self.assertNotIn("LangChain", owned, "LangChain owned — 백엔드 이력서에 없음")
+
+    def test_concordant_frontend_resume_vs_frontend_job_explicit_path(self) -> None:
+        """
+        예측: 프론트 이력서 + 프론트 공고(explicit) → React∈owned, TypeScript∈owned, fit>70
+        """
+        result = pipeline.run_c_part_analysis(
+            b_predicted_job="frontend",
+            jd_input=self.FRONTEND_JD,
+            candidate_input=self.FRONTEND_RESUME,
+            explicit_required_skills=self.FRONTEND_EXPLICIT,
+        )
+        self.assertEqual(result["status"], "success")
+        owned = {x["skill"] for x in result["owned_skills"]}
+        fit = result["fit_score"]
+
+        self.assertIn("React", owned,      "React not owned — 프론트 일치 케이스")
+        self.assertIn("TypeScript", owned, "TypeScript not owned — 프론트 일치 케이스")
+        self.assertGreater(fit, 70, f"fit={fit} — 프론트 일치인데 너무 낮음")
+
+    def test_discordant_ai_resume_vs_frontend_job_explicit_path(self) -> None:
+        """
+        예측: AI 이력서 + 프론트 공고(explicit) → React∉owned, TypeScript∉owned, fit<20
+        """
+        result = pipeline.run_c_part_analysis(
+            b_predicted_job="frontend",
+            jd_input=self.FRONTEND_JD,
+            candidate_input=self.AI_RESUME,
+            explicit_required_skills=self.FRONTEND_EXPLICIT,
+        )
+        self.assertEqual(result["status"], "success")
+        owned = {x["skill"] for x in result["owned_skills"]}
+        fit = result["fit_score"]
+
+        self.assertNotIn("React",      owned, "React owned — AI 이력서에 없음")
+        self.assertNotIn("TypeScript", owned, "TypeScript owned — AI 이력서에 없음")
+        self.assertLess(fit, 20, f"fit={fit} — 완전 불일치인데 너무 높음")
+
+
 if __name__ == "__main__":
     unittest.main()
