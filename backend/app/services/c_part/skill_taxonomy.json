@@ -27,7 +27,13 @@
       "SageMaker",
       "Spark",
       "Docker",
-      "통계"
+      "통계",
+      "LLMOps",
+      "AI Agent",
+      "ChatGPT",
+      "RAG",
+      "Vector DB",
+      "Prompt Engineering"
     ],
     "backend": [
       "Java",
@@ -47,7 +53,13 @@
       "Kubernetes",
       "Spring Security",
       "Kafka",
-      "JUnit"
+      "JUnit",
+      "Go",
+      "NoSQL",
+      "MSSQL",
+      "Oracle",
+      "gRPC",
+      "RPA"
     ],
     "data_analyst": [
       "Python",
@@ -137,6 +149,30 @@
     "파이토치": "PyTorch",
     "리액트": "React",
     "마이에스큐엘": "MySQL",
-    "포스트그레스": "PostgreSQL"
+    "포스트그레스": "PostgreSQL",
+    "java": "Java",
+    "JAVA": "Java",
+    "restful api": "REST API",
+    "Restful API": "REST API",
+    "rest": "REST API",
+    "mssql": "MSSQL",
+    "ms-sql": "MSSQL",
+    "MS-SQL": "MSSQL",
+    "node.js": "Node.js",
+    "go": "Go",
+    "golang": "Go",
+    "GoLang": "Go",
+    "nosql": "NoSQL",
+    "chatgpt": "ChatGPT",
+    "gpt": "ChatGPT",
+    "llmops": "LLMOps",
+    "llm ops": "LLMOps",
+    "llm-ops": "LLMOps",
+    "ai agent": "AI Agent",
+    "rpa": "RPA",
+    "lang chain": "LangChain",
+    "spring boot": "Spring Boot",
+    "mysql": "MySQL",
+    "oracle": "Oracle"
   }
 }
