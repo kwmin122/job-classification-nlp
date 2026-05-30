@@ -447,6 +447,53 @@ class TestSkillMatchingIntegration(unittest.TestCase):
         self.assertNotIn("TypeScript", owned, "TypeScript owned — AI 이력서에 없음")
         self.assertLess(fit, 20, f"fit={fit} — 완전 불일치인데 너무 높음")
 
+    def test_keyword_absent_skills_never_owned_invariant(self) -> None:
+        """
+        불변식: 후보 텍스트에 키워드가 없는 스킬은 절대 owned에 들어가지 않는다.
+
+        이 케이스가 100점·AI Agent owned를 반환했던 버그 재발 방지 회귀 테스트.
+        "AI 기술 학습하며" 언급 → AI Agent sim=0.59 (owned 기준 0.38 초과) 였지만
+        keyword_hit=False이므로 반드시 missing이어야 한다.
+        """
+        result = pipeline.run_c_part_analysis(
+            b_predicted_job="ai",
+            jd_input=self.AI_JD,
+            candidate_input=self.FRONTEND_LETTER,
+            explicit_required_skills=self.AI_EXPLICIT,
+        )
+        self.assertEqual(result["status"], "success")
+        owned = {x["skill"] for x in result["owned_skills"]}
+        missing = {x["skill"] for x in result["skill_gaps"]}
+
+        # 후보 텍스트에 등장하지 않는 스킬 목록 (직접 확인)
+        absent_from_candidate = {"AI Agent", "Python", "LangChain", "MLOps", "Docker", "RAG"}
+
+        absent_but_owned = owned & absent_from_candidate
+        self.assertFalse(
+            absent_but_owned,
+            f"키워드 없는 스킬이 owned에 포함됨: {absent_but_owned}  — 거짓말 금지 위반"
+        )
+        for skill in absent_from_candidate:
+            self.assertIn(skill, missing, f"{skill}이 missing에 없음")
+
+    def test_keyword_present_skills_can_be_owned(self) -> None:
+        """
+        확인: keyword 있는 스킬은 여전히 owned가 될 수 있다 (수정 후 회귀 없음).
+        """
+        result = pipeline.run_c_part_analysis(
+            b_predicted_job="ai",
+            jd_input=self.AI_JD,
+            candidate_input=self.AI_RESUME,
+            explicit_required_skills=self.AI_EXPLICIT,
+        )
+        self.assertEqual(result["status"], "success")
+        owned = {x["skill"] for x in result["owned_skills"]}
+
+        # AI 이력서에는 이 스킬들이 직접 언급됨 → owned 유지
+        self.assertIn("Python",    owned, "Python not owned — AI 이력서에 명시됨")
+        self.assertIn("LangChain", owned, "LangChain not owned — AI 이력서에 명시됨")
+        self.assertIn("AI Agent",  owned, "AI Agent not owned — AI 이력서에 명시됨")
+
 
 if __name__ == "__main__":
     unittest.main()

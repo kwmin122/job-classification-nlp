@@ -638,8 +638,9 @@ def run_c_part_analysis(
             if jd_req_vec is None:
                 jd_req_vec = get_embedding(source_sent)
 
-            best_sentence = None
-            best_sim_val  = 0.0
+            best_sentence    = None
+            best_sim_val     = 0.0
+            any_keyword_hit  = False  # 후보 텍스트에 스킬 키워드가 실제로 등장했는지
 
             for sentence, cand_vec in zip(candidate_sentences, candidate_vectors):
                 if has_negation(sentence):
@@ -655,6 +656,9 @@ def run_c_part_analysis(
                 keyword_hit = _keyword_hit_any(skill, sentence)
                 has_exp_v   = has_experience_verb(sentence)
 
+                if keyword_hit:
+                    any_keyword_hit = True
+
                 if keyword_hit or sim >= _cand_pool_threshold:
                     # 경험 동사 없는 단순 키워드 등장 → 유사도 감쇄
                     if keyword_hit and not has_exp_v:
@@ -665,6 +669,12 @@ def run_c_part_analysis(
                         best_sentence = sentence
 
             # ── coverage 계산 + 분류 ────────────────────────────────────
+            # 핵심 규칙: 후보 텍스트에 스킬 키워드가 없으면 owned/partial 불가 → missing.
+            # 의미적 유사도만으로는 "보유"를 주장할 수 없다. 거짓말 금지.
+            if not any_keyword_hit:
+                best_sim_val  = 0.0
+                best_sentence = None
+
             best_has_exp = has_experience_verb(best_sentence) if best_sentence else False
             coverage = _compute_coverage(best_sim_val, has_exp_verb=best_has_exp)
             skill_coverage_map[skill] = coverage
