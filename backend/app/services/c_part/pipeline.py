@@ -645,10 +645,12 @@ def run_c_part_analysis(
                 if has_negation(sentence):
                     continue
 
-                # JD 요구 문장 ↔ 지원자 문장 직접 비교 + skill 벡터 보조 비교
-                jd_cand_sim = cosine_sim(jd_req_vec, cand_vec)
+                # skill 벡터 ↔ 지원자 문장 비교
+                # jd_cand_sim (JD 요구 문장 ↔ 지원자 문장)은 같은 도메인 텍스트에서
+                # false positive를 유발함 — "AI 기술 학습 중"이 Python/MLOps/Docker에
+                # 모두 매칭되는 버그 원인. skill_sim만 사용.
                 skill_sim   = cosine_sim(skill_vec,  cand_vec)
-                sim         = max(jd_cand_sim, skill_sim)
+                sim         = skill_sim
 
                 keyword_hit = _keyword_hit_any(skill, sentence)
                 has_exp_v   = has_experience_verb(sentence)
