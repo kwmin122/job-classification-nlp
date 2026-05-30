@@ -646,6 +646,23 @@ function DashboardPage({
           </div>
         </div>
 
+        {/* 공고 명시 기술 전체 — structured_skills */}
+        {result.structured_skills && result.structured_skills.length > 0 && (
+          <div className="structured-skills-section">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">공고 명시 기술</p>
+                <h3>채용공고 요구 스킬 전체</h3>
+              </div>
+            </div>
+            <div className="skill-tags">
+              {result.structured_skills.map((s) => (
+                <span key={s} className="skill-tag">{s}</span>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Gap matrix detail */}
         {gapRows.length > 0 ? (
           <div className="gap-table">
@@ -665,6 +682,15 @@ function DashboardPage({
                       <span className={`target-chip ${skill.target_type}`}>
                         {skill.target_type === "gap" ? "부족" : "보완"}
                       </span>
+                      {skill.coverage !== undefined && (
+                        <span className={`coverage-tag ${
+                          skill.coverage >= 70 ? "cov-owned" :
+                          skill.coverage >= 40 ? "cov-partial" :
+                          "cov-missing"
+                        }`}>
+                          충족도 {skill.coverage.toFixed(0)}%
+                        </span>
+                      )}
                     </strong>
                     <p>{skill.evidence}</p>
                   </div>
@@ -741,6 +767,9 @@ function DashboardPage({
                       {item.resource.level} · 신뢰도 {item.resource.reliability}/5 ·{" "}
                       {item.recommend_score.toFixed(0)}점
                     </small>
+                    {item.resource.reason && (
+                      <small className="resource-reason">💡 {item.resource.reason}</small>
+                    )}
                   </a>
                 ))}
               </article>
