@@ -44,8 +44,9 @@ async function extractText(page) {
         });
         const page = await context.newPage();
 
+        // 'load' 사용: 일부 페이지는 광고 트래커로 인해 networkidle에 도달하지 못함
         await page.goto(url, {
-            waitUntil: 'networkidle',
+            waitUntil: 'load',
             timeout: timeoutMs,
         });
         await page.waitForTimeout(2000);
