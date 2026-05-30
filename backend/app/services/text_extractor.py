@@ -268,10 +268,15 @@ def extract_url(url: str, *, timeout_seconds: int = 10, max_bytes: int = 2_000_0
         job_title = _extract_jobkorea_workfield(payload)
         visible = extract_visible_text_from_html(html)
         if skills:
-            # RSC에 skills가 있어도 visible이 너무 짧으면 iframe 본문이 누락된 것 → Playwright 보완
-            body = visible if len(visible) >= 500 else ""
-            if not body:
-                body = _extract_with_playwright(url)
+            # visible에 JD 본문 마커가 없으면 iframe에만 본문이 있는 것 → Playwright 보완
+            # 숫자 threshold 대신 의미 기반 체크: 마커 없으면 메타데이터뿐
+            _JD_MARKERS = (
+                "담당업무", "자격요건", "우대사항", "주요업무", "필수조건",
+                "이런 업무", "이런 분들", "이런 기술",
+                "[담당", "[자격", "하는 일", "업무내용",
+            )
+            has_jd_body = any(m in visible for m in _JD_MARKERS)
+            body = visible if has_jd_body else _extract_with_playwright(url)
             return TextExtractionResult(
                 text=body or visible or f"[잡코리아 공고] {job_title or ''}",
                 source_type="url",
