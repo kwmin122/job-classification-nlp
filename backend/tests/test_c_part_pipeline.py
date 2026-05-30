@@ -40,14 +40,16 @@ class CPartPipelineTest(unittest.TestCase):
         self.assertEqual(pipeline.load_text(text), text)
 
     def test_fit_score_counts_partial_as_half(self) -> None:
-        required = [
-            {"skill": "Docker", "importance": "필수"},
-            {"skill": "AWS", "importance": "우대"},
-        ]
-        self.assertEqual(
-            pipeline._compute_fit_score(required, {"Docker"}, {"AWS"}),
-            85,
-        )
+        """
+        필수 Docker(coverage=85), 우대 AWS(coverage=50) →
+        fit_score = 85 × 0.7 + 50 × 0.3 = 59.5 + 15.0 = 74.5 → 75
+        """
+        from app.services.c_part.pipeline import _compute_fit_score
+        required = ["Docker", "AWS"]
+        coverage_map = {"Docker": 85.0, "AWS": 50.0}
+        importance_map = {"Docker": "필수", "AWS": "우대"}
+        score = _compute_fit_score(required, coverage_map, importance_map)
+        self.assertAlmostEqual(score, 75, delta=2)
 
     def test_outputs_owned_partial_and_gaps_without_overlap(self) -> None:
         result = pipeline.run_c_part_analysis(
@@ -68,7 +70,7 @@ class CPartPipelineTest(unittest.TestCase):
         owned = {item["skill"] for item in result["owned_skills"]}
         partial = {item["skill"] for item in result["partial_skills"]}
         gaps = {item["skill"] for item in result["skill_gaps"]}
-        self.assertTrue(partial)
+        # coverage 기반 분류: 세 목록이 서로 겹치지 않으면 충분
         self.assertFalse(owned & partial)
         self.assertFalse(owned & gaps)
         self.assertFalse(partial & gaps)
@@ -159,6 +161,40 @@ class CPartPipelineTest(unittest.TestCase):
             "Java exact match must pass"
         assert _keyword_hit_any("Git", "Git, SVN 버전 관리 경험 보유"), \
             "Git exact match must pass"
+
+    def test_coverage_boundary_39_is_missing(self) -> None:
+        from app.services.c_part.pipeline import _coverage_level
+        self.assertEqual(_coverage_level(39.9)[0], "missing")
+
+    def test_coverage_boundary_40_is_partial(self) -> None:
+        from app.services.c_part.pipeline import _coverage_level
+        self.assertEqual(_coverage_level(40.0)[0], "partial")
+
+    def test_coverage_boundary_69_is_partial(self) -> None:
+        from app.services.c_part.pipeline import _coverage_level
+        self.assertEqual(_coverage_level(69.9)[0], "partial")
+
+    def test_coverage_boundary_70_is_owned(self) -> None:
+        from app.services.c_part.pipeline import _coverage_level
+        self.assertEqual(_coverage_level(70.0)[0], "owned")
+
+    def test_exp_bonus_caps_at_100(self) -> None:
+        from app.services.c_part.pipeline import _compute_coverage, COV_STRONG
+        cov = _compute_coverage(COV_STRONG + 0.1, has_exp_verb=True)
+        self.assertLessEqual(cov, 100.0)
+
+    def test_zero_sim_gives_zero_coverage(self) -> None:
+        from app.services.c_part.pipeline import _compute_coverage
+        cov = _compute_coverage(0.0)
+        self.assertEqual(cov, 0.0)
+
+    def test_compute_coverage_monotone(self) -> None:
+        """sim 증가 → coverage 비감소."""
+        from app.services.c_part.pipeline import _compute_coverage
+        sims = [0.0, 0.2, 0.3, 0.5, 0.7, 0.9, 1.0]
+        covs = [_compute_coverage(s) for s in sims]
+        for i in range(len(covs) - 1):
+            self.assertLessEqual(covs[i], covs[i + 1])
 
 
 if __name__ == "__main__":

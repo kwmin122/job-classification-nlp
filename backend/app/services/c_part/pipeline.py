@@ -107,6 +107,14 @@ GAP_LEVEL_MEDIUM  = _RULES["gap_score"]["levels"]["medium"]
 FIT_W_REQUIRED    = _RULES["fit_score"]["required_weight"]
 FIT_W_PREFERRED   = _RULES["fit_score"]["preferred_weight"]
 
+# ── coverage 재설계 상수 (Task 3 실측값) ─────────────────────────────
+COV_BASELINE   = 0.241   # 이 이하 sim → coverage 0
+COV_STRONG     = 0.435   # 이 이상 sim → coverage 100
+COV_EXP_BONUS  = 15.0    # 경험 동사 있을 때 coverage 보너스
+COV_OWNED_THR  = 70      # coverage >= 이 값 → owned
+COV_PARTIAL_LO = 40      # 40 <= coverage < 70 → partial
+                         # coverage < 40 → missing
+
 MODEL_NAME = "jhgan/ko-sroberta-multitask"
 
 # ─────────────────────────────────────────────────────────────────────
@@ -205,6 +213,25 @@ def _gap_level(gap_score: int) -> str:
     elif gap_score >= GAP_LEVEL_MEDIUM:
         return "중간"
     return "낮음"
+
+
+def _compute_coverage(best_sim: float, has_exp_verb: bool = False) -> float:
+    """코사인 유사도 → coverage(0~100) 변환."""
+    raw = (best_sim - COV_BASELINE) / max(COV_STRONG - COV_BASELINE, 1e-6)
+    cov = max(0.0, min(1.0, raw)) * 100.0
+    if has_exp_verb:
+        cov = min(100.0, cov + COV_EXP_BONUS)
+    return round(cov, 1)
+
+
+def _coverage_level(coverage: float) -> tuple[str, str]:
+    """coverage 값 → (분류명, gap_level) 반환."""
+    if coverage >= COV_OWNED_THR:
+        return "owned", "낮음"
+    elif coverage >= COV_PARTIAL_LO:
+        return "partial", "중간"
+    else:
+        return "missing", "높음"
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -421,54 +448,28 @@ def _compute_gap(
 # ─────────────────────────────────────────────────────────────────────
 
 def _compute_fit_score(
-    required_skills: list[dict],
-    matched_set: set[str],
-    partial_set: set[str],
+    required_skills: list[str],
+    skill_coverage_map: dict[str, float],
+    importance_map: dict[str, str],
 ) -> int:
     """
-    fit_score 산출 — 존재하는 중요도 그룹에만 가중치 재분배 + partial 부분 반영.
-
-    스킬별 기여도:
-      matched  → 1.0점 (충분히 충족)
-      partial  → 0.5점 (일부 경험 있음, 보완 필요)
-      gap      → 0.0점 (근거 없음)
-
-    그룹별 계산:
-      - 필수 + 우대 모두 있음 → 필수 기여도 × 70 + 우대 기여도 × 30
-      - 필수만 있음           → 필수 기여도 × 100
-      - 우대만 있음           → 우대 기여도 × 100
-      - 둘 다 없음            → 0
+    fit_score = 필수그룹 평균coverage × 0.7 + 우대그룹 평균coverage × 0.3
+    없는 그룹은 존재하는 그룹으로만 재배분.
     """
-    required  = [s for s in required_skills if s["importance"] == "필수"]
-    preferred = [s for s in required_skills if s["importance"] == "우대"]
+    required_covs  = [skill_coverage_map.get(s, 0.0) for s in required_skills if importance_map.get(s) == "필수"]
+    preferred_covs = [skill_coverage_map.get(s, 0.0) for s in required_skills if importance_map.get(s) != "필수"]
 
-    def group_score(lst: list) -> float:
-        """그룹 내 스킬들의 평균 기여도 (matched=1.0, partial=0.5, gap=0.0)"""
-        if not lst:
-            return 0.0
-        total = 0.0
-        for s in lst:
-            skill = s["skill"]
-            if skill in matched_set:
-                total += 1.0
-            elif skill in partial_set:
-                total += 0.5   # partial: 완전 충족도 완전 부족도 아님
-            # gap: 0.0 (기여 없음)
-        return total / len(lst)
-
-    has_req  = bool(required)
-    has_pref = bool(preferred)
-
-    if has_req and has_pref:
-        score = group_score(required) * FIT_W_REQUIRED + group_score(preferred) * FIT_W_PREFERRED
-    elif has_req:
-        score = group_score(required) * 100
-    elif has_pref:
-        score = group_score(preferred) * 100
+    if required_covs and preferred_covs:
+        score = (float(np.mean(required_covs)) * (FIT_W_REQUIRED / 100.0)
+                 + float(np.mean(preferred_covs)) * (FIT_W_PREFERRED / 100.0))
+    elif required_covs:
+        score = float(np.mean(required_covs))
+    elif preferred_covs:
+        score = float(np.mean(preferred_covs))
     else:
-        score = 0
+        score = 0.0
 
-    return int(round(max(0, min(100, score))))
+    return int(round(max(0.0, min(100.0, score))))
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -566,7 +567,8 @@ def run_c_part_analysis(
         # ── 6. 스킬별 격차 분석 ──────────────────────────────────────
         matched_skills: list[str] = []
         skill_gaps: list[dict]    = []
-
+        skill_coverage_map: dict[str, float] = {}
+        importance_map_local: dict[str, str] = {}
 
         # [v7] JD 요구 문장 벡터 사전 캐시 (source_sentence → vec)
         # source_sentence가 jd_sentences에 있으면 이미 계산된 벡터 재사용
@@ -610,67 +612,80 @@ def run_c_part_analysis(
                         best_sim_val  = sim
                         best_sentence = sentence
 
-            # 충족 / 부족 판정
-            if best_sentence is not None and best_sim_val >= threshold:
+            # ── coverage 계산 + 분류 ────────────────────────────────────
+            best_has_exp = has_experience_verb(best_sentence) if best_sentence else False
+            coverage = _compute_coverage(best_sim_val, has_exp_verb=best_has_exp)
+            skill_coverage_map[skill] = coverage
+            importance_map_local[skill] = importance
+
+            cat, _ = _coverage_level(coverage)
+            gap_score = max(round(100.0 - coverage), 0)  # backward compat
+            gap_level = _gap_level(gap_score)
+
+            if cat == "owned":
                 matched_skills.append(skill)
             else:
-                best_candidate_arg = (best_sentence, best_sim_val) if best_sentence else None
-                gap_score, evidence = _compute_gap(source_sent, best_candidate_arg, importance)
+                # evidence 포맷 (기존 _compute_gap 대체)
+                if best_sentence:
+                    evidence = (
+                        f"공고 요구: {skill} / "
+                        f"내 자료 근거: '{best_sentence[:120]}' "
+                        f"(충족도 {coverage:.0f}%)"
+                    )
+                else:
+                    evidence = f"공고 요구: {skill} / 관련 경험 문장 미확인"
                 skill_gaps.append({
                     "skill":      skill,
                     "gap_score":  gap_score,
-                    "gap_level":  _gap_level(gap_score),
+                    "gap_level":  gap_level,
                     "importance": importance,
                     "evidence":   evidence,
+                    "coverage":   coverage,
                 })
 
-        # ── 6.5 owned / partial / gap 완전 분리 ─────────────────────
-        #
-        # 세 목록은 반드시 서로 겹치지 않아야 한다.
-        #
-        #   owned_skills   : 충분히 충족한 역량 (matched_skills 기준)
-        #   partial_skills : 일부 경험은 있지만 채용공고 기준에는 부족한 역량
-        #                    → skill_gaps 후보 중 _owned_map에 근거 있는 것
-        #                    → partial로 분류된 스킬은 skill_gaps에서 제거
-        #   skill_gaps     : 근거가 없거나 크게 부족한 역량
-        #                    → partial로 빠진 스킬은 포함하지 않음
-        #
-        # [v6 수정] 이전 버전은 partial_skills를 skill_gaps 안에서 뽑으면서
-        # skill_gaps에서 제거하지 않아 같은 스킬이 두 목록에 동시에 나오는 버그.
-        # 수정: partial로 분류된 스킬을 skill_gaps에서 명시적으로 제거.
-
+        # ── 6.5 coverage 기반 owned / partial / missing 분리 ─────────
         owned_skills:   list[dict] = []
         partial_skills: list[dict] = []
-        partial_skill_names: set[str] = set()
 
-        # 1) owned: matched 기준
+        # owned: matched_skills (coverage >= 70)
         for skill in matched_skills:
+            coverage = skill_coverage_map.get(skill, 100.0)
             entry = _owned_map.get(
                 skill, {"skill": skill, "evidence": "", "evidence_strength": "contextual"}
             )
-            owned_skills.append(entry)
+            # skill_coverage_map에서 coverage 추가 (owned이므로 반드시 >=70)
+            owned_skills.append({**entry, "coverage": coverage})
 
-        # 2) partial: skill_gaps 후보 중 _owned_map에 근거 문장이 있는 것
+        # partial/missing: skill_gaps에서 coverage로 분리
+        remaining_gaps = []
         for gap in skill_gaps:
             skill = gap["skill"]
-            if skill in _owned_map:
-                cand = _owned_map[skill]
+            coverage = gap["coverage"]
+            cat, _ = _coverage_level(coverage)
+
+            if cat == "partial":
+                cand = _owned_map.get(skill)
                 partial_skills.append({
                     "skill":             skill,
-                    "evidence":          cand["evidence"],
-                    "evidence_strength": cand["evidence_strength"],
-                    "gap_score":         gap["gap_score"],   # D파트 우선순위 계산용
+                    "evidence":          cand["evidence"] if cand else gap["evidence"],
+                    "evidence_strength": cand["evidence_strength"] if cand else "weak",
+                    "gap_score":         gap["gap_score"],
                     "gap_level":         gap["gap_level"],
                     "importance":        gap["importance"],
-                    "note":              "충족 임계값 미달 — 학습 보완 필요",
+                    "note":              f"충족도 {coverage:.0f}% — 보완 필요",
+                    "coverage":          coverage,
                 })
-                partial_skill_names.add(skill)
+            else:  # missing (coverage < 40)
+                remaining_gaps.append({**gap})
 
-        # 3) skill_gaps: partial로 분류된 스킬 제거 → 완전 분리 보장
-        skill_gaps = [g for g in skill_gaps if g["skill"] not in partial_skill_names]
+        skill_gaps = remaining_gaps
 
         # ── 7. fit_score 산출 ─────────────────────────────────────────
-        fit_score = _compute_fit_score(required_skills, set(matched_skills), set(p['skill'] for p in partial_skills))
+        fit_score = _compute_fit_score(
+            required_skills=[req["skill"] for req in required_skills],
+            skill_coverage_map=skill_coverage_map,
+            importance_map=importance_map_local,
+        )
 
         # ── 8. 출력 JSON 빌드 ─────────────────────────────────────────
         return {
