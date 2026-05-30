@@ -190,6 +190,6 @@ export type AnalyzeResponse = {
   retrieval_mode: string;
   embedding_model: string;
   chunking_strategy: string;
-  jd_quality: "ok" | "weak"; // NEW
-  structured_skills: string[]; // NEW
+  jd_quality?: "ok" | "weak"; // NEW
+  structured_skills?: string[]; // NEW
 };
