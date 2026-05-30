@@ -652,7 +652,7 @@ input, select { min-width: 0; }
 /* ─── Insight Row ──────────────────────────────────────────────── */
 .insight-row {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
@@ -1013,11 +1013,53 @@ details[open] > summary::after { content: " ▾"; }
 /* ─── Misc ─────────────────────────────────────────────────────── */
 .method-stack { display: flex; flex-wrap: wrap; gap: 8px; }
 
+/* ── Reveal animation ─────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.reveal-1 { animation: fadeUp 0.35s ease both 0ms;   }
+.reveal-2 { animation: fadeUp 0.35s ease both 120ms;  }
+.reveal-3 { animation: fadeUp 0.35s ease both 240ms;  }
+.reveal-4 { animation: fadeUp 0.35s ease both 360ms;  }
+.reveal-5 { animation: fadeUp 0.35s ease both 480ms;  }
+.reveal-6 { animation: fadeUp 0.35s ease both 600ms;  }
+
+/* ── Actionable Summary ──────────────────────────────────────── */
+.actionable-summary {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  padding: 24px 28px;
+  margin-top: 16px;
+}
+
+.actionable-summary .eyebrow {
+  margin-bottom: 12px;
+}
+
+.summary-lead {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 8px;
+  line-height: 1.5;
+}
+
+.summary-body {
+  font-size: .9rem;
+  color: var(--ink-soft);
+  margin: 0 0 6px;
+  line-height: 1.6;
+}
+
+.summary-body:last-child { margin-bottom: 0; }
+
 /* ─── Responsive ───────────────────────────────────────────────── */
 @media (max-width: 1280px) {
   :root { --sidebar-w: 200px; }
   .insight-row { grid-template-columns: 1fr 1fr; }
-  .insight-row .widget-card:last-child { grid-column: span 2; }
 }
 
 @media (max-width: 1100px) {

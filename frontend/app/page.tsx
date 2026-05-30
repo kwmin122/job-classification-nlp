@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -30,12 +30,22 @@ import type {
 /* ─── constants ─────────────────────────────────────────────────── */
 const ANALYSIS_STEPS = ["입력 확인", "역량 비교", "자료 매칭", "로드맵 출력"];
 
-const JOB_LABEL_MAP: Record<string, string> = {
-  ai: "AI/ML 엔지니어",
-  backend: "백엔드 개발자",
-  data_analyst: "데이터 분석가",
-  frontend: "프론트엔드 개발자",
-};
+/* ─── hooks ─────────────────────────────────────────────────────── */
+function useCountUp(target: number, duration = 1000): number {
+  const [current, setCurrent] = useState(0);
+  useEffect(() => {
+    if (target === 0) { setCurrent(0); return; }
+    let frame = 0;
+    const totalFrames = Math.round(duration / 16);
+    const timer = setInterval(() => {
+      frame++;
+      setCurrent(Math.round((frame / totalFrames) * target));
+      if (frame >= totalFrames) clearInterval(timer);
+    }, 16);
+    return () => clearInterval(timer);
+  }, [target, duration]);
+  return current;
+}
 
 const createCandidate = (id: string): CandidateMaterialDraft => ({
   id,
@@ -453,12 +463,7 @@ function DashboardPage({
     ...result.partial_skills.map((s) => ({ ...s, target_type: "partial" as const })),
   ];
 
-  const jobProbData = Object.entries(result.job_probabilities ?? {})
-    .map(([key, val]) => ({
-      name: JOB_LABEL_MAP[key] ?? key,
-      value: Math.round(val * 100),
-    }))
-    .sort((a, b) => b.value - a.value);
+  const animatedScore = useCountUp(result.fit_score);
 
   const gapChartData = gapRows
     .slice(0, 8)
@@ -472,7 +477,7 @@ function DashboardPage({
           <p className="eyebrow">분석 결과</p>
           <h1>
             {result.predicted_job} 직무 · 적합도{" "}
-            {result.fit_score.toFixed(0)}점
+            {animatedScore.toFixed(0)}점
           </h1>
           <p>
             부족 역량 {result.missing_skills.length}개 · 보완 필요{" "}
@@ -485,7 +490,6 @@ function DashboardPage({
           </p>
         </div>
         <div className="dash-topbar-right">
-          <span className="quiet-pill">{result.retrieval_mode}</span>
           <button className="back-btn" type="button" onClick={onReset}>
             <IconBack /> 다시 분석
           </button>
@@ -502,14 +506,14 @@ function DashboardPage({
       {/* Dashboard content */}
       <div className={result.jd_quality === "weak" ? "dash-content opacity-40 pointer-events-none select-none" : "dash-content"}>
         {/* KPI Row */}
-        <section className="score-board" aria-label="요약 점수">
+        <section className="score-board reveal-1" aria-label="요약 점수">
           <div className={`metric-card ${scoreTone(result.fit_score)}`}>
             <span>예측 직무</span>
             <strong>{result.predicted_job}</strong>
           </div>
           <div className={`metric-card ${scoreTone(result.fit_score)}`}>
             <span>적합도</span>
-            <strong>{result.fit_score.toFixed(0)}점</strong>
+            <strong>{animatedScore.toFixed(0)}점</strong>
           </div>
           <div className="metric-card tone-risk">
             <span>부족 역량</span>
@@ -521,8 +525,8 @@ function DashboardPage({
           </div>
         </section>
 
-        {/* Insight row: gauge + job prob + gap chart */}
-        <div className="insight-row">
+        {/* Insight row: gauge + gap chart */}
+        <div className="insight-row reveal-2">
           {/* Fit Gauge */}
           <div className="widget-card">
             <div>
@@ -553,44 +557,6 @@ function DashboardPage({
                 </p>
               </div>
             ) : null}
-          </div>
-
-          {/* Job Probability */}
-          <div className="widget-card">
-            <div>
-              <p className="eyebrow">Job Classification</p>
-              <h3>직무 분류 확률</h3>
-            </div>
-            {jobProbData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={140}>
-                <BarChart
-                  data={jobProbData}
-                  layout="vertical"
-                  margin={{ left: 0, right: 36, top: 4, bottom: 4 }}
-                >
-                  <XAxis type="number" domain={[0, 100]} hide />
-                  <YAxis
-                    type="category"
-                    dataKey="name"
-                    width={96}
-                    tick={{ fontSize: 12, fill: "#485e44" }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <Tooltip formatter={(v) => [`${v}%`, "확률"]} cursor={{ fill: "rgba(200,229,90,.15)" }} />
-                  <Bar dataKey="value" radius={[0, 6, 6, 0]} background={{ fill: "#eef4eb", radius: 6 }}>
-                    {jobProbData.map((entry, i) => (
-                      <Cell key={entry.name} fill={i === 0 ? "#c8e55a" : "#d8edaa"} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <p style={{ color: "var(--muted)", fontSize: ".84rem" }}>직무 확률 데이터 없음</p>
-            )}
-            <p style={{ margin: 0, fontSize: ".78rem", color: "var(--muted)" }}>
-              앙상블 분류기 (TF-IDF+SVM · LSTM · Text-CNN · FastText) 가중 합산
-            </p>
           </div>
 
           {/* Gap Chart */}
@@ -633,7 +599,7 @@ function DashboardPage({
         </div>
 
         {/* Skills overview */}
-        <div className="evidence-section" id="gap-section">
+        <div className="evidence-section reveal-3" id="gap-section">
           <div className="evidence-section-title">
             <h3>역량 분류 현황</h3>
             <span className="quiet-pill">공고 기준</span>
@@ -665,7 +631,7 @@ function DashboardPage({
 
         {/* Gap matrix detail */}
         {gapRows.length > 0 ? (
-          <div className="gap-table">
+          <div className="gap-table reveal-4">
             <div className="panel-heading">
               <div>
                 <p className="eyebrow">Gap Matrix</p>
@@ -705,7 +671,7 @@ function DashboardPage({
         ) : null}
 
         {/* Weekly Roadmap */}
-        <div className="roadmap-board" id="roadmap-section">
+        <div className="roadmap-board reveal-5" id="roadmap-section">
           <div className="panel-heading">
             <div>
               <p className="eyebrow">Weekly Roadmap</p>
@@ -737,7 +703,7 @@ function DashboardPage({
         </div>
 
         {/* Resource Recommendations */}
-        <div className="resource-board" id="resources-section">
+        <div className="resource-board reveal-6" id="resources-section">
           <div className="panel-heading">
             <div>
               <p className="eyebrow">Curated RAG Resources</p>
@@ -777,21 +743,49 @@ function DashboardPage({
           </div>
         </div>
 
-        {/* Report + Method */}
-        <div className="report-row">
-          <div className="report-card">
-            <p className="eyebrow">Analysis Report</p>
-            <p>{result.report}</p>
-          </div>
-          <details className="method-card">
-            <summary>분석 방식 상세</summary>
-            <code>{result.scoring_formula}</code>
-            <span>청킹: {result.chunking_strategy}</span>
-            <span>검색: {result.retrieval_mode}</span>
-            <span>임베딩: {result.embedding_model}</span>
-          </details>
-        </div>
+        {/* Actionable Summary */}
+        <ActionableSummary result={result} />
       </div>
+    </div>
+  );
+}
+
+/* ─── Actionable Summary ────────────────────────────────────────── */
+function ActionableSummary({ result }: { result: AnalyzeResponse }) {
+  const { fit_score, predicted_job, missing_skills, partial_skills, weekly_roadmap, recommended_resources } = result;
+
+  const statusLabel =
+    fit_score >= 75 ? "지원 가능한 수준입니다" :
+    fit_score >= 45 ? "보완 후 지원을 권장합니다" :
+    "추가 준비가 필요합니다";
+
+  const topGap = missing_skills[0] ?? partial_skills[0];
+  const topResource = recommended_resources[0]?.recommendations[0]?.resource;
+  const week1 = weekly_roadmap[0];
+
+  const lines: string[] = [
+    `${predicted_job} 포지션 기준 적합도 ${fit_score.toFixed(0)}점 — ${statusLabel}.`,
+  ];
+
+  if (topGap) {
+    const resourceNote = topResource ? ` 추천 자료: 《${topResource.title}》` : "";
+    lines.push(`가장 먼저 보완할 역량은 ${topGap.skill}입니다.${resourceNote}`);
+  } else {
+    lines.push("공고 요건을 모두 충족하고 있습니다.");
+  }
+
+  if (week1) {
+    lines.push(`1주차 목표: ${week1.goal} — ${week1.practice}`);
+  }
+
+  return (
+    <div className="actionable-summary reveal-6">
+      <p className="eyebrow">다음 할 일</p>
+      {lines.map((line, i) => (
+        <p key={i} className={i === 0 ? "summary-lead" : "summary-body"}>
+          {line}
+        </p>
+      ))}
     </div>
   );
 }
