@@ -79,3 +79,42 @@ FE017,프론트엔드 개발자,접근성,웹 접근성,MDN 접근성 한국어,
 FE018,프론트엔드 개발자,API 연동,OpenAPI/Swagger,인프런 OpenAPI 강의 모음,백엔드 API 스펙을 읽고 연동하는 기본 구조를 한국어 강의로 찾아 학습한다,https://www.inflearn.com/ko/search?s=OpenAPI,강의,beginner,한국어,무료,3시간,3,Swagger OpenAPI 요구 대응
 FE019,프론트엔드 개발자,CSS,실무 채널,드림코딩 YouTube,HTML CSS JavaScript React 실무 감각을 한국어 영상으로 보완한다,https://www.youtube.com/@dream-coding,유튜브,beginner,한국어,무료,6시간,3,프론트엔드 입문자에게 인기 있는 한국어 채널
 FE020,프론트엔드 개발자,Frontend,실무 채널,노마드 코더 YouTube,React Next TypeScript 웹 개발 흐름을 한국어 영상으로 복습한다,https://www.youtube.com/@nomadcoders,유튜브,beginner,한국어,무료,6시간,3,프론트엔드 입문자에게 인기 있는 한국어 채널
+BE021,백엔드 개발자,Kubernetes,컨테이너 오케스트레이션,Kubernetes 공식 한국어 문서,Kubernetes 기본 개념과 배포 오브젝트를 공식 한국어 문서로 학습한다,https://kubernetes.io/ko/docs/home/,공식문서,intermediate,한국어,무료,8시간,5,백엔드 공고에서 컨테이너 운영과 배포 역량 보완
+BE022,백엔드 개발자,Kubernetes,실습 강의,인프런 Kubernetes 강의 모음,Kubernetes 입문과 실습 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Kubernetes,강의,intermediate,한국어,무료,8시간,3,Docker 이후 운영 역량 확장을 위한 자료
+BE023,백엔드 개발자,Kafka,메시징 시스템,Apache Kafka 공식 문서,Kafka 개념 토픽 프로듀서 컨슈머를 공식 문서로 학습한다,https://kafka.apache.org/documentation/,공식문서,intermediate,영어,무료,8시간,5,이벤트 기반 백엔드와 대용량 처리 역량 보완
+BE024,백엔드 개발자,Kafka,한국어 강의,인프런 Kafka 강의 모음,Kafka와 메시지 큐 실습 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=Kafka,강의,intermediate,한국어,무료,8시간,3,백엔드 비동기 처리와 이벤트 스트리밍 역량 보완
+BE025,백엔드 개발자,JUnit,테스트 자동화,JUnit 5 공식 문서,JUnit 5 기반 단위 테스트 작성법을 공식 문서로 학습한다,https://junit.org/junit5/docs/current/user-guide/,공식문서,beginner,영어,무료,5시간,5,백엔드 테스트 코드 작성 역량 보완
+BE026,백엔드 개발자,JUnit,테스트 강의,인프런 JUnit 강의 모음,JUnit과 Spring 테스트 강의를 한국어로 찾아 학습한다,https://www.inflearn.com/ko/search?s=JUnit,강의,beginner,한국어,무료,5시간,3,실무 백엔드 테스트 작성 경험 보완
+
+ML021,AI/ML 엔지니어,LLMOps,기초 개념,DeepLearning.AI LLMOps 강의,LLM 서비스의 배포·모니터링·평가 파이프라인을 실습 중심으로 학습한다,https://learn.deeplearning.ai/courses/llmops,강의,intermediate,영어,무료,4시간,5,잡코리아 AI 공고에서 LLMOps 요구가 반복됨 — DeepLearning.AI 공식 단기 강의
+ML022,AI/ML 엔지니어,LLMOps,파이프라인 도구,MLflow 공식 문서,LLM 실험 추적·모델 관리·서빙을 MLflow로 구현하는 공식 문서,https://mlflow.org/docs/latest/index.html,공식문서,intermediate,영어,무료,6시간,5,LLMOps 파이프라인 구축 표준 도구 — 공식 문서로 바로 학습
+ML023,AI/ML 엔지니어,LLMOps,배포 실습,BentoML 공식 문서,LLM/ML 모델을 REST API로 패키징·배포하는 BentoML 공식 가이드,https://docs.bentoml.com/en/latest/,공식문서,intermediate,영어,무료,5시간,4,LLMOps 배포 파이프라인 실습용 — 빠른 프로토타이핑에 적합
+ML024,AI/ML 엔지니어,LLMOps,모니터링,LangSmith 공식 문서,LLM 애플리케이션 추적·평가·모니터링을 위한 LangSmith 공식 가이드,https://docs.smith.langchain.com/,공식문서,intermediate,영어,무료,3시간,5,LangChain 생태계 LLMOps 모니터링 도구 — 실무 필수
+ML025,AI/ML 엔지니어,AI Agent,개념 및 설계,LangChain Agent 공식 문서,LangChain으로 AI Agent를 설계하고 도구를 연결하는 공식 가이드,https://python.langchain.com/docs/how_to/#agents,공식문서,intermediate,영어,무료,4시간,5,잡코리아 AI 공고에서 AI Agent 요구 급증 — LangChain 표준 구현 문서
+ML026,AI/ML 엔지니어,AI Agent,실습 강의,DeepLearning.AI AI Agents in LangGraph,LangGraph 기반 상태머신 에이전트를 단계별로 구현하는 무료 강의,https://www.deeplearning.ai/short-courses/ai-agents-in-langgraph/,강의,intermediate,영어,무료,4시간,5,AI Agent 실무 구현의 가장 최신 접근법 — DeepLearning.AI 공식
+ML027,AI/ML 엔지니어,AI Agent,API 레퍼런스,OpenAI Assistants API 공식 문서,OpenAI Assistants API로 도구·메모리·파일 검색을 통합한 Agent 구축 가이드,https://platform.openai.com/docs/assistants/overview,공식문서,intermediate,영어,무료,3시간,5,OpenAI 생태계 Agent 개발 레퍼런스 — 실무 직결
+ML028,AI/ML 엔지니어,AI Agent,고급 구현,Anthropic Tool Use 공식 문서,Claude를 이용한 도구 호출 에이전트 구현 공식 가이드,https://docs.anthropic.com/en/docs/build-with-claude/tool-use,공식문서,advanced,영어,무료,3시간,5,AI Agent 도구 연결의 핵심 패턴 — Anthropic 공식 문서
+ML029,AI/ML 엔지니어,ChatGPT,프롬프트 엔지니어링,OpenAI 프롬프트 엔지니어링 가이드,GPT 모델 성능을 높이는 공식 프롬프트 엔지니어링 모범 사례,https://platform.openai.com/docs/guides/prompt-engineering,공식문서,beginner,영어,무료,2시간,5,잡코리아 AI 공고에서 ChatGPT/프롬프트 엔지니어링 요구 반복 — OpenAI 공식
+ML030,AI/ML 엔지니어,ChatGPT,실습 강의,DeepLearning.AI ChatGPT Prompt Engineering,OpenAI와 DeepLearning.AI가 공동 제작한 프롬프트 엔지니어링 무료 강의,https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/,강의,beginner,영어,무료,2시간,5,ChatGPT 실무 활용의 공식 입문 강의 — 무료·검증됨
+ML031,AI/ML 엔지니어,ChatGPT,실습 예제,OpenAI Cookbook,GPT API 활용 예제·레시피를 모은 OpenAI 공식 오픈소스 쿡북,https://cookbook.openai.com/,공식문서,intermediate,영어,무료,자기 페이스,5,ChatGPT API 실무 패턴 레퍼런스 — 검색·RAG·에이전트 예제 포함
+ML032,AI/ML 엔지니어,RPA,플랫폼 입문,UiPath Academy 무료 과정,업계 표준 RPA 플랫폼 UiPath의 공식 무료 교육 아카데미,https://academy.uipath.com/,강의,beginner,한국어,무료,10시간,5,잡코리아 AI 자동화 공고에서 RPA(UiPath) 요구 반복 — 공식 무료 자격증 과정
+ML033,AI/ML 엔지니어,RPA,공식 문서,UiPath 공식 문서,UiPath Studio·Orchestrator·봇 배포 등 전체 RPA 워크플로우 공식 레퍼런스,https://docs.uipath.com/,공식문서,intermediate,한국어,무료,자기 페이스,5,RPA 실무 구현의 공식 레퍼런스 — 한국어 지원
+ML034,AI/ML 엔지니어,RPA,마이크로소프트 RPA,Power Automate 공식 문서,Microsoft 생태계 RPA·자동화 플로우 구축 공식 가이드,https://learn.microsoft.com/ko-kr/power-automate/,공식문서,beginner,한국어,무료,5시간,5,Microsoft 365 환경 RPA 자동화 표준 — 한국어 공식 문서
+BE027,백엔드 개발자,Go,언어 입문,Go 공식 투어,Go 언어 핵심 개념을 인터랙티브하게 학습하는 공식 Tour of Go,https://go.dev/tour/,공식문서,beginner,영어,무료,4시간,5,잡코리아 백엔드 공고에서 Go 요구 증가 — 공식 입문 가이드
+BE028,백엔드 개발자,Go,공식 레퍼런스,Go 공식 문서,Go 언어 표준 라이브러리·도구 체인 전체 공식 레퍼런스,https://go.dev/doc/,공식문서,intermediate,영어,무료,자기 페이스,5,Go 실무 개발의 표준 레퍼런스 — 공식 문서
+BE029,백엔드 개발자,Go,실습 예제,Go by Example,Go 언어 핵심 패턴을 예제 코드로 학습하는 커뮤니티 레퍼런스,https://gobyexample.com/,공식문서,beginner,영어,무료,자기 페이스,4,Go 문법·패턴을 빠르게 익히기 위한 예제 모음
+BE030,백엔드 개발자,Go,고급 패턴,Effective Go,Go 코드를 Go답게 작성하는 공식 가이드라인 문서,https://go.dev/doc/effective_go,공식문서,advanced,영어,무료,3시간,5,Go 숙련자 필독 — 이디엄 패턴과 성능 최적화
+BE031,백엔드 개발자,NoSQL,MongoDB 공식,MongoDB 공식 문서,MongoDB의 데이터 모델·쿼리·인덱스·집계 파이프라인 공식 레퍼런스,https://www.mongodb.com/docs/manual/,공식문서,intermediate,영어,무료,자기 페이스,5,잡코리아 백엔드 공고에서 NoSQL(MongoDB) 요구 반복 — 공식 레퍼런스
+BE032,백엔드 개발자,NoSQL,MongoDB 교육,MongoDB University 무료 강의,MongoDB 공식 교육 플랫폼에서 제공하는 무료 인증 강의,https://learn.mongodb.com/,강의,beginner,영어,무료,8시간,5,MongoDB 실무 입문 — 공식 무료 인증 과정
+BE033,백엔드 개발자,NoSQL,Redis,Redis 공식 문서,Redis 데이터 구조·캐싱·pub-sub·스트림 전체 공식 레퍼런스,https://redis.io/docs/,공식문서,intermediate,영어,무료,자기 페이스,5,NoSQL 캐시 레이어 표준 — Redis 공식 문서
+BE034,백엔드 개발자,NoSQL,Firebase,Firebase Firestore 공식 문서,Google Firebase Firestore NoSQL 클라우드 DB 공식 구현 가이드,https://firebase.google.com/docs/firestore,공식문서,beginner,영어,무료,자기 페이스,5,서버리스 NoSQL 패턴 학습 — Firebase 공식
+
+BE035,백엔드 개발자,NoSQL,Elasticsearch,Elasticsearch 공식 문서,분산 검색·분석 엔진 Elasticsearch의 인덱싱·쿼리·집계 공식 레퍼런스,https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html,공식문서,intermediate,영어,무료,자기 페이스,5,잡코리아 백엔드 공고에서 검색 엔진 NoSQL 요구 반복 — Elastic 공식 문서
+BE036,백엔드 개발자,NoSQL,DynamoDB,AWS DynamoDB 공식 문서,AWS 서버리스 NoSQL DB DynamoDB의 데이터 모델·쿼리·용량 관리 공식 가이드,https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html,공식문서,intermediate,영어,무료,자기 페이스,5,AWS 기반 백엔드 공고에서 DynamoDB 요구 반복 — AWS 공식 레퍼런스
+
+ML035,AI/ML 엔지니어,RAG,개념 및 구현,LangChain RAG 공식 문서,LangChain으로 Retrieval-Augmented Generation 파이프라인을 구축하는 공식 가이드,https://python.langchain.com/docs/tutorials/rag/,공식문서,intermediate,영어,무료,4시간,5,잡코리아 AI 공고에서 RAG 요구 급증 — LangChain 공식 RAG 튜토리얼
+ML036,AI/ML 엔지니어,Vector DB,개념 및 실습,Chroma 공식 문서,오픈소스 벡터 DB Chroma로 임베딩 저장·검색·RAG를 구현하는 공식 가이드,https://docs.trychroma.com/,공식문서,intermediate,영어,무료,3시간,5,RAG·AI Agent 핵심 인프라 — 오픈소스 벡터 DB 공식 문서
+ML037,AI/ML 엔지니어,Prompt Engineering,체계적 방법론,Prompt Engineering Guide,LLM 프롬프트 설계의 체계적 기법과 사례를 정리한 오픈소스 커뮤니티 가이드,https://www.promptingguide.ai/,공식문서,intermediate,영어,무료,3시간,5,잡코리아 AI 공고 Prompt Engineering 요구 — 커뮤니티 검증 종합 가이드
+BE037,백엔드 개발자,MSSQL,공식 문서,Microsoft SQL Server 공식 문서,MS SQL Server의 쿼리·인덱스·트랜잭션·성능 최적화 공식 레퍼런스,https://learn.microsoft.com/ko-kr/sql/sql-server/,공식문서,intermediate,한국어,무료,자기 페이스,5,잡코리아 백엔드 공고에서 MSSQL 요구 반복 — Microsoft 공식 한국어 문서
+BE038,백엔드 개발자,Oracle,공식 문서,Oracle Database 공식 문서,Oracle DB의 SQL·PL/SQL·성능 튜닝·DBA 관리 공식 레퍼런스,https://docs.oracle.com/en/database/oracle/oracle-database/,공식문서,intermediate,영어,무료,자기 페이스,5,잡코리아 백엔드 공고에서 Oracle DB 요구 반복 — Oracle 공식 문서
+BE039,백엔드 개발자,gRPC,공식 문서,gRPC 공식 문서,gRPC 프로토콜·Protobuf 정의·서비스 구현 공식 가이드,https://grpc.io/docs/,공식문서,intermediate,영어,무료,3시간,5,잡코리아 백엔드 공고에서 gRPC 마이크로서비스 요구 반복 — 공식 문서
