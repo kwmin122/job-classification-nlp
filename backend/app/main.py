@@ -421,6 +421,7 @@ def analyze(request: AnalyzeRequest, top_k: int = 3) -> AnalyzeResponse:
         partial_skills=c_output.partial_skills,
         weekly_roadmap=weekly_roadmap,
         preferences=request.roadmap_preferences,
+        owned_skills_count=len(owned_skills),
     )
 
     return AnalyzeResponse(
