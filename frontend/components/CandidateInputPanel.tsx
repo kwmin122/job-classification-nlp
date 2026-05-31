@@ -39,13 +39,10 @@ export function CandidateInputPanel({
   return (
     <section className="input-card" aria-label="내 지원 자료">
       <div className="section-heading">
-        <div>
-          <p className="eyebrow">Candidate Evidence</p>
-          <h2>내 지원 자료</h2>
-        </div>
+        <h2>내 지원 자료</h2>
         <span className="field-count">{totalLength.toLocaleString()}자</span>
       </div>
-      <p className="field-help">자소서, 이력서 요약, 포트폴리오, README에서 기술 사용 근거를 붙여넣으세요.</p>
+      <p className="field-help">자소서, 이력서, 포트폴리오, README에서 기술 사용 근거를 붙여넣으세요.</p>
       <div className="material-list">
         {materials.map((material, index) => (
           <article key={material.id} className="material-block">

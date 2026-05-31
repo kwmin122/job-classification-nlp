@@ -27,9 +27,6 @@ import type {
   SkillRecommendation,
 } from "@/lib/types";
 
-/* ─── constants ─────────────────────────────────────────────────── */
-const ANALYSIS_STEPS = ["입력 확인", "역량 비교", "자료 매칭", "로드맵 출력"];
-
 /* ─── AnimatedNumber ────────────────────────────────────────────── */
 function AnimatedNumber({ value }: { value: number }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -378,16 +375,8 @@ function SetupPage({
       {/* Header */}
       <header className="setup-header">
         <div>
-          <p className="eyebrow">Career Readiness Dashboard</p>
           <h1>채용공고 기준 역량 점검</h1>
           <p>지원하려는 채용공고와 내 자료를 비교해 부족 역량과 주차별 학습 로드맵을 확인합니다.</p>
-        </div>
-        <div className="step-pills" aria-label="분석 단계">
-          {ANALYSIS_STEPS.map((step, i) => (
-            <span key={step} className={isLoading ? "active" : ""}>
-              {i + 1}. {step}
-            </span>
-          ))}
         </div>
       </header>
 
@@ -407,22 +396,23 @@ function SetupPage({
           warnings={jobWarnings}
           error={jobExtractionError}
         />
-        <div className="input-right-col">
-          <CandidateInputPanel
-            materials={candidateMaterials}
-            onMaterialChange={onMaterialChange}
-            onAddMaterial={onAddMaterial}
-            onRemoveMaterial={onRemoveMaterial}
-            onFileChange={onExtractCandidateFile}
-          />
-          <div className="settings-row">
-            <AnalysisSettingsPanel
-              openaiApiKey={openaiApiKey}
-              onOpenaiApiKeyChange={setOpenaiApiKey}
-            />
-            <RoadmapPreferencePanel value={preferences} onChange={setPreferences} />
-          </div>
-        </div>
+        <CandidateInputPanel
+          materials={candidateMaterials}
+          onMaterialChange={onMaterialChange}
+          onAddMaterial={onAddMaterial}
+          onRemoveMaterial={onRemoveMaterial}
+          onFileChange={onExtractCandidateFile}
+        />
+      </div>
+
+      {/* Settings strip */}
+      <div className="settings-strip">
+        <RoadmapPreferencePanel value={preferences} onChange={setPreferences} />
+        <div className="strip-divider" />
+        <AnalysisSettingsPanel
+          openaiApiKey={openaiApiKey}
+          onOpenaiApiKeyChange={setOpenaiApiKey}
+        />
       </div>
 
       {/* CTA */}

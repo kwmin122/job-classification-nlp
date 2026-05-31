@@ -230,24 +230,24 @@ input, select { min-width: 0; }
 
 .setup-header {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
+  align-items: flex-start;
   gap: 24px;
-  padding-bottom: 8px;
+  padding-bottom: 4px;
 }
 
 .setup-header h1 {
-  margin: 6px 0 0;
-  font-size: 2rem;
-  font-weight: 740;
-  line-height: 1.2;
-  letter-spacing: -.01em;
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -.025em;
   color: var(--ink);
 }
-.setup-header > div > p:not(.eyebrow) {
-  margin: 8px 0 0;
+.setup-header > div > p {
+  margin: 7px 0 0;
   color: var(--muted);
-  max-width: 52ch;
+  font-size: .9rem;
+  max-width: 56ch;
 }
 
 .step-pills {
@@ -295,11 +295,7 @@ input, select { min-width: 0; }
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 20px 24px;
-  background: var(--surface);
-  border: 1.5px solid var(--line);
-  border-radius: var(--r-card);
-  box-shadow: var(--shadow-sm);
+  padding: 8px 0 0;
 }
 
 .cta-inner {
@@ -321,12 +317,12 @@ input, select { min-width: 0; }
 .input-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 18px;
+  gap: 16px;
+  padding: 28px 28px 24px;
   background: var(--surface);
-  border: 1.5px solid var(--line);
-  border-radius: var(--r-card);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(26,34,24,0.07);
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(26,34,24,0.06);
 }
 
 .section-heading,
@@ -342,7 +338,7 @@ input, select { min-width: 0; }
   margin: 0;
   letter-spacing: 0;
 }
-.input-card h2 { font-size: .98rem; font-weight: 700; color: var(--ink); }
+.input-card h2 { font-size: 1.08rem; font-weight: 760; color: var(--ink); }
 
 .eyebrow {
   margin: 0 0 4px;
@@ -354,17 +350,16 @@ input, select { min-width: 0; }
 }
 
 .field-count {
-  padding: 3px 8px;
-  border: 1.5px solid var(--line-strong);
+  padding: 2px 8px;
   border-radius: var(--r-pill);
   color: var(--muted);
+  background: var(--surface-2);
   font-size: .72rem;
-  font-weight: 720;
+  font-weight: 640;
   white-space: nowrap;
   flex-shrink: 0;
 }
 .field-count.status-on {
-  border-color: var(--green);
   color: var(--green);
   background: var(--green-soft);
 }
@@ -377,9 +372,36 @@ input, select { min-width: 0; }
 
 .input-card textarea { min-height: 140px; }
 
-/* Source tabs */
-.source-tabs { display: flex; flex-wrap: wrap; gap: 7px; }
-.source-tabs button,
+/* Source tabs — pill switcher */
+.source-tabs {
+  display: inline-flex;
+  background: var(--surface-2);
+  padding: 3px;
+  border-radius: 10px;
+  gap: 1px;
+}
+.source-tabs button {
+  min-height: 30px;
+  padding: 3px 16px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: .83rem;
+  font-weight: 620;
+  box-shadow: none;
+  transition: background 100ms ease, color 100ms ease;
+}
+.source-tabs button:hover:not(:disabled) { background: rgba(255,255,255,0.6); transform: none; }
+.source-tabs button.selected {
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 720;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.10), 0 0 0 0.5px rgba(0,0,0,0.05);
+}
+.source-tabs.compact button { padding: 2px 11px; font-size: .78rem; }
+
+/* Secondary/ghost — decoupled */
 .secondary-action,
 .ghost-action {
   min-height: 34px;
@@ -390,14 +412,7 @@ input, select { min-width: 0; }
   font-size: .82rem;
   font-weight: 640;
 }
-.source-tabs button.selected {
-  border-color: var(--lime-dark);
-  color: var(--ink);
-  background: var(--lime-light);
-  font-weight: 720;
-}
-.source-tabs.compact { gap: 5px; }
-.source-tabs.compact button { min-height: 30px; padding: 3px 9px; font-size: .76rem; }
+.ghost-action { min-height: 30px; padding: 3px 9px; }
 
 /* URL input row */
 .source-action {
@@ -409,8 +424,8 @@ input, select { min-width: 0; }
   width: 100%;
   height: 40px;
   padding: 0 12px;
-  border: 1.5px solid var(--line);
-  border-radius: var(--r-sm);
+  border: 1px solid var(--line);
+  border-radius: 10px;
   color: var(--ink);
   background: var(--surface);
   transition: border-color 150ms;
@@ -423,27 +438,31 @@ input, select { min-width: 0; }
 }
 .source-action button {
   min-height: 40px;
-  padding: 0 14px;
+  padding: 0 16px;
   color: var(--ink);
   background: var(--lime);
   font-weight: 720;
+  border-radius: 10px;
   box-shadow: 0 2px 6px rgba(143,184,50,.28);
 }
 
 /* File drop */
 .file-drop {
-  display: grid;
-  gap: 8px;
-  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
   border: 1.5px dashed var(--line-strong);
-  border-radius: var(--r-sm);
+  border-radius: 12px;
   color: var(--ink-soft);
   background: var(--surface-2);
   font-size: .84rem;
   font-weight: 640;
   cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
 }
-.file-drop input { height: auto; padding: 0; }
+.file-drop:hover { border-color: var(--lime-dark); background: var(--lime-light); }
+.file-drop input { height: auto; padding: 0; flex: 1; }
 
 /* Extraction status */
 .extraction-status { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -482,41 +501,52 @@ input, select { min-width: 0; }
 .secret-field > span { color: var(--ink-soft); font-size: .79rem; font-weight: 720; }
 .secret-field input::placeholder { color: #9db498; }
 
-/* Segmented controls */
-.segmented-group { display: flex; flex-direction: column; gap: 7px; }
-.segmented-group > span { color: var(--ink-soft); font-size: .79rem; font-weight: 720; }
-.segmented-group > div { display: flex; flex-wrap: wrap; gap: 7px; }
-.segmented-group button {
-  min-height: 32px;
-  padding: 4px 10px;
-  border: 1.5px solid var(--line-strong);
-  color: var(--ink-soft);
-  background: var(--surface);
-  font-size: .82rem;
-  font-weight: 600;
+/* Segmented controls — pill switcher */
+.segmented-group { display: flex; flex-direction: column; gap: 6px; }
+.segmented-group > span { color: var(--ink-soft); font-size: .78rem; font-weight: 700; }
+.segmented-group > div {
+  display: inline-flex;
+  background: var(--surface-2);
+  padding: 3px;
+  border-radius: 10px;
+  gap: 1px;
 }
+.segmented-group button {
+  min-height: 30px;
+  padding: 3px 13px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: .82rem;
+  font-weight: 620;
+  box-shadow: none;
+  transition: background 100ms ease, color 100ms ease;
+}
+.segmented-group button:hover:not(:disabled) { background: rgba(255,255,255,0.6); transform: none; }
 .segmented-group button.selected {
-  border-color: var(--lime-dark);
+  background: var(--surface);
   color: var(--ink);
-  background: var(--lime-light);
   font-weight: 720;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.10), 0 0 0 0.5px rgba(0,0,0,0.05);
 }
 
 /* Primary CTA */
 .primary-action {
-  min-height: 46px;
-  min-width: 160px;
-  padding: 0 28px;
+  min-height: 52px;
+  min-width: 180px;
+  padding: 0 36px;
   color: var(--ink);
   background: var(--lime);
-  font-weight: 760;
-  font-size: .96rem;
-  box-shadow: 0 4px 14px rgba(143,184,50,.35);
+  font-weight: 780;
+  font-size: 1rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(143,184,50,.40);
   white-space: nowrap;
 }
 .primary-action:hover:not(:disabled) {
   background: #b8d84a;
-  box-shadow: 0 6px 20px rgba(143,184,50,.42);
+  box-shadow: 0 6px 22px rgba(143,184,50,.48);
 }
 
 .error-message {
@@ -1012,6 +1042,123 @@ details[open] > summary::after { content: " ▾"; }
 
 /* ─── Misc ─────────────────────────────────────────────────────── */
 .method-stack { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ── Settings strip ──────────────────────────────────────────── */
+.settings-strip {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 18px 24px;
+  background: var(--surface);
+  border: 1px solid rgba(26,34,24,0.07);
+  border-radius: 16px;
+  box-shadow: 0 1px 6px rgba(26,34,24,0.04);
+  flex-wrap: wrap;
+  row-gap: 14px;
+}
+
+.pref-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+  flex-wrap: wrap;
+  row-gap: 10px;
+}
+
+.pref-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pref-label {
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.pref-sep {
+  width: 1px;
+  height: 22px;
+  background: var(--line);
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.strip-divider {
+  width: 1px;
+  height: 32px;
+  background: var(--line);
+  flex-shrink: 0;
+  margin: 0 16px;
+  align-self: center;
+}
+
+/* ── Pill switcher (standalone) ──────────────────────────────── */
+.pill-switcher {
+  display: inline-flex;
+  background: var(--surface-2);
+  padding: 3px;
+  border-radius: 10px;
+  gap: 1px;
+}
+.pill-switcher button {
+  min-height: 30px;
+  padding: 3px 14px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: .82rem;
+  font-weight: 620;
+  white-space: nowrap;
+  box-shadow: none;
+  transition: background 100ms ease, color 100ms ease;
+}
+.pill-switcher button:hover:not(:disabled) { background: rgba(255,255,255,0.6); transform: none; }
+.pill-switcher button.selected {
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 720;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.10), 0 0 0 0.5px rgba(0,0,0,0.05);
+}
+
+/* ── API key compact ─────────────────────────────────────────── */
+.api-key-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.api-key-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.api-key-input {
+  width: 200px;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: .82rem;
+  color: var(--ink);
+  background: var(--surface-2);
+  transition: border-color 150ms;
+}
+.api-key-input:focus { border-color: var(--lime-dark); outline: none; }
+.api-key-input::placeholder { color: var(--muted); }
+.api-key-badge {
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--lime-light);
+  color: var(--lime-dark);
+  font-size: .73rem;
+  font-weight: 720;
+  white-space: nowrap;
+}
 
 /* ── Reveal animation ─────────────────────────────────────────── */
 @keyframes fadeUp {

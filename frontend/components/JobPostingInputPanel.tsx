@@ -49,13 +49,10 @@ export function JobPostingInputPanel({
   return (
     <section className="input-card" aria-label="지원할 채용공고">
       <div className="section-heading">
-        <div>
-          <p className="eyebrow">Target JD</p>
-          <h2>지원할 채용공고</h2>
-        </div>
+        <h2>지원할 채용공고</h2>
         <span className="field-count">{value.trim().length.toLocaleString()}자</span>
       </div>
-      <p className="field-help">주요업무, 자격요건, 우대사항이 포함될수록 부족 역량 판단이 정확해집니다.</p>
+      <p className="field-help">주요업무, 자격요건, 우대사항이 포함될수록 판단이 정확해집니다.</p>
       <SourceTabs
         modes={sourceModes}
         selected={sourceMode}
