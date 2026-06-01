@@ -35,22 +35,11 @@ cd job-classification-nlp
 
 ---
 
-### 2. 모델 파일 배치
+### 2. Ko-SRoBERTa 모델 자동 다운로드 안내
 
-학습된 분류기 모델 파일은 용량 문제로 Git에 포함되지 않습니다.
-팀 공유 드라이브에서 `models.zip`을 받아 아래 경로에 압축 해제하세요.
+학습된 분류기 모델 파일(`.pkl`, `.pt`)은 레포에 포함되어 있습니다. 별도 작업 불필요.
 
-```
-backend/app/models/
-└── job_classifier/
-    ├── model_tfidf_svm.pkl
-    ├── model_lstm.pt
-    ├── model_textcnn.pt
-    ├── model_lstm_fasttext.pt
-    └── preprocessed_data.pkl
-```
-
-> Ko-SRoBERTa 모델은 첫 실행 시 HuggingFace에서 자동 다운로드됩니다 (약 430MB).
+> Ko-SRoBERTa (`jhgan/ko-sroberta-multitask`) 모델은 백엔드 **첫 실행 시** HuggingFace에서 자동 다운로드됩니다 (약 430MB, 네트워크 필요, 1~3분 소요).
 
 ---
 
@@ -172,7 +161,7 @@ cd frontend && npm run e2e
 │   │   │   └── embedding_retriever.py # RAG 추천 검색
 │   │   ├── data/
 │   │   │   └── learning_resources.csv # 큐레이션 학습 자료 DB (116개)
-│   │   └── models/job_classifier/     # ⚠️ Git 미포함 — 팀원 전달 필요
+│   │   └── models/job_classifier/     # 학습된 분류기 모델 (.pkl, .pt)
 │   ├── tests/                         # 백엔드 단위 테스트 (87개)
 │   └── tools/
 │       └── playwright_extract.cjs     # Node.js Playwright 동적 추출 스크립트

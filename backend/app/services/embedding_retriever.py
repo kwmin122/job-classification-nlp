@@ -14,7 +14,7 @@ from app.services.resource_loader import DATA_DIR, resource_search_text
 from app.services.retriever import TfidfRetriever
 
 DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
-DEFAULT_LOCAL_EMBEDDING_MODEL = "BAAI/bge-m3"
+DEFAULT_LOCAL_EMBEDDING_MODEL = "jhgan/ko-sroberta-multitask"
 CHUNKING_STRATEGY = "one_resource_row_per_chunk"
 CACHE_DIR = DATA_DIR.parent / "cache"
 EMBEDDINGS_FILENAME = "resource_embeddings.npz"
@@ -68,11 +68,11 @@ def build_retriever(
             EmbeddingRetriever(
                 resources=resources,
                 model=local_model,
-                embedder=local_embedder or BgeM3Embedder(model=local_model),
+                embedder=local_embedder or SentenceTransformerEmbedder(model=local_model),
                 cache_dir=cache_dir,
             ),
             RetrieverInfo(
-                retrieval_mode="bge_m3_fallback",
+                retrieval_mode="local_sentence_transformer_fallback",
                 embedding_model=local_model,
                 chunking_strategy=CHUNKING_STRATEGY,
             ),
@@ -168,7 +168,7 @@ class OpenAIEmbedder:
         return [item.embedding for item in response.data]
 
 
-class BgeM3Embedder:
+class SentenceTransformerEmbedder:
     def __init__(self, *, model: str = DEFAULT_LOCAL_EMBEDDING_MODEL) -> None:
         self.model = model
         self.encoder = None

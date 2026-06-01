@@ -10,4 +10,6 @@ backend/app/cache/
 .env
 .env.local
 npm-debug.log*
+frontend/test-results/
+docs/superpowers/
 

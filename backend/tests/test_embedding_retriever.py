@@ -70,7 +70,7 @@ class EmbeddingRetrieverTest(unittest.TestCase):
         self.assertEqual(result[0][0].id, "BE001")
         self.assertGreater(result[0][1], 0.9)
 
-    def test_build_retriever_uses_bge_m3_fallback_without_api_key(self) -> None:
+    def test_build_retriever_uses_local_sentence_transformer_fallback_without_api_key(self) -> None:
         resources = [resource("BE001", "Docker", "컨테이너 배포 학습")]
 
         def embedder(texts: list[str]) -> list[list[float]]:
@@ -88,7 +88,7 @@ class EmbeddingRetrieverTest(unittest.TestCase):
         self.assertEqual(
             info,
             RetrieverInfo(
-                retrieval_mode="bge_m3_fallback",
+                retrieval_mode="local_sentence_transformer_fallback",
                 embedding_model=DEFAULT_LOCAL_EMBEDDING_MODEL,
                 chunking_strategy="one_resource_row_per_chunk",
             ),
