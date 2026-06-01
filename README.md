@@ -4,6 +4,37 @@
 
 ---
 
+## 빠른 시작
+
+터미널에서 순서대로 실행하세요.
+
+**1. 클론 & 백엔드**
+
+```bash
+git clone https://github.com/kwmin122/job-classification-nlp.git
+cd job-classification-nlp
+python3 -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r backend/requirements.txt
+uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8010
+```
+
+> 첫 실행 시 AI 모델 자동 다운로드 1~3분 소요
+
+**2. 프론트엔드 (새 터미널)**
+
+```bash
+cd frontend
+npm install
+cp .env.example .env.local
+npm run build
+npm run start -- --port 3010
+```
+
+브라우저에서 **http://localhost:3010** 접속
+
+---
+
 ## 기술 스택
 
 | 레이어 | 내용 |
