@@ -445,7 +445,7 @@ h1, h2, h3, h4, .display { font-family: var(--font-polysans); font-weight: 500; 
 .dash-card-head .hint { font-size: 11.5px; color: var(--slate); display: block; margin-top: 4px; line-height: 1.4; }
 
 /* score panel — vertical rows */
-.score-card .score-list { flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; gap: 12px; min-height: 0; }
+.score-card .score-list { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; gap: 22px; min-height: 0; }
 .score-row-head { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
 .score-label { font-size: 12.5px; font-weight: 600; color: var(--graphite); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .score-weight { font-size: 10.5px; color: var(--slate); font-weight: 500; white-space: nowrap; }
@@ -454,7 +454,7 @@ h1, h2, h3, h4, .display { font-family: var(--font-polysans); font-weight: 500; 
 .score-track { height: 6px; border-radius: 99px; background: var(--fog); overflow: hidden; }
 .score-track span { display: block; height: 100%; border-radius: 99px; transition: width 1s var(--ease); }
 .score-flag { font-size: 11px; color: var(--carbon); font-weight: 500; }
-.score-card .disclaimer { margin-top: 16px; flex-shrink: 0; }
+.score-card .disclaimer { margin-top: auto; padding-top: 16px; flex-shrink: 0; }
 
 /* competency panel — compact rows */
 .tabs { display: flex; gap: 3px; background: var(--fog); padding: 4px; border-radius: var(--r-pill); margin-bottom: 14px; width: fit-content; border: 1px solid var(--chalk); }

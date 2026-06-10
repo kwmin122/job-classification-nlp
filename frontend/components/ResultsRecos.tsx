@@ -177,6 +177,7 @@ export function RoadmapView({ d, highlight }: RoadmapViewProps) {
 /* ─── Report ───────────────────────────────────────────────────── */
 interface ReportBlockProps { title: string; items: string[]; accent?: string; }
 function ReportBlock({ title, items, accent }: ReportBlockProps) {
+  if (!items || items.length === 0) return null;
   return (
     <div className="rep-block">
       <div className={"rep-bar " + (accent || "")}/>
