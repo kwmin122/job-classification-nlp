@@ -1,5 +1,3 @@
-# [엔진 교체] C파트 분석을 증거 우선(v5) 엔진으로 위임.
-# v7 pipeline.py는 보존(유닛테스트/롤백용). API는 v5 어댑터를 사용.
 from app.services.c_part_v5.adapter import (
     run_c_part_analysis,
     normalize_skill_name,

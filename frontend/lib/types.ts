@@ -171,6 +171,128 @@ export type WeeklyRoadmapItem = {
   practice: string;
 };
 
+// ── Ventriloc UI block types ──────────────────────────────────────
+
+export type GapType = "learning" | "evidence" | "expression" | "explicit";
+export type ToneType = "good" | "warn" | "bad" | "info" | "neutral";
+
+export type UiJob = {
+  title: string;
+  company: string;
+  group: string;
+  confidence: number;
+  core: string[];
+  source: string;
+};
+
+export type UiSummary = {
+  predictedJob: string;
+  predictedConfidence: number;
+  fit: number;
+  gapCount: number;
+  weeks: number;
+  level: string;
+  intensity: string;
+};
+
+export type UiScoreBreakdown = {
+  key: string;
+  label: string;
+  value: number;
+  weight?: string;
+  tone: ToneType;
+  tip: string;
+  unit?: string;
+  isCount?: boolean;
+};
+
+export type UiMetComp = {
+  skill: string;
+  coverage: number;
+  type: string;
+  evidence: string;
+  source: string;
+};
+
+export type UiPartialComp = {
+  skill: string;
+  coverage: number;
+  type: string;
+  evidence: string;
+  verdict: string;
+  source: string;
+};
+
+export type UiGapComp = {
+  skill: string;
+  gap: GapType;
+  evidence: string;
+  source: string;
+  note: string;
+};
+
+export type UiAdjComp = {
+  cat: string;
+  level: number;
+  note: string;
+};
+
+export type UiResourceItem = {
+  title: string;
+  url: string;
+  kind: string;
+  level: string;
+  price: string;
+  trust: number;
+  why: string;
+};
+
+export type UiResourceGroup = {
+  skill: string;
+  gap: GapType;
+  items: UiResourceItem[];
+};
+
+export type UiRoadmapWeek = {
+  week: number;
+  goal: string;
+  skills: string[];
+  res: string;
+  task: string;
+  output: string;
+};
+
+export type UiReport = {
+  summary: string;
+  strengths: string[];
+  gaps: string[];
+  expression: string[];
+  order: string[];
+  caution: string[];
+};
+
+export type UiExcluded = {
+  text: string;
+  reason: string;
+  tag: string;
+};
+
+export type UiBlock = {
+  job: UiJob;
+  summary: UiSummary;
+  scoreBreakdown: UiScoreBreakdown[];
+  competencies: {
+    met: UiMetComp[];
+    partial: UiPartialComp[];
+    gap: UiGapComp[];
+    adjacent: UiAdjComp[];
+  };
+  excluded: UiExcluded[];
+  resources: UiResourceGroup[];
+  roadmap: UiRoadmapWeek[];
+  report: UiReport;
+};
+
 export type AnalyzeResponse = {
   predicted_job: string;
   job_label: string | null;
@@ -192,4 +314,5 @@ export type AnalyzeResponse = {
   chunking_strategy: string;
   jd_quality?: "ok" | "weak"; // NEW
   structured_skills?: string[]; // NEW
+  ui?: UiBlock; // NEW: Ventriloc dashboard block
 };

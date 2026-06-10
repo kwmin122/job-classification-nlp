@@ -439,6 +439,22 @@ def analyze(request: AnalyzeRequest, top_k: int = 3) -> AnalyzeResponse:
         jd_quality=jd_quality,
     )
 
+    # Patch ui block with info only available in main.py
+    raw_ui = c_result.get("ui")
+    if raw_ui is not None:
+        confidence_pct = round(
+            (classification.job_probabilities.get(predicted_job, 0)
+             or max(classification.job_probabilities.values(), default=0)) * 100
+        )
+        raw_ui["summary"]["predictedConfidence"] = confidence_pct
+        raw_ui["summary"]["weeks"] = request.roadmap_preferences.duration_weeks
+        raw_ui["summary"]["level"] = request.roadmap_preferences.difficulty
+        raw_ui["summary"]["intensity"] = request.roadmap_preferences.intensity
+        raw_ui["job"]["confidence"] = confidence_pct
+        if job_title:
+            raw_ui["job"]["title"] = job_title
+        raw_ui["job"]["source"] = "URL" if request.job_posting.source_type == "url" else "텍스트"
+
     return AnalyzeResponse(
         predicted_job=predicted_job,
         job_label=classification.job_label,
@@ -463,4 +479,5 @@ def analyze(request: AnalyzeRequest, top_k: int = 3) -> AnalyzeResponse:
         chunking_strategy=retriever_info.chunking_strategy,
         structured_skills=job_structured_skills,
         jd_quality=jd_quality,
+        ui=raw_ui,
     )

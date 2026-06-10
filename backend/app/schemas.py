@@ -161,6 +161,7 @@ class AnalyzeResponse(BaseModel):
     chunking_strategy: str
     jd_quality: Literal["ok", "weak"] = "ok"          # NEW: H영역
     structured_skills: list[str] = Field(default_factory=list)  # NEW: 공고 명시 전체 기술 (표시용)
+    ui: dict | None = None  # NEW: Ventriloc dashboard data block
 
 
 class RoadmapItem(BaseModel):
