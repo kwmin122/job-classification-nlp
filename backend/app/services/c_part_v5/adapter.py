@@ -80,26 +80,24 @@ def _res_to_ui_item(res: dict) -> dict:
 
 def _infer_gap_type(skill: str, sc: dict, owned: dict) -> str:
     """
-    GAP 스킬의 gap_type 추론.
-    gap_type ∈ {learning, evidence, expression, explicit}
+    GAP 스킬의 gap_type 추론 — 스킬별(per-skill)로 정직하게.
+    gap_type ∈ {learning, evidence, explicit}
+      - evidence: 그 스킬이 자료에 언급은 됐으나 직접 수행 근거가 부족
+      - learning: 자료에서 그 스킬의 흔적 자체를 찾지 못함
+    (이전 버그: 후보 단위 expression_gap 플래그로 모든 gap을 'expression'으로 묶어
+     '경험 있어 보이나'라는 동일·부정확한 문구가 붙던 문제를 제거함.)
     """
-    flags = sc.get("flags", [])
-    # expression: global expression_gap flag (UNOBSERVABLE situation)
-    if any("expression_gap" in f for f in flags):
-        return "expression"
-    # evidence: skill appeared somewhere in candidate text (alias/partial hit) but not enough
-    # We use owned dict (includes partial hits) — if key exists but state is GAP, it's evidence gap
-    if skill in owned:
+    if skill in owned:   # 별칭/부분 매칭 등으로 자료에 등장은 함
         return "evidence"
-    return "learning"
+    return "learning"    # 자료에서 그 역량의 근거를 찾지 못함
 
 
 def _gap_note(gap_type: str, skill: str) -> str:
     notes = {
-        "learning":   f"요구 역량 대비 학습·경험 근거가 확인되지 않음",
-        "evidence":   f"자료 전반에서 직접 사용 근거 문장을 찾지 못함",
-        "expression": f"경험은 있어 보이나 사용 기술·역할·결과 표현이 불명확",
-        "explicit":   f"본인이 직접 부족하다고 언급 — 기초 학습 로드맵 필요",
+        "learning":   "공고 요구 역량이나, 자료에서 수행·학습 근거를 찾지 못했습니다",
+        "evidence":   "언급은 있으나 직접 수행한 근거 문장이 부족합니다",
+        "expression": "관련 경험은 보이나 사용 기술·역할·결과가 구체적으로 드러나지 않습니다",
+        "explicit":   "지원자가 직접 부족하다고 언급했습니다",
     }
     return notes.get(gap_type, "근거 미확인")
 
@@ -190,7 +188,7 @@ def _build_ui_block(
         },
         {
             "key": "adj",
-            "label": "보조 강점 (별도)",
+            "label": "직무 외 강점 (참고)",
             "value": min(100, sum(1 for hits in strengths.values() if hits) * 15),
             "weight": "별도",
             "tone": "good",

@@ -41,7 +41,11 @@ export function SummaryRow({ d, run }: SummaryRowProps) {
         <div className="stat-body">
           <div className="stat-kicker">현재 자료 기준 적합도</div>
           <div className="stat-main tnum">{Math.round(fit)}<small>/100</small></div>
-          <div className="stat-sub">보완 여지가 큰 구간</div>
+          <div className="stat-sub">{
+            d.summary.fit >= 70 ? "공고 요구 역량을 대체로 충족"
+            : d.summary.fit >= 40 ? "일부 충족 · 보완하면 더 올라가는 구간"
+            : "공고 요구 역량 대비 보완이 많이 필요"
+          }</div>
         </div>
       </div>
 

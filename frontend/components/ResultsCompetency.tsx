@@ -80,7 +80,7 @@ export function CompetencyTabs({ d, onJump, onPeek }: CompetencyTabsProps) {
     { id: "met", label: "충족", n: comp.met.length, tone: "good" },
     { id: "partial", label: "부분 충족", n: comp.partial.length, tone: "warn" },
     { id: "gap", label: "부족", n: comp.gap.length, tone: "bad" },
-    { id: "adjacent", label: "보조 강점", n: comp.adjacent.length, tone: "info" },
+    { id: "adjacent", label: "직무 외 강점", n: comp.adjacent.length, tone: "info" },
   ];
   const [tab, setTab] = useState("met");
   return (
@@ -103,7 +103,7 @@ export function CompetencyTabs({ d, onJump, onPeek }: CompetencyTabsProps) {
         {tab === "gap" && <div className="comp-list tabpane" key="gap">{comp.gap.map((c, i) => <GapRow key={i} c={c} onJump={onJump}/>)}</div>}
         {tab === "adjacent" && (
           <div className="tabpane" key="adjacent">
-            <div className="adj-banner"><Ic.Bolt size={14}/><span>보조 강점은 기술 적합도 점수와 <b>분리</b>해 봅니다</span></div>
+            <div className="adj-banner"><Ic.Bolt size={14}/><span>PM·협업·운영처럼 공고의 <b>핵심 기술은 아니지만</b> 참고할 강점입니다. 적합도 점수에는 반영되지 않습니다.</span></div>
             <div className="comp-list">{comp.adjacent.map((a, i) => <AdjRow key={i} a={a}/>)}</div>
           </div>
         )}

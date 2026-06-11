@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import * as Ic from "./Icons";
 
 type Stage = "input" | "analyzing" | "results";
@@ -63,10 +64,19 @@ export function Sidebar({ stage, view, gapCount, onNav }: SidebarProps) {
 
 /* Tooltip */
 export function Tip({ text }: { text: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+  const show = () => {
+    const r = ref.current?.getBoundingClientRect();
+    if (r) setPos({ x: r.left + r.width / 2, y: r.top });
+  };
   return (
-    <span className="tip">
+    <span className="tip" ref={ref} onMouseEnter={show} onMouseLeave={() => setPos(null)}>
       <span className="tip-ico">i</span>
-      <span className="tip-body">{text}</span>
+      {pos && typeof document !== "undefined" && createPortal(
+        <span className="tip-pop" style={{ left: pos.x, top: pos.y - 8 }}>{text}</span>,
+        document.body
+      )}
     </span>
   );
 }

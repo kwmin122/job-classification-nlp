@@ -19,7 +19,6 @@ interface AnalyzingViewProps {
 
 export function AnalyzingView({ onDone }: AnalyzingViewProps) {
   const [cur, setCur] = useState(0);
-  const warnAt = 0;
 
   useEffect(() => {
     if (cur >= STAGES.length) {
@@ -53,7 +52,6 @@ export function AnalyzingView({ onDone }: AnalyzingViewProps) {
         <ol className="timeline">
           {STAGES.map((s, i) => {
             const st = stateOf(i);
-            const showWarn = i === warnAt && cur > warnAt;
             return (
               <li key={i} className={"tl-item " + st}>
                 <span className="tl-node">
@@ -63,10 +61,7 @@ export function AnalyzingView({ onDone }: AnalyzingViewProps) {
                 </span>
                 <span className="tl-label">{s}</span>
                 {st === "run" && <span className="tl-tag run">진행 중</span>}
-                {st === "done" && showWarn && (
-                  <span className="tl-tag warn"><Ic.Alert size={12}/>본문이 다소 짧아 핵심 위주로 분석</span>
-                )}
-                {st === "done" && !showWarn && <span className="tl-tag ok">완료</span>}
+                {st === "done" && <span className="tl-tag ok">완료</span>}
               </li>
             );
           })}
