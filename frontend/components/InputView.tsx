@@ -2,6 +2,7 @@
 import React, { useRef, useState } from "react";
 import * as Ic from "./Icons";
 import { Tip } from "./Sidebar";
+import { extractJobPostingFromUrl } from "../lib/api";
 
 const SAMPLE_JD = `[백엔드 개발자 채용]
 · Java, Spring Boot 기반 REST API 설계 및 개발
@@ -42,16 +43,47 @@ interface JobCardProps {
 function JobCard({ jd, setJd, jdStatus, setJdStatus }: JobCardProps) {
   const [tab, setTab] = useState("text");
   const [url, setUrl] = useState("");
-  const load = () => {
+  const [loading, setLoading] = useState(false);
+  const [loadMsg, setLoadMsg] = useState("");
+  const [showText, setShowText] = useState(false);
+
+  const load = async () => {
     if (tab === "url") {
-      if (!url.trim()) return;
-      setJd(SAMPLE_JD); setJdStatus({ tone: "good", msg: "공고 본문 추출 완료 · 약 320자" });
+      if (!url.trim() || loading) return;
+      setLoading(true);
+      setShowText(false);
+      setJdStatus(null);
+      // OCR(이미지 공고)일 수 있어 시간이 걸림 → 진행 메시지 표시
+      setLoadMsg("공고를 불러오는 중… 이미지로 올린 공고는 OCR로 본문을 읽어 수십 초 걸릴 수 있어요.");
+      try {
+        const res = await extractJobPostingFromUrl(url.trim());
+        setJd(res.text || "");
+        const ocrUsed = res.extractor === "image_ocr"
+          || (res.warnings || []).some(w => w.includes("OCR"));
+        const cnt = res.char_count ?? (res.text || "").length;
+        setJdStatus({
+          tone: cnt >= 40 ? "good" : "warn",
+          msg: ocrUsed
+            ? `이미지 공고를 OCR로 읽었어요 · 실제 추출 ${cnt.toLocaleString()}자`
+            : `공고 본문 추출 완료 · 실제 추출 ${cnt.toLocaleString()}자`,
+        });
+      } catch (e) {
+        setJd("");
+        setJdStatus({
+          tone: "bad",
+          msg: "공고를 불러오지 못했어요 · " + ((e as Error).message || "URL 확인 후 본문을 직접 붙여넣어 주세요"),
+        });
+      } finally {
+        setLoading(false);
+        setLoadMsg("");
+      }
     } else if (jd.trim().length < 40) {
       setJdStatus({ tone: "warn", msg: "공고 본문이 짧습니다 · 핵심 요구사항이 누락될 수 있어요" });
     } else {
-      setJdStatus({ tone: "good", msg: "공고 본문 확인 완료" });
+      setJdStatus({ tone: "good", msg: `공고 본문 확인 완료 · ${jd.trim().length.toLocaleString()}자` });
     }
   };
+
   return (
     <div className="card pad-card">
       <div className="card-head">
@@ -66,7 +98,8 @@ function JobCard({ jd, setJd, jdStatus, setJdStatus }: JobCardProps) {
         <div className="field-row">
           <div className="input-wrap">
             <Ic.Link size={16}/>
-            <input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://… 채용공고 주소"/>
+            <input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://… 채용공고 주소"
+              onKeyDown={e => { if (e.key === "Enter") load(); }}/>
           </div>
         </div>
       ) : (
@@ -74,15 +107,34 @@ function JobCard({ jd, setJd, jdStatus, setJdStatus }: JobCardProps) {
           placeholder="채용공고 본문을 붙여넣어 주세요 — 자격요건·우대사항이 있으면 더 정확해요"/>
       )}
       <div className="card-actions">
-        <button className="btn dark sm" onClick={load}><Ic.Download size={15}/>공고 불러오기</button>
-        <button className="btn ghost sm" onClick={() => { setJd(""); setUrl(""); setJdStatus(null); }}><Ic.Refresh size={14}/>초기화</button>
+        <button className="btn dark sm" onClick={load} disabled={loading}>
+          {loading ? <><Ic.Spinner size={15}/>불러오는 중…</> : <><Ic.Download size={15}/>공고 불러오기</>}
+        </button>
+        <button className="btn ghost sm" onClick={() => { setJd(""); setUrl(""); setJdStatus(null); setShowText(false); }}><Ic.Refresh size={14}/>초기화</button>
         {tab === "text" && <button className="link-btn" onClick={() => { setJd(SAMPLE_JD); setJdStatus({ tone: "good", msg: "예시 공고를 불러왔어요" }); }}>예시 공고</button>}
       </div>
-      {jdStatus && (
+      {loading && (
+        <div className="status warn">
+          <Ic.Spinner size={15}/>{loadMsg}
+        </div>
+      )}
+      {!loading && jdStatus && (
         <div className={"status " + jdStatus.tone}>
           {jdStatus.tone === "good" ? <Ic.CheckCircle size={15}/> : <Ic.Alert size={15}/>}
           {jdStatus.msg}
         </div>
+      )}
+      {/* 추출한 공고 텍스트 실제로 보기 — URL 불러온 뒤 검증용 */}
+      {!loading && tab === "url" && jd.trim().length > 0 && jdStatus?.tone !== "bad" && (
+        <>
+          <button className="link-btn" style={{ marginTop: 10 }} onClick={() => setShowText(v => !v)}>
+            {showText ? "추출한 공고 텍스트 숨기기" : "추출한 공고 텍스트 보기"}
+          </button>
+          {showText && (
+            <textarea className="ta" style={{ marginTop: 8 }} value={jd} readOnly
+              onFocus={e => e.currentTarget.select()}/>
+          )}
+        </>
       )}
     </div>
   );

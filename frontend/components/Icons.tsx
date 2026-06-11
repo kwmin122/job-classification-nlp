@@ -28,6 +28,15 @@ export const File = mk(<><path d="M7 3.5h7l4 4V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V
 export const Trash = mk(<><path d="M5 7h14M10 7V5.5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1V7M6.5 7l.8 12a1 1 0 0 0 1 1h7.4a1 1 0 0 0 1-1l.8-12"/></>);
 export const Plus = mk(<><path d="M12 5v14M5 12h14"/></>);
 export const Refresh = mk(<><path d="M20 11a8 8 0 0 0-14-4M4 13a8 8 0 0 0 14 4"/><path d="M4 4v3.5h3.5M20 20v-3.5h-3.5"/></>);
+export function Spinner({ size = 20, sw = 2, ...rest }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth={sw} strokeLinecap="round"
+      style={{ animation: "spin 0.8s linear infinite" }} {...rest}>
+      <path d="M12 3a9 9 0 1 0 9 9" />
+    </svg>
+  );
+}
 export const Spark = mk(<><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></>);
 export const Check = mk(<><path d="M4.5 12.5 9.5 17.5 19.5 6.5"/></>);
 export const CheckCircle = mk(<><circle cx="12" cy="12" r="9"/><path d="M8 12.2l2.8 2.8L16.5 9.3"/></>);

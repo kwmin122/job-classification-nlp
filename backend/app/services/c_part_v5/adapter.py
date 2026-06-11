@@ -439,10 +439,15 @@ def run_c_part_analysis(
         posting_skills: list[str] = []
         # 중복/상위어 정돈: 같은 역량의 표기 분산을 하나로 (예: ML·AI/ML→Machine Learning)
         _collapse = {"ML": "Machine Learning", "AI/ML": "Machine Learning", "데이터분석": "데이터 분석"}
+        def _canon(s):
+            # 원문 표기(예: 'Tensorflow')를 가제터 정규형('TensorFlow')으로 — 후보 보유 스킬과 매칭되게
+            hits = v5.find_skills(s)
+            return next(iter(hits.keys())) if hits else s
         def _dedup(skills):
             seen, out = set(), []
             for s in skills:
-                c = _collapse.get(s, v5.ALIASES.get(s, s))
+                c = _canon(s)
+                c = _collapse.get(c, v5.ALIASES.get(c, c))
                 if c not in seen:
                     seen.add(c); out.append(c)
             return out
@@ -461,14 +466,29 @@ def run_c_part_analysis(
         cand_owned = {k for k in owned if not k.startswith("_emb:")}  # DID 근거 보유
         emb_groups = set(sc.get("emb_groups", []))
         SKILL_PARENT = v5.SKILL_PARENT
-        # 후보가 (포부/사회이슈가 아닌) 문장에서 언급만 한 스킬 집합
+        # 기술 스택/활용 기술 섹션의 스킬도 '직접 경험'으로 인정 (이력서·불릿 스타일 보완).
+        #   프로젝트에 나열한 기술은 실제 사용한 것으로 본다.
+        _STACK_MARKERS = ("활용 기술", "활용기술", "사용 기술", "사용기술", "기술 스택",
+                          "보유 기술", "사용 도구", "언어/라이브러리", "라이브러리",
+                          "개발 환경", "tech stack", "skills", "stack")
+        # 0점 처리할 SAID 유형(포부/지원동기/사회이슈/의견) — 그 외 언급은 0.3 인정
+        _SAID_ZERO = {"said_aspiration", "said_aspiration_mid", "said_motivation",
+                      "said_external_subj", "said_opinion", "said_other_opinion", "said_capability"}
         mentioned_non_said = set()
         for _sent in v5.split_sentences(candidate_text):
-            _lbl, _ = v5.classify_sentence(_sent)
-            if _lbl == "SAID":
+            _lbl, _feat = v5.classify_sentence(_sent)
+            _low = _sent.lower()
+            _is_stack = any(m in _low for m in _STACK_MARKERS)
+            _hits = v5.find_skills(_sent)
+            if _lbl == "DID" or _is_stack:
+                for _sk in _hits:
+                    cand_owned.add(_sk)            # 직접 경험으로 인정
+                    owned.setdefault(_sk, _sent[:70])  # UI 증거로 해당 문장 사용
                 continue
-            for _sk in v5.find_skills(_sent):
-                mentioned_non_said.add(_sk)
+            if _lbl == "SAID" and any(k in _feat for k in _SAID_ZERO):
+                continue                           # 포부/사회이슈/의견 → 0
+            for _sk in _hits:
+                mentioned_non_said.add(_sk)         # 학습·언급 → 0.3
 
         # 후보가 직접 보유한 스킬들의 상위 역량군(같은 군의 다른 스킬도 유사 경험으로 인정)
         cand_owned_parents = {SKILL_PARENT.get(k) for k in cand_owned if SKILL_PARENT.get(k)}
