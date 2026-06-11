@@ -138,10 +138,24 @@ def _configure_java_home() -> None:
 
 @lru_cache(maxsize=1)
 def get_okt():
+    """konlpy Okt 형태소 분석기. JVM(JDK)이 없는 환경(예: Windows JDK 미설치)에서는
+    None을 반환해 호출부가 폴백 토크나이저를 쓰게 한다 — 크로스플랫폼 동작 보장."""
     _configure_java_home()
-    from konlpy.tag import Okt
+    try:
+        from konlpy.tag import Okt
 
-    return Okt()
+        okt = Okt()
+        okt.pos("초기화", norm=True, stem=True)  # JVM 실제 기동 확인(여기서 실패하면 폴백)
+        return okt
+    except Exception:
+        return None  # konlpy/JVM 불가 → 폴백 토크나이저 사용
+
+
+def _fallback_tokenize(normalized: str) -> str:
+    """Okt(형태소 분석) 없이 쓰는 폴백: 영문 기술어 + 한글 어절 추출.
+    JVM 없는 환경에서도 분류가 동작하게 한다(형태소 분석이 없어 정확도는 다소 낮아질 수 있음)."""
+    toks = re.findall(r"[A-Za-z][A-Za-z0-9+#.]*|[가-힣]{2,}", normalized)
+    return " ".join(w for w in toks if w not in STOPWORDS and len(w) > 1)
 
 
 def normalize_tech(text: str) -> str:
@@ -156,6 +170,8 @@ def preprocess_for_job_classifier(text: str, okt: OktLike | None = None) -> str:
 
     parser = okt or get_okt()
     normalized = normalize_tech(text)
+    if parser is None:
+        return _fallback_tokenize(normalized)  # JVM 없는 환경(Windows JDK 미설치 등)
     tokens = parser.pos(normalized, norm=True, stem=True)
     result = []
     for word, pos in tokens:
