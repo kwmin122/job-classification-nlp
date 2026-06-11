@@ -62,6 +62,39 @@ app.add_middleware(
 )
 
 
+def _warmup() -> None:
+    """콜드 스타트 제거: 서버가 요청을 받기 전(import 시점, 블로킹)에 분류기 학습·
+    임베딩·자원 임베딩을 미리 로드한다. on_event 대신 import 시점에 돌려야 서빙 스레드와
+    경쟁하지 않는다(경쟁 시 첫 분석이 수십 초 → 프록시 타임아웃 → 화면이 입력으로 되돌아감).
+    """
+    import time
+    print("[워밍업] 모델·임베딩 로드 중… (최초 1회, 약 1분 — 이후 모든 분석은 즉시)", flush=True)
+    t0 = time.time()
+    try:
+        from app.services.c_part_v5 import engine as v5
+
+        v5._load_emb_model()          # ko-sroberta 임베딩 모델 로드(가장 느린 부분)
+        v5._ensure_classifier()        # DID/SAID LR 분류기 학습
+        v5._get_resource_embeddings()  # 자원 임베딩 캐시
+        # 임베딩 fallback 경로까지 한 번 태워 인코더를 완전히 데운다(비가제터 AI 용어 사용)
+        run_c_part_analysis(
+            "AI/ML 엔지니어",
+            "Python, PyTorch 기반 머신러닝 엔지니어를 모집합니다. Linux 서버 운영 경험 우대.",
+            "오토인코더 기반 이상탐지 모델을 직접 설계하고 학습시켰습니다. "
+            "어텐션 메커니즘을 적용해 성능을 개선했습니다.",
+        )
+        print(f"[워밍업] 완료 ({time.time() - t0:.0f}초) — 분석 준비됨", flush=True)
+    except Exception as exc:
+        # 워밍업 실패는 치명적이지 않음 — 실제 요청 시 lazy 초기화로 폴백
+        print(f"[워밍업] 건너뜀: {exc}", flush=True)
+
+
+import sys as _sys
+
+if "pytest" not in _sys.modules and os.getenv("DISABLE_WARMUP") != "1":
+    _warmup()  # import(서빙 시작 전)에 1회 블로킹 — 첫 사용자 분석을 즉시 빠르게 (테스트는 건너뜀)
+
+
 @app.get("/health")
 def health() -> dict[str, str | int]:
     return {"status": "ok", "resource_count": len(load_resources())}

@@ -124,6 +124,10 @@ export default function Home() {
 
   /* Start analysis */
   const startAnalysis = useCallback(async () => {
+    if (!form.jd.trim() || !form.cl.trim()) {
+      setApiError("채용공고와 자소서를 모두 입력해 주세요. (공고는 URL 불러오기 또는 직접 입력)");
+      return;
+    }
     setApiError(null);
     setResult(null);
     setAnimDone(false);

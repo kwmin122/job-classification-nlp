@@ -18,14 +18,28 @@ async function parseResponse<T>(response: Response): Promise<T> {
 }
 
 export async function analyze(payload: AnalyzeRequest): Promise<AnalyzeResponse> {
-  const response = await fetch(`${API_BASE}/analyze`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(payload)
-  });
-  return parseResponse<AnalyzeResponse>(response);
+  // 분석 서버가 다운/지연이면 무한 대기 대신 명확히 실패시킨다(가짜 100%→되돌아감 방지).
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 120_000);
+  try {
+    const response = await fetch(`${API_BASE}/analyze`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: ctrl.signal,
+    });
+    return await parseResponse<AnalyzeResponse>(response);
+  } catch (e) {
+    if (e instanceof DOMException && e.name === "AbortError") {
+      throw new Error("분석 서버 응답이 지연됩니다. 서버가 실행 중인지 확인하고 잠시 후 다시 시도해 주세요.");
+    }
+    if (e instanceof TypeError) {
+      throw new Error("분석 서버에 연결하지 못했어요. 백엔드(8010)가 실행 중인지 확인해 주세요.");
+    }
+    throw e;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 export async function extractJobPostingFromUrl(url: string): Promise<ExtractedText> {
