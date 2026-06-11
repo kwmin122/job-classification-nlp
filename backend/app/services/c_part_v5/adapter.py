@@ -470,13 +470,16 @@ def run_c_part_analysis(
             for _sk in v5.find_skills(_sent):
                 mentioned_non_said.add(_sk)
 
+        # 후보가 직접 보유한 스킬들의 상위 역량군(같은 군의 다른 스킬도 유사 경험으로 인정)
+        cand_owned_parents = {SKILL_PARENT.get(k) for k in cand_owned if SKILL_PARENT.get(k)}
         met_p, partial_p, gap_p = [], [], []
         cov_scores = []
         for s in posting_skills:
+            parent = SKILL_PARENT.get(s)
             if s in cand_owned:
                 cov = 1.0; met_p.append(s)                 # 직접 수행 근거
-            elif SKILL_PARENT.get(s) and SKILL_PARENT.get(s) in emb_groups:
-                cov = 0.6; partial_p.append(s)             # 유사 경험(임베딩 근거)
+            elif parent and (parent in emb_groups or parent in cand_owned_parents):
+                cov = 0.6; partial_p.append(s)             # 유사 경험(같은 역량군: 임베딩 또는 동일군 스킬 보유)
             elif s in mentioned_non_said:
                 cov = 0.3; partial_p.append(s)             # 학습·언급 수준
             else:
