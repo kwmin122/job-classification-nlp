@@ -130,17 +130,21 @@ def _build_ui_block(
     strengths: dict,
     opts: dict | None = None,
     job_info: dict | None = None,
+    posting_skills: list | None = None,
 ) -> dict:
     """
     v5 엔진 출력을 window.DATA 형태의 ui 블록으로 변환.
     하드코딩 없음 — 모든 값은 엔진 출력 또는 파라미터에서 파생.
+    ★ core/요구역량은 '사용자가 입력한 공고에서 추출한 실제 스킬(posting_skills)' 기준.
     """
     opts = opts or {}
     job_info = job_info or {}
 
     # ── job ──────────────────────────────────────────────────────
     prof = v5.ROLE_PROFILES.get(job_key, [])
-    core_skills = [p["skill"] for p in prof if p["importance"] == "필수"][:7]
+    # 공고 기준: 입력 공고에서 추출한 실제 요구 스킬. 없을 때만 코퍼스 프로필 폴백.
+    core_skills = (list(posting_skills)[:7] if posting_skills
+                   else [p["skill"] for p in prof if p["importance"] == "필수"][:7])
     ui_job = {
         "title": job_info.get("title", korean),
         "company": job_info.get("company", ""),
@@ -170,27 +174,27 @@ def _build_ui_block(
     ui_score = [
         {
             "key": "tech",
-            "label": "기술 적합도",
+            "label": "공고 스킬 적합도",
             "value": sc.get("technical_match", 0),
-            "weight": "65%",
+            "weight": "= 적합도",
             "tone": "good" if sc.get("technical_match", 0) >= 70 else ("warn" if sc.get("technical_match", 0) >= 40 else "bad"),
-            "tip": "채용공고의 핵심 기술 요구와 지원자 자료에 드러난 실제 기술 경험 근거가 얼마나 일치하는지 계산한 값입니다.",
+            "tip": "공고가 요구한 역량별로 실제 수행 근거가 있는지(직접 1.0·유사 0.6·학습 0.3·없음 0)를 평균한 값. 이 값이 곧 적합도입니다.",
         },
         {
             "key": "exp",
-            "label": "경험 근거 점수",
+            "label": "경험 근거 강도 (참고)",
             "value": sc.get("experience_evidence", 0),
-            "weight": "25%",
+            "weight": "참고",
             "tone": "good" if sc.get("experience_evidence", 0) >= 65 else ("warn" if sc.get("experience_evidence", 0) >= 40 else "bad"),
-            "tip": "실제 수행한 프로젝트·업무 경험처럼 직접 경험으로 인정된 근거 문장의 강도를 반영한 값입니다.",
+            "tip": "지원자가 보여준 전체 경험의 강도(참고용). 적합도에 직접 가산하지 않으며, 공고 요구 역량을 실제로 수행했는지 판단하는 근거로만 사용됩니다.",
         },
         {
             "key": "adj",
-            "label": "보조 강점 점수",
+            "label": "보조 강점 (별도)",
             "value": min(100, sum(1 for hits in strengths.values() if hits) * 15),
-            "weight": "10%",
+            "weight": "별도",
             "tone": "good",
-            "tip": "PM·협업·자동화·운영처럼 직무 핵심 기술은 아니지만 업무 수행에 도움이 되는 인접 강점의 강도입니다.",
+            "tip": "PM·협업·자동화·운영처럼 직무 핵심 기술은 아니지만 참고할 강점. 적합도와 별개로 표시되며 점수에 가산되지 않습니다.",
         },
         {
             "key": "expr",
@@ -428,19 +432,70 @@ def run_c_part_analysis(
         sc = v5.score(job_key, owned, did, ach, candidate_text, emb_audit=emb_audit)
 
         prof = v5.ROLE_PROFILES.get(job_key, [])
-        importance_map = {p["skill"]: p["importance"] for p in prof}
 
-        # required_skills: explicit 우선, 없으면 코퍼스 프로필
+        # ★ 공고 기준 요구역량: 사용자가 입력한 공고에서 실제로 추출한 스킬.
+        #   우선순위: (1) URL 정형 스킬(explicit) → (2) 공고 본문 가제터 추출 → (3) 코퍼스 폴백
+        jd_text = load_text(jd_input) if jd_input else ""
+        posting_skills: list[str] = []
+        # 중복/상위어 정돈: 같은 역량의 표기 분산을 하나로 (예: ML·AI/ML→Machine Learning)
+        _collapse = {"ML": "Machine Learning", "AI/ML": "Machine Learning", "데이터분석": "데이터 분석"}
+        def _dedup(skills):
+            seen, out = set(), []
+            for s in skills:
+                c = _collapse.get(s, v5.ALIASES.get(s, s))
+                if c not in seen:
+                    seen.add(c); out.append(c)
+            return out
         if explicit_required_skills:
-            required_skills = [
-                {"skill": s, "importance": "필수", "source_sentence": s}
-                for s in explicit_required_skills
-            ]
-        else:
-            required_skills = [
-                {"skill": p["skill"], "importance": p["importance"], "source_sentence": ""}
-                for p in prof
-            ]
+            posting_skills = _dedup(explicit_required_skills)
+        elif jd_text and len(jd_text.strip()) >= 20:
+            posting_skills = _dedup(sorted(v5.find_skills(jd_text).keys()))
+        required_from_posting = bool(posting_skills)
+        if not posting_skills:  # 폴백(공고에서 못 뽑을 때만): 코퍼스 직무군 프로필
+            posting_skills = [p["skill"] for p in prof if p["importance"] == "필수"]
+
+        # ── 공고 요구 역량별 '실제 수행 근거' 충족도로 fit 계산 ──────────
+        #   정책: fit = 공고 요구 역량별 충족 점수의 평균. 전체 경험 강도는
+        #   fit에 직접 가산하지 않고, 각 요구 역량을 실제로 수행했는지의 근거로만 사용.
+        #   역량별: 직접경험(DID) 1.0 / 유사(임베딩) 0.6 / 학습·언급 0.3 / 없음·포부·사회이슈 0
+        cand_owned = {k for k in owned if not k.startswith("_emb:")}  # DID 근거 보유
+        emb_groups = set(sc.get("emb_groups", []))
+        SKILL_PARENT = v5.SKILL_PARENT
+        # 후보가 (포부/사회이슈가 아닌) 문장에서 언급만 한 스킬 집합
+        mentioned_non_said = set()
+        for _sent in v5.split_sentences(candidate_text):
+            _lbl, _ = v5.classify_sentence(_sent)
+            if _lbl == "SAID":
+                continue
+            for _sk in v5.find_skills(_sent):
+                mentioned_non_said.add(_sk)
+
+        met_p, partial_p, gap_p = [], [], []
+        cov_scores = []
+        for s in posting_skills:
+            if s in cand_owned:
+                cov = 1.0; met_p.append(s)                 # 직접 수행 근거
+            elif SKILL_PARENT.get(s) and SKILL_PARENT.get(s) in emb_groups:
+                cov = 0.6; partial_p.append(s)             # 유사 경험(임베딩 근거)
+            elif s in mentioned_non_said:
+                cov = 0.3; partial_p.append(s)             # 학습·언급 수준
+            else:
+                cov = 0.0; gap_p.append(s)                 # 근거 없음(또는 포부/사회이슈에만)
+            cov_scores.append(cov)
+        fit_p = round(100 * sum(cov_scores) / len(cov_scores)) if cov_scores else 0
+
+        # sc 오버라이드 → 이후 모든 UI/리포트가 공고 요구 역량 기준
+        sc["states"] = {"OWNED": met_p, "GAP": gap_p, "UNOBSERVABLE": partial_p}
+        sc["technical_match"] = fit_p   # 공고 스킬 적합도 = fit
+        sc["fit"] = fit_p
+        importance_map = {s: "필수" for s in posting_skills}
+
+        # required_skills = 공고 기준
+        required_skills = [
+            {"skill": s, "importance": "필수",
+             "source_sentence": ("공고 명시" if required_from_posting else "")}
+            for s in posting_skills
+        ]
 
         owned_named = sc["states"]["OWNED"]
         owned_skills = [{"skill": s, "evidence": owned.get(s, "")} for s in owned_named]
@@ -480,6 +535,7 @@ def run_c_part_analysis(
             owned=owned,
             roadmap=roadmap,
             strengths=strengths,
+            posting_skills=posting_skills,
         )
 
         return {
