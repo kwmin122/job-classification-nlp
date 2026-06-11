@@ -147,7 +147,14 @@ def get_okt():
         okt = Okt()
         okt.pos("초기화", norm=True, stem=True)  # JVM 실제 기동 확인(여기서 실패하면 폴백)
         return okt
-    except Exception:
+    except Exception as exc:
+        # 조용히 저하되지 않게 명확히 경고 — 팀원이 JDK 설치 필요성을 알 수 있도록
+        print(
+            "[경고] konlpy/Okt(JVM) 사용 불가 → 폴백 토크나이저로 동작합니다(직무 분류 정확도 저하 가능). "
+            "정확도를 위해 JDK(예: Temurin 17) 설치 후 JAVA_HOME 설정을 권장합니다. "
+            f"원인: {exc}",
+            flush=True,
+        )
         return None  # konlpy/JVM 불가 → 폴백 토크나이저 사용
 
 
