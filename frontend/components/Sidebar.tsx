@@ -49,10 +49,6 @@ export function Sidebar({ stage, view, gapCount, onNav }: SidebarProps) {
       </nav>
 
       <div className="sidebar-spacer"/>
-      <div className="nav-label">계정</div>
-      <nav className="nav">
-        <button className="nav-item"><Ic.Settings size={18}/><span>설정</span></button>
-      </nav>
       <div className="side-divider"/>
       <div className="profile">
         <div className="ava">지</div>

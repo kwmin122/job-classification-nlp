@@ -40,11 +40,13 @@ function ResourceItem({ it, onAdd, added }: ResourceItemProps) {
         <div className="res-why">{it.why}</div>
       </div>
       <div className="res-actions">
-        <button className="btn dark sm" onClick={() => {}}><Ic.ArrowUpRight size={14}/>자료 열기</button>
+        <button className="btn dark sm" disabled={!it.url}
+          onClick={() => { if (it.url) window.open(it.url, "_blank", "noopener,noreferrer"); }}>
+          <Ic.ArrowUpRight size={14}/>자료 열기
+        </button>
         <button className={"icon-act" + (added ? " on" : "")} title="로드맵에 추가" onClick={onAdd}>
           {added ? <Ic.Check size={15} sw={2.6}/> : <Ic.Pin size={15}/>}
         </button>
-        <button className="icon-act" title="대체 자료" onClick={() => {}}><Ic.Swap size={15}/></button>
         <button className="icon-act" title="관심 없음" onClick={() => setDismissed(true)}><Ic.X size={15}/></button>
       </div>
     </div>
@@ -92,19 +94,10 @@ export function ResourcesView({ d, highlight }: ResourcesViewProps) {
 }
 
 /* ─── Roadmap ──────────────────────────────────────────────────── */
-const EXTRA_WEEKS: Omit<UiRoadmapWeek, "week">[] = [
-  { goal: "심화 학습 및 복습", skills: ["전반"], res: "이전 자료 복습", task: "학습 내용 정리 및 복습", output: "복습 정리 노트" },
-  { goal: "프로젝트 확장 및 개선", skills: ["전반"], res: "—", task: "기존 프로젝트 기능 확장", output: "확장된 결과물" },
-  { goal: "포트폴리오·자소서 정리", skills: ["문서화"], res: "STAR 작성 가이드", task: "경험을 채용 키워드 중심으로 재작성", output: "보완된 자소서 초안" },
-  { goal: "모의 면접 대비", skills: ["전반"], res: "기술 면접 질문 모음", task: "예상 질문 20개 답변 준비", output: "면접 대비 노트" },
-];
-
 function buildWeeks(base: UiRoadmapWeek[], target: number): UiRoadmapWeek[] {
-  if (target <= base.length) return base.slice(0, target);
-  const out = [...base];
-  let i = 0;
-  while (out.length < target) { out.push(EXTRA_WEEKS[i % EXTRA_WEEKS.length] as UiRoadmapWeek); i++; }
-  return out.map((w, idx) => ({ ...w, week: idx + 1 }));
+  // 실제 분석에서 도출된 주차만 표시한다(가짜 주차로 채우지 않음).
+  // 기간 선택(2/4/8/12)은 '최대 표시 주차' 상한으로만 작동한다.
+  return base.slice(0, target).map((w, idx) => ({ ...w, week: idx + 1 }));
 }
 
 interface WeekCardProps {
@@ -132,7 +125,6 @@ function WeekCard({ w, open, onToggle, done, onDone }: WeekCardProps) {
             <button className={"btn sm " + (done ? "ghost" : "lime")} onClick={onDone}>
               {done ? <><Ic.Refresh size={13}/>완료 취소</> : <><Ic.Check size={14}/>완료 표시</>}
             </button>
-            <button className="btn ghost sm"><Ic.ArrowUpRight size={13}/>자료 열기</button>
           </div>
         </div>
       )}
@@ -193,10 +185,25 @@ interface ReportViewProps { d: UiBlock; onRestart: () => void; }
 export function ReportView({ d, onRestart }: ReportViewProps) {
   const r = d.report;
   const [copied, setCopied] = useState(false);
+  const sec = (t: string, items: string[]) =>
+    items.length ? `\n## ${t}\n${items.map(s => "- " + s).join("\n")}\n` : "";
+  const markdown = () =>
+    `# 역량 분석 리포트\n\n## 전체 요약\n${r.summary}\n` +
+    sec("강점", r.strengths) + sec("부족 역량", r.gaps) +
+    sec("표현 보완", r.expression) + sec("추천 학습 순서", r.order) +
+    sec("주의사항", r.caution);
   const copy = () => {
-    const txt = `[역량 분석 리포트]\n\n■ 전체 요약\n${r.summary}\n\n■ 강점\n${r.strengths.map(s => "- " + s).join("\n")}\n\n■ 부족 역량\n${r.gaps.map(s => "- " + s).join("\n")}\n\n■ 표현 보완\n${r.expression.map(s => "- " + s).join("\n")}\n\n■ 추천 학습 순서\n${r.order.join("\n")}\n\n■ 주의사항\n${r.caution.map(s => "- " + s).join("\n")}`;
-    navigator.clipboard?.writeText(txt); setCopied(true); setTimeout(() => setCopied(false), 1600);
+    navigator.clipboard?.writeText(markdown());
+    setCopied(true); setTimeout(() => setCopied(false), 1600);
   };
+  const downloadMd = () => {
+    const blob = new Blob([markdown()], { type: "text/markdown;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "역량분석리포트.md";
+    a.click(); URL.revokeObjectURL(a.href);
+  };
+  const printPdf = () => window.print();
   return (
     <div className="view fade-in">
       <div className="view-head">
@@ -207,8 +214,8 @@ export function ReportView({ d, onRestart }: ReportViewProps) {
         <span className="spacer"/>
         <div className="rep-actions">
           <button className="btn sm" onClick={copy}>{copied ? <><Ic.Check size={14}/>복사됨</> : <><Ic.Copy size={14}/>복사</>}</button>
-          <button className="btn sm"><Ic.Download size={14}/>Markdown</button>
-          <button className="btn sm"><Ic.Pdf size={14}/>PDF</button>
+          <button className="btn sm" onClick={downloadMd}><Ic.Download size={14}/>Markdown</button>
+          <button className="btn sm" onClick={printPdf}><Ic.Pdf size={14}/>PDF</button>
           <button className="btn dark sm" onClick={onRestart}><Ic.Refresh size={14}/>다시 분석</button>
         </div>
       </div>

@@ -119,11 +119,14 @@ export default function Home() {
   const [highlight, setHighlight] = useState<string | null>(null);
   const [peek, setPeek] = useState<PeekableItem | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [animDone, setAnimDone] = useState(false);
   const pendingJump = useRef<{ skill: string; target: string } | null>(null);
 
   /* Start analysis */
   const startAnalysis = useCallback(async () => {
     setApiError(null);
+    setResult(null);
+    setAnimDone(false);
     setStage("analyzing");
     try {
       const res = await analyze({
@@ -142,15 +145,20 @@ export default function Home() {
     }
   }, [form]);
 
-  /* AnalyzingView calls onDone when its animation finishes */
-  const finishAnalysis = useCallback(() => {
-    if (result) {
+  /* AnalyzingView calls onDone when its animation finishes (그 자체로 화면 전환하지 않음) */
+  const finishAnalysis = useCallback(() => { setAnimDone(true); }, []);
+
+  /* 결과가 도착했고 + 진행 애니메이션도 끝났을 때만 결과 화면으로 전환.
+     (API가 느려도 멈추지 않고, 결과가 준비될 때까지 분석 화면 유지) */
+  useEffect(() => {
+    if (stage === "analyzing" && animDone && result) {
       setStage("results");
       setView("dash");
-      // trigger bar animations on next tick
-      setTimeout(() => setRunAnim(true), 80);
+      setRunAnim(false);
+      const t = setTimeout(() => setRunAnim(true), 80);
+      return () => clearTimeout(t);
     }
-  }, [result]);
+  }, [stage, animDone, result]);
 
   /* Jump to another view, optionally highlight a resource card */
   const jump = useCallback((skill: string, target: string) => {
