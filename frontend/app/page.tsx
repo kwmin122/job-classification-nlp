@@ -89,6 +89,7 @@ function DashboardView({ d, run, onJump, onPeek }: DashboardViewProps) {
 /* ─── helpers ─────────────────────────────────────────────────────── */
 const INIT_FORM: FormState = {
   jd: "",
+  jdSkills: [],
   cl: "",
   files: [],
   jdStatus: null,
@@ -134,7 +135,7 @@ export default function Home() {
     setStage("analyzing");
     try {
       const res = await analyze({
-        job_posting: { source_type: "text", text: form.jd },
+        job_posting: { source_type: "text", text: form.jd, structured_skills: form.jdSkills },
         candidate_materials: [{ source_type: "text", label: "자소서", text: form.cl }],
         roadmap_preferences: {
           duration_weeks: weeksNum(form.opts.weeks),

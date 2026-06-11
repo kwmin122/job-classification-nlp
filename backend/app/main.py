@@ -145,6 +145,8 @@ async def _extract_source(kind: str, request: Request) -> ExtractedText:
         char_count=len(result.text),
         warnings=result.warnings,
         extractor=result.extractor,
+        structured_skills=list(getattr(result, "structured_skills", []) or []),
+        job_title=getattr(result, "job_title", None),
     )
 
 
@@ -397,6 +399,9 @@ def analyze(request: AnalyzeRequest, top_k: int = 3) -> AnalyzeResponse:
         job_title = job_extraction.job_title
     else:
         job_text = extract_from_text_source(request.job_posting.text or "")
+        # 프론트가 URL 추출 때 받은 구조화 스킬을 함께 보냈으면 권위 있는 요구 스킬로 사용.
+        # (편집 가능한 본문은 text로 유지하되, 요구 역량은 본문 find_skills 대신 이걸로 → 보일러플레이트 오염 방지)
+        job_structured_skills = list(request.job_posting.structured_skills or [])
 
     candidate_text = " ".join(
         extract_from_text_source(material.text)

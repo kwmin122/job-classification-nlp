@@ -29,6 +29,10 @@ class JobPostingInput(BaseModel):
     source_type: Literal["url", "text", "file"]
     url: str | None = None
     text: str = ""
+    # URL 추출 시 사이트가 제공한 구조화된 요구 스킬(예: jobkorea '스킬' 태그).
+    # text로 보내더라도 이게 있으면 권위 있는 요구 스킬로 사용해, 추천공고·카테고리
+    # 보일러플레이트가 섞인 본문에서 find_skills가 엉뚱한 스킬을 잡는 오염을 막는다.
+    structured_skills: list[str] = []
 
 
 class CandidateMaterialInput(BaseModel):
@@ -84,6 +88,9 @@ class ExtractedText(BaseModel):
     char_count: int = Field(ge=0)
     warnings: list[str] = Field(default_factory=list)
     extractor: str
+    # URL 추출 시 사이트가 제공한 구조화 요구 스킬/직무명 — 분석 때 권위 있는 요구 스킬로 재사용
+    structured_skills: list[str] = Field(default_factory=list)
+    job_title: str | None = None
 
 
 class COutput(BaseModel):

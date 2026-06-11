@@ -112,6 +112,8 @@ export type ExtractedText = {
   char_count: number;
   warnings: string[];
   extractor: string;
+  structured_skills?: string[];
+  job_title?: string | null;
 };
 
 export type CandidateMaterialDraft = {
@@ -137,6 +139,7 @@ export type AnalyzeRequest = {
     source_type: SourceType;
     url?: string;
     text: string;
+    structured_skills?: string[];
   };
   candidate_materials: Array<{
     source_type: "text" | "file";

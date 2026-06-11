@@ -37,10 +37,11 @@ interface JdStatus { tone: "good" | "warn" | "bad"; msg: string; }
 interface JobCardProps {
   jd: string;
   setJd: (v: string) => void;
+  setJdSkills: (v: string[]) => void;
   jdStatus: JdStatus | null;
   setJdStatus: (s: JdStatus | null) => void;
 }
-function JobCard({ jd, setJd, jdStatus, setJdStatus }: JobCardProps) {
+function JobCard({ jd, setJd, setJdSkills, jdStatus, setJdStatus }: JobCardProps) {
   const [tab, setTab] = useState("text");
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -58,6 +59,8 @@ function JobCard({ jd, setJd, jdStatus, setJdStatus }: JobCardProps) {
       try {
         const res = await extractJobPostingFromUrl(url.trim());
         setJd(res.text || "");
+        // 사이트가 준 구조화 요구 스킬을 저장 → 분석 시 본문 find_skills(보일러플레이트 오염) 대신 사용
+        setJdSkills(res.structured_skills || []);
         const ocrUsed = res.extractor === "image_ocr"
           || (res.warnings || []).some(w => w.includes("OCR"));
         const cnt = res.char_count ?? (res.text || "").length;
@@ -69,6 +72,7 @@ function JobCard({ jd, setJd, jdStatus, setJdStatus }: JobCardProps) {
         });
       } catch (e) {
         setJd("");
+        setJdSkills([]);
         setJdStatus({
           tone: "bad",
           msg: "공고를 불러오지 못했어요 · " + ((e as Error).message || "URL 확인 후 본문을 직접 붙여넣어 주세요"),
@@ -103,14 +107,14 @@ function JobCard({ jd, setJd, jdStatus, setJdStatus }: JobCardProps) {
           </div>
         </div>
       ) : (
-        <textarea className="ta" value={jd} onChange={e => { setJd(e.target.value); setJdStatus(null); }}
+        <textarea className="ta" value={jd} onChange={e => { setJd(e.target.value); setJdSkills([]); setJdStatus(null); }}
           placeholder="채용공고 본문을 붙여넣어 주세요 — 자격요건·우대사항이 있으면 더 정확해요"/>
       )}
       <div className="card-actions">
         <button className="btn dark sm" onClick={load} disabled={loading}>
           {loading ? <><Ic.Spinner size={15}/>불러오는 중…</> : <><Ic.Download size={15}/>공고 불러오기</>}
         </button>
-        <button className="btn ghost sm" onClick={() => { setJd(""); setUrl(""); setJdStatus(null); setShowText(false); }}><Ic.Refresh size={14}/>초기화</button>
+        <button className="btn ghost sm" onClick={() => { setJd(""); setJdSkills([]); setUrl(""); setJdStatus(null); setShowText(false); }}><Ic.Refresh size={14}/>초기화</button>
         {tab === "text" && <button className="link-btn" onClick={() => { setJd(SAMPLE_JD); setJdStatus({ tone: "good", msg: "예시 공고를 불러왔어요" }); }}>예시 공고</button>}
       </div>
       {loading && (
@@ -222,6 +226,7 @@ function OptionGroup({ label, value, onChange, options }: OptionGroupProps) {
 
 export interface FormState {
   jd: string;
+  jdSkills: string[];   // URL 추출 시 사이트가 준 구조화 요구 스킬(있으면 본문 find_skills 대신 사용)
   cl: string;
   files: FileEntry[];
   jdStatus: JdStatus | null;
@@ -267,11 +272,12 @@ interface InputViewProps {
 }
 export function InputView({ form, setForm, onStart }: InputViewProps) {
   const canStart = form.jd.trim().length > 0 && (form.cl.trim().length > 0 || form.files.length > 0);
-  const reset = () => setForm(f => ({ ...f, jd: "", cl: "", files: [], jdStatus: null }));
+  const reset = () => setForm(f => ({ ...f, jd: "", jdSkills: [], cl: "", files: [], jdStatus: null }));
   return (
     <div className="input-grid fade-in">
       <div className="input-col">
         <JobCard jd={form.jd} setJd={v => setForm(f => ({ ...f, jd: v }))}
+          setJdSkills={v => setForm(f => ({ ...f, jdSkills: v }))}
           jdStatus={form.jdStatus} setJdStatus={s => setForm(f => ({ ...f, jdStatus: s }))}/>
         <ApplicantCard cl={form.cl} setCl={v => setForm(f => ({ ...f, cl: v }))}
           files={form.files} setFiles={v => setForm(f => ({ ...f, files: v }))}/>
