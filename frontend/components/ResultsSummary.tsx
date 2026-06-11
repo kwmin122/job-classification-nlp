@@ -37,7 +37,7 @@ export function SummaryRow({ d, run }: SummaryRowProps) {
       </div>
 
       <div className="card stat">
-        <Gauge value={run ? d.summary.fit : 0} color="#D98A24"/>
+        <Gauge value={d.summary.fit} color="#D98A24"/>
         <div className="stat-body">
           <div className="stat-kicker">현재 자료 기준 적합도</div>
           <div className="stat-main tnum">{Math.round(fit)}<small>/100</small></div>
@@ -81,7 +81,7 @@ function ScoreRow({ item, run, delay }: ScoreRowProps) {
         <span className="score-val tnum" style={{ color }}>{Math.round(v)}<small>{item.isCount ? item.unit : ""}</small></span>
       </div>
       {!item.isCount
-        ? <div className="score-track"><span style={{ width: (run ? item.value : 0) + "%", background: color, transitionDelay: delay + "ms" }}/></div>
+        ? <div className="score-track"><span style={{ width: item.value + "%", background: color, transitionDelay: delay + "ms" }}/></div>
         : <div className="score-flag">표현만 보완하면 점수 상승 여지가 있어요</div>}
     </div>
   );

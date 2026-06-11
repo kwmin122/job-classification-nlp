@@ -85,9 +85,13 @@ export function ResourcesView({ d, highlight }: ResourcesViewProps) {
         </div>
       </div>
       <div className="view-body">
-        <div className="res-grid">
-          {d.resources.map((g, i) => <ResourceCard key={i} group={g} highlight={highlight}/>)}
-        </div>
+        {d.resources.length === 0 ? (
+          <div className="empty-note">공고가 요구하는 역량을 이미 대부분 충족해, 추천할 학습자료가 없습니다.</div>
+        ) : (
+          <div className="res-grid">
+            {d.resources.map((g, i) => <ResourceCard key={i} group={g} highlight={highlight}/>)}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -154,13 +158,17 @@ export function RoadmapView({ d, highlight }: RoadmapViewProps) {
         </div>
       </div>
       <div className="view-body">
-        <div className="week-list">
-          {list.map(w => (
-            <WeekCard key={w.week} w={w} open={!!open[w.week]} done={!!done[w.week]}
-              onToggle={() => setOpen(o => ({ ...o, [w.week]: !o[w.week] }))}
-              onDone={() => setDone(s => ({ ...s, [w.week]: !s[w.week] }))}/>
-          ))}
-        </div>
+        {list.length === 0 ? (
+          <div className="empty-note">부족 역량이 없어 학습 로드맵이 비어 있습니다. 공고 요구 역량을 이미 충족했어요.</div>
+        ) : (
+          <div className="week-list">
+            {list.map(w => (
+              <WeekCard key={w.week} w={w} open={!!open[w.week]} done={!!done[w.week]}
+                onToggle={() => setOpen(o => ({ ...o, [w.week]: !o[w.week] }))}
+                onDone={() => setDone(s => ({ ...s, [w.week]: !s[w.week] }))}/>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

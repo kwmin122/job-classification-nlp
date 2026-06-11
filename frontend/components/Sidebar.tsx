@@ -73,9 +73,10 @@ export function Tip({ text }: { text: string }) {
 
 /* Animated count-up number */
 export function useCountUp(target: number, run: boolean, dur = 1100): number {
-  const [v, setV] = useState(0);
+  const [v, setV] = useState(target);
   useEffect(() => {
-    if (!run) { setV(0); return; }
+    // 애니메이션을 안 켤 때는 실제 목표값을 그대로 표시한다(0으로 떨어뜨리지 않음).
+    if (!run) { setV(target); return; }
     let raf: number;
     let start: number | null = null;
     let done = false;
