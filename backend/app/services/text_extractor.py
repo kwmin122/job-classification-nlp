@@ -235,6 +235,49 @@ def _extract_with_playwright(url: str, timeout_seconds: int = 32) -> str:
         return ""
 
 
+_JD_BODY_MARKERS = (
+    "담당업무", "자격요건", "우대사항", "주요업무", "필수조건", "주요 업무",
+    "이런 업무", "이런 분", "이런 기술", "하는 일", "업무내용", "지원자격",
+    "responsibilities", "qualifications", "requirements", "what you",
+)
+
+
+def _has_jd_body(text: str) -> bool:
+    """텍스트에 채용공고 본문 마커가 있는지 (없으면 메타/잡동사니만 추출된 것)."""
+    low = text.lower()
+    return any(m.lower() in low for m in _JD_BODY_MARKERS)
+
+
+def _list_page_images(url: str, timeout_seconds: int = 28) -> list[str]:
+    """playwright로 페이지의 큰 콘텐츠 이미지(JD 포스터 추정) URL 목록 반환."""
+    script_path = Path(__file__).parent.parent.parent / "tools" / "playwright_images.cjs"
+    if not script_path.exists():
+        return []
+    try:
+        result = subprocess.run(
+            ["node", str(script_path), url, str(timeout_seconds * 1000 - 3000)],
+            capture_output=True, timeout=timeout_seconds, text=True,
+            encoding="utf-8", errors="replace",
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            return [u for u in result.stdout.splitlines() if u.startswith("http")]
+    except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
+        pass
+    return []
+
+
+def _ocr_page_images(url: str) -> str:
+    """이미지 기반 공고: 페이지의 큰 이미지를 OCR해 JD 텍스트 복원. 실패 시 ''."""
+    imgs = _list_page_images(url)
+    if not imgs:
+        return ""
+    try:
+        from app.services.ocr import ocr_image_urls
+    except Exception:
+        return ""
+    return clean_text(ocr_image_urls(imgs))
+
+
 def extract_url(url: str, *, timeout_seconds: int = 10, max_bytes: int = 2_000_000) -> TextExtractionResult:
     parsed = urlparse(url)
     if parsed.scheme not in {"http", "https"}:
@@ -334,24 +377,32 @@ def extract_url(url: str, *, timeout_seconds: int = 10, max_bytes: int = 2_000_0
             )
 
     text = extract_visible_text_from_html(html)
+    extractor = "html_parser"
     if len(text) < 200:
         # 정적 HTML이 너무 짧음 → JS 렌더링 시도 (SPA/CSR 사이트 대응)
         pw_text = _extract_with_playwright(url)
         if len(pw_text) >= 200:
-            return TextExtractionResult(
-                text=pw_text,
-                source_type="url",
-                extractor="playwright",
-                warnings=warnings,
-            )
-        if len(text) < 20:
-            raise TextExtractionError(
-                "URL에서 충분한 본문을 추출하지 못했습니다. 채용공고 본문을 직접 붙여넣어 주세요."
-            )
+            text, extractor = pw_text, "playwright"
+
+    # ── 이미지 기반 공고 OCR fallback ───────────────────────────────────
+    #   JD 본문 마커가 없으면(linkareer 등 직무 내용을 포스터 이미지로 올린 경우)
+    #   페이지의 큰 이미지를 OCR해 실제 JD 텍스트를 복원한다.
+    if not _has_jd_body(text):
+        ocr_text = _ocr_page_images(url)
+        if len(ocr_text) >= 200:
+            # OCR 본문 + 기존 텍스트(회사/제목 등 메타) 결합
+            text = (ocr_text + " " + text).strip()
+            extractor = "image_ocr"
+            warnings.append("이미지 기반 공고를 OCR로 읽었습니다 (정확도는 원본 이미지 품질에 따름).")
+
+    if len(text) < 20:
+        raise TextExtractionError(
+            "URL에서 충분한 본문을 추출하지 못했습니다. 채용공고 본문을 직접 붙여넣어 주세요."
+        )
     return TextExtractionResult(
         text=text,
         source_type="url",
-        extractor="html_parser",
+        extractor=extractor,
         warnings=warnings,
     )
 

@@ -291,3 +291,16 @@ python -m pytest tests/ -q
 │   └── .env.example                   # NEXT_PUBLIC_API_URL 예시
 └── README.md
 ```
+
+## 이미지 기반 채용공고 OCR (easyocr)
+
+linkareer 등 일부 채용 사이트는 직무 내용을 텍스트가 아니라 **포스터 이미지**로 게시합니다.
+이 경우 URL 입력 시 본문 텍스트에 직무 요구사항이 없으므로, 시스템이 페이지의 큰 이미지를
+자동으로 **OCR**(easyocr)하여 실제 JD 텍스트를 복원한 뒤 분석합니다.
+
+- 엔진: `easyocr` (PyTorch 기반, **Windows/macOS/Linux 동일 동작**, 별도 바이너리 설치 불필요).
+- 최초 1회 모델 자동 다운로드(약 100MB, 네트워크 필요). 이후 오프라인 동작.
+- 설치: `pip install -r backend/requirements.txt` (easyocr, pillow 포함).
+- 동작 조건: URL 본문에 직무 마커(담당업무/자격요건/이런 업무 등)가 없을 때만 OCR 작동(graceful).
+- 미설치 시: OCR을 건너뛰고 텍스트만으로 분석(빈 결과 대신 안내).
+- 참고: OCR은 페이지 렌더링 + 인식으로 수십 초가 걸릴 수 있습니다(이미지 공고에 한함).
