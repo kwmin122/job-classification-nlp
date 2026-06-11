@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "역량 핏 분석",
-  description: "채용공고 기반 역량 격차와 학습 로드맵 추천 대시보드"
+  title: "Career Compass",
+  description: "채용공고 요구 역량 대비 내 위치와 부족 역량·학습 로드맵을 알려주는 대시보드"
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

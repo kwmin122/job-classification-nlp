@@ -76,18 +76,20 @@ interface CompetencyTabsProps {
 }
 export function CompetencyTabs({ d, onJump, onPeek }: CompetencyTabsProps) {
   const comp = d.competencies;
+  const reqTotal = comp.met.length + comp.partial.length + comp.gap.length;
   const tabs = [
-    { id: "met", label: "충족", n: comp.met.length, tone: "good" },
-    { id: "partial", label: "부분 충족", n: comp.partial.length, tone: "warn" },
+    { id: "req", label: "요구 역량", n: reqTotal, tone: "neutral" },
+    { id: "met", label: "보유", n: comp.met.length, tone: "good" },
+    { id: "partial", label: "부분", n: comp.partial.length, tone: "warn" },
     { id: "gap", label: "부족", n: comp.gap.length, tone: "bad" },
     { id: "adjacent", label: "직무 외 강점", n: comp.adjacent.length, tone: "info" },
   ];
-  const [tab, setTab] = useState("met");
+  const [tab, setTab] = useState("req");
   return (
     <div className="dash-card comp-panel">
       <div className="dash-card-head">
-        <h2>역량 분석</h2>
-        <span className="hint">근거 문장을 누르면 원문 위치를 볼 수 있어요</span>
+        <h2>공고 요구 역량 vs 내 역량</h2>
+        <span className="hint">공고가 요구한 역량별로 보유·부분·부족을 한눈에. 근거 문장을 누르면 원문 위치를 봐요</span>
       </div>
       <div className="tabs">
         {tabs.map(t => (
@@ -98,6 +100,19 @@ export function CompetencyTabs({ d, onJump, onPeek }: CompetencyTabsProps) {
       </div>
 
       <div className="comp-scroll">
+        {tab === "req" && (
+          <div className="tabpane" key="req">
+            <div className="req-summary">
+              공고가 요구한 <b>{reqTotal}개</b> 역량 · 보유 <b className="t-good">{comp.met.length}</b> · 부분 <b className="t-warn">{comp.partial.length}</b> · 부족 <b className="t-bad">{comp.gap.length}</b>
+            </div>
+            <div className="comp-list">
+              {comp.met.map((c, i) => <MetRow key={"m" + i} c={c} onPeek={onPeek}/>)}
+              {comp.partial.map((c, i) => <PartialRow key={"p" + i} c={c} onPeek={onPeek}/>)}
+              {comp.gap.map((c, i) => <GapRow key={"g" + i} c={c} onJump={onJump}/>)}
+              {reqTotal === 0 && <div className="empty-note">공고에서 요구 역량을 추출하지 못했습니다. URL로 공고를 불러오거나 본문을 더 자세히 넣어 주세요.</div>}
+            </div>
+          </div>
+        )}
         {tab === "met" && <div className="comp-list tabpane" key="met">{comp.met.map((c, i) => <MetRow key={i} c={c} onPeek={onPeek}/>)}</div>}
         {tab === "partial" && <div className="comp-list tabpane" key="partial">{comp.partial.map((c, i) => <PartialRow key={i} c={c} onPeek={onPeek}/>)}</div>}
         {tab === "gap" && <div className="comp-list tabpane" key="gap">{comp.gap.map((c, i) => <GapRow key={i} c={c} onJump={onJump}/>)}</div>}

@@ -229,6 +229,17 @@ ALIASES = {
     "transformer": "Transformers",
     "Multimodal": "멀티모달",
     "multimodal": "멀티모달",
+    # 영문 표기/약어 동의어 → 자원 보유 캐노니컬로 정규화 (find_skills 결과 정리)
+    "Spring": "Spring Boot",
+    "ML": "Machine Learning",
+    "React.js": "React", "Reactjs": "React",
+    "Vue.js": "Vue",
+    "Tailwind": "Tailwind CSS",
+    "EC2": "AWS", "S3": "AWS",
+    "REST": "REST API",
+    "GPT": "ChatGPT",
+    "자연어 처리": "NLP", "자연어처리": "NLP",
+    "Front-end": "Frontend", "Front-End": "Frontend",
 }
 
 # 최종 통합 가제터 (211 코퍼스 + 학습자료80개.csv 어휘만, 후보 텍스트 미사용)
@@ -1261,10 +1272,13 @@ def _get_resource_embeddings():
         return None, None
 
 
-# semantic 유사도 하한: 관련 skill-family는 0.45+, 오도메인 junk는 <0.45
-# (Opus 71 실측 캘리브레이션: Airflow→Frontend 0.37, Java→JavaScript 0.38,
-#  Kotlin→React Query 0.24 등 패딩 차단; SQL→PostgreSQL 0.45+, 데이터시각화→R 0.55+ 유지)
-_RES_SEMANTIC_FLOOR = 0.45
+# semantic 유사도 하한: 관련 자원은 0.50+, 오도메인 junk는 <0.50
+# 이 경로는 direct 매칭이 0개일 때만 탄다(위 `if direct:` 가드). 119자원 실측 캘리:
+#   junk 상한 — Linux→LangSmith 0.489 / 서버운영→EC2 0.449 / 추천시스템→junk 0.419 (전부 컷)
+#   legit 하한 — 자연어처리→HuggingFace 0.506 / 데이터시각화→R·데이터분석 0.512~0.549 (통과)
+# 0.50은 junk 상한(0.489)과 legit 하한(0.506) 사이. 카탈로그 보강 후엔 대부분 direct로 빠져
+# 이 안전망은 잔여 케이스에만 작동(과튜닝 불필요).
+_RES_SEMANTIC_FLOOR = 0.50
 
 
 def search_resources(gap_skill, topk=3):
@@ -1314,7 +1328,11 @@ def search_resources(gap_skill, topk=3):
             _seen_direct.add(_t)
             direct.append(_item)
 
-    if len(direct) >= topk:
+    # direct 매칭이 하나라도 있으면 그것만 반환한다(의미 padding 금지).
+    # 이유: 언어/프레임워크 클러스터(JavaScript↔Java 0.525, ↔CSS 0.529)는 cosine이
+    # 높아 floor로 못 거른다. 직접 일치한 자원은 항상 정확하므로, 부족하면 적게 보일지언정
+    # 무관한 자원을 섞지 않는다. (예전엔 Git 2개에 LangChain을 끼워 넣던 버그)
+    if direct:
         direct_sorted = sorted(
             direct,
             key=lambda x: (

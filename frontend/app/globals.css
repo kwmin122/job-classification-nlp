@@ -651,3 +651,9 @@ button.crow:hover { border-color: var(--slate); }
 
 .empty-note { padding: 40px 24px; text-align: center; color: var(--slate); font-size: 14px;
   background: var(--paper); border: 1px solid var(--chalk); border-radius: var(--r-card); line-height: 1.6; }
+.req-summary { padding: 12px 15px; margin-bottom: 13px; background: var(--paper);
+  border: 1px solid var(--chalk); border-radius: 11px; font-size: 13px; color: var(--slate); }
+.req-summary b { color: var(--carbon); font-weight: 700; }
+.req-summary .t-good { color: var(--good); }
+.req-summary .t-warn { color: var(--warn); }
+.req-summary .t-bad { color: var(--bad); }

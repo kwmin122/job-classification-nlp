@@ -202,8 +202,8 @@ export default function Home() {
           <>
             <div className="panel-header">
               <div className="panel-title-row">
-                <h1>역량 핏 분석</h1>
-                <p>채용공고와 지원자 자료를 입력하면 증거 기반으로 역량 적합도를 분석해 드립니다</p>
+                <h1>Career Compass</h1>
+                <p>채용공고가 요구하는 역량과 내 자료를 맞춰, 지금 내 위치와 다음에 채울 역량을 알려드립니다</p>
               </div>
             </div>
             {apiError && (

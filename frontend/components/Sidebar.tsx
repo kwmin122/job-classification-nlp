@@ -27,8 +27,8 @@ export function Sidebar({ stage, view, gapCount, onNav }: SidebarProps) {
       <div className="brand">
         <div className="mark"><Ic.Target size={20} sw={2}/></div>
         <div>
-          <div className="name">역량 핏</div>
-          <div className="sub">Career Fit Analyzer</div>
+          <div className="name">Career Compass</div>
+          <div className="sub">내가 어디에 있고, 어디로 갈지</div>
         </div>
       </div>
 
