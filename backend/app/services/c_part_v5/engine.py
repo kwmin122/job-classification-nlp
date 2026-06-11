@@ -240,6 +240,7 @@ ALIASES = {
     "GPT": "ChatGPT",
     "자연어 처리": "NLP", "자연어처리": "NLP",
     "Front-end": "Frontend", "Front-End": "Frontend",
+    "생성형 AI": "LLM", "생성형AI": "LLM", "Generative AI": "LLM",
 }
 
 # 최종 통합 가제터 (211 코퍼스 + 학습자료80개.csv 어휘만, 후보 텍스트 미사용)

@@ -118,3 +118,41 @@ ML037,AI/ML 엔지니어,Prompt Engineering,체계적 방법론,Prompt Engineeri
 BE037,백엔드 개발자,MSSQL,공식 문서,Microsoft SQL Server 공식 문서,MS SQL Server의 쿼리·인덱스·트랜잭션·성능 최적화 공식 레퍼런스,https://learn.microsoft.com/ko-kr/sql/sql-server/,공식문서,intermediate,한국어,무료,자기 페이스,5,잡코리아 백엔드 공고에서 MSSQL 요구 반복 — Microsoft 공식 한국어 문서
 BE038,백엔드 개발자,Oracle,공식 문서,Oracle Database 공식 문서,Oracle DB의 SQL·PL/SQL·성능 튜닝·DBA 관리 공식 레퍼런스,https://docs.oracle.com/en/database/oracle/oracle-database/,공식문서,intermediate,영어,무료,자기 페이스,5,잡코리아 백엔드 공고에서 Oracle DB 요구 반복 — Oracle 공식 문서
 BE039,백엔드 개발자,gRPC,공식 문서,gRPC 공식 문서,gRPC 프로토콜·Protobuf 정의·서비스 구현 공식 가이드,https://grpc.io/docs/,공식문서,intermediate,영어,무료,3시간,5,잡코리아 백엔드 공고에서 gRPC 마이크로서비스 요구 반복 — 공식 문서
+X001,백엔드 개발자,Linux,,생활코딩 리눅스,"리눅스 명령어·파일 시스템 입문(무료, 한국어 자막)",https://opentutorials.org/course/2598,공식학습,beginner,한국어,무료,6시간,5,"리눅스 명령어·파일 시스템 입문(무료, 한국어 자막)"
+X002,백엔드 개발자,Linux,,개발자를 위한 쉬운 리눅스,실무에 필요한 리눅스 기본기 2시간 압축(무료),https://www.inflearn.com/course/%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%A5%BC-%EC%9C%84%ED%95%9C-%EC%89%AC%EC%9A%B4-%EB%A6%AC%EB%88%85%EC%8A%A4,강의,intermediate,한국어,무료,2시간,4,실무에 필요한 리눅스 기본기 2시간 압축(무료)
+X003,백엔드 개발자,Linux,,이것이 우분투 리눅스다,설치~서버·네트워크까지 우분투 심화(무료),https://www.inflearn.com/course/%EC%9D%B4%EA%B2%83%EC%9D%B4-%EC%9A%B0%EB%B6%84%ED%88%AC-%EB%A6%AC%EB%88%85%EC%8A%A4%EB%8B%A4,강의,advanced,한국어,무료,10시간,4,설치~서버·네트워크까지 우분투 심화(무료)
+X004,백엔드 개발자,Django,,Django 초보 가이드 — 실습으로 알아보는 장고 입문,실습 중심 장고 입문(무료),https://www.inflearn.com/course/django-%EC%B4%88%EB%B3%B4-%EA%B0%80%EC%9D%B4%EB%93%9C-%EC%8B%A4%EC%8A%B5%EC%9D%84-%ED%86%B5%ED%95%B4-%EC%95%8C%EC%95%84%EB%B3%B4%EB%8A%94-%EC%9E%A5%EA%B3%A0-%EC%9E%85%EB%AC%B8,강의,beginner,한국어,무료,3시간,4,실습 중심 장고 입문(무료)
+X005,백엔드 개발자,Django,,파이썬으로 장고 공략하기: 입문,게시판~AWS 배포까지 실전 장고,https://www.inflearn.com/course/django-course,강의,intermediate,한국어,무료,8시간,4,게시판~AWS 배포까지 실전 장고
+X006,백엔드 개발자,Django,,Django 공식 문서(한국어),모델·뷰·보안 전 영역 공식 레퍼런스,https://docs.djangoproject.com/ko/5.0/,공식문서,advanced,한국어,무료,참고,5,모델·뷰·보안 전 영역 공식 레퍼런스
+X007,프론트엔드 개발자,Vue,,Vue.js 입문서 — 캡틴판교,프론트 개발자를 위한 Vue 입문 정리,https://joshua1988.github.io/web-development/vuejs/vuejs-tutorial-for-beginner/,문서,beginner,한국어,무료,2시간,4,프론트 개발자를 위한 Vue 입문 정리
+X008,프론트엔드 개발자,Vue,,Age of Vue.js — 캡틴판교,컴포넌트 설계·프로젝트 구조 실전,https://www.inflearn.com/course/age-of-vuejs,강의,intermediate,한국어,무료,6시간,4,컴포넌트 설계·프로젝트 구조 실전
+X009,프론트엔드 개발자,Vue,,Vue.js 공식 가이드(한국어),Composition API 등 공식 심화 가이드,https://ko.vuejs.org/guide/introduction.html,공식문서,advanced,한국어,무료,참고,5,Composition API 등 공식 심화 가이드
+X010,백엔드 개발자,MongoDB,,MongoDB — Javascript로 배우는 NoSQL DB,JS로 배우는 몽고DB 기초,https://www.inflearn.com/course/mongodb_grammar_basics,강의,beginner,한국어,무료,4시간,4,JS로 배우는 몽고DB 기초
+X011,백엔드 개발자,MongoDB,,mongoDB 기초부터 실무까지(feat. Node.js),Node.js 연동 실무 활용,https://www.inflearn.com/course/%EB%AA%BD%EA%B3%A0%EB%94%94%EB%B9%84-%EA%B8%B0%EC%B4%88-%EC%8B%A4%EB%AC%B4,강의,intermediate,한국어,무료,6시간,4,Node.js 연동 실무 활용
+X012,백엔드 개발자,MongoDB,,MongoDB 공식 매뉴얼,스키마·인덱스·샤딩 공식 레퍼런스,https://www.mongodb.com/docs/manual/,공식문서,advanced,영어,무료,참고,5,스키마·인덱스·샤딩 공식 레퍼런스
+X013,백엔드 개발자,Azure,,Azure 기본 사항 — 클라우드 개념(MS Learn),Azure 입문 공식 무료 학습 경로,https://learn.microsoft.com/ko-kr/training/paths/microsoft-azure-fundamentals-describe-cloud-concepts/,공식학습,beginner,한국어,무료,3시간,5,Azure 입문 공식 무료 학습 경로
+X014,백엔드 개발자,Azure,,AZ-900: 클라우드 인프라 소개,핵심 서비스·거버넌스 자격 대비,https://learn.microsoft.com/ko-kr/training/courses/az-900t00,공식학습,intermediate,한국어,무료,8시간,5,핵심 서비스·거버넌스 자격 대비
+X015,백엔드 개발자,Azure,,Azure 학습 허브(역할별 심화),역할별 심화 학습 경로 전체,https://learn.microsoft.com/ko-kr/training/azure/,공식학습,advanced,한국어,무료,참고,5,역할별 심화 학습 경로 전체
+X016,백엔드 개발자,Elasticsearch,,Elastic 가이드북 — 김종민,한국어 엘라스틱서치 입문 가이드북,https://esbook.kimjmin.net/,문서,beginner,한국어,무료,6시간,5,한국어 엘라스틱서치 입문 가이드북
+X017,백엔드 개발자,Elasticsearch,,엘라스틱서치 가이드북(GitHub),커뮤니티가 유지하는 한국어 ES 자료,https://github.com/eskrug/es-kr-guide,오픈소스,intermediate,한국어,무료,참고,4,커뮤니티가 유지하는 한국어 ES 자료
+X018,백엔드 개발자,Elasticsearch,,ElasticSearch 한글 형태소 분석 실습,한글 분석기·매핑 심화 실습,https://wonyong-jang.github.io/elk/2021/06/19/ELK-Elastic-Search-analyze-korean2.html,문서,advanced,한국어,무료,참고,3,한글 분석기·매핑 심화 실습
+X019,AI/ML 엔지니어,OCR,,Tesseract로 파이썬 OCR 구현하기,Tesseract 파이썬 OCR 입문,https://www.youdad.kr/implementing-python-ocr-with-tesseract/,문서,beginner,한국어,무료,1시간,3,Tesseract 파이썬 OCR 입문
+X020,AI/ML 엔지니어,OCR,,EasyOCR(오픈소스),80개 언어 딥러닝 OCR 라이브러리(한국어 지원),https://github.com/JaidedAI/EasyOCR,오픈소스,intermediate,영어,무료,참고,4,80개 언어 딥러닝 OCR 라이브러리(한국어 지원)
+X021,AI/ML 엔지니어,OCR,,Tesseract 공식 문서,학습·튜닝 공식 매뉴얼,https://tesseract-ocr.github.io/tessdoc/,공식문서,advanced,영어,무료,참고,4,학습·튜닝 공식 매뉴얼
+X022,백엔드 개발자,MSA,,실무에서 전하는 따끈한 MSA 이야기,MSA 배경·패턴 개념 입문,https://www.inflearn.com/course/%EC%8B%A4%EB%AC%B4-msa-%EC%9D%B4%EC%95%BC%EA%B8%B0,강의,beginner,한국어,무료,3시간,4,MSA 배경·패턴 개념 입문
+X023,백엔드 개발자,MSA,,Spring Cloud로 개발하는 MSA,Spring Cloud 게이트웨이·서비스메시 실전,https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9C-%EB%A7%88%EC%9D%B4%ED%81%AC%EB%A1%9C%EC%84%9C%EB%B9%84%EC%8A%A4,강의,intermediate,한국어,무료,10시간,4,Spring Cloud 게이트웨이·서비스메시 실전
+X024,백엔드 개발자,MSA,,마이크로서비스 아키텍처 스타일(Azure Architecture),MSA 설계 패턴 공식 가이드,https://learn.microsoft.com/ko-kr/azure/architecture/guide/architecture-styles/microservices,공식문서,advanced,한국어,무료,참고,5,MSA 설계 패턴 공식 가이드
+X025,AI/ML 엔지니어,NLP,,딥 러닝을 이용한 자연어 처리 입문(위키독스),전처리~트랜스포머·BERT 한국어 입문서,https://wikidocs.net/book/2155,문서,beginner,한국어,무료,참고,5,전처리~트랜스포머·BERT 한국어 입문서
+X026,AI/ML 엔지니어,NLP,,딥러닝 자연어 처리 실습(위키독스),실습 중심 자연어처리,https://wikidocs.net/book/19223,문서,intermediate,한국어,무료,참고,4,실습 중심 자연어처리
+X027,AI/ML 엔지니어,NLP,,Hugging Face NLP Course,트랜스포머 기반 NLP 공식 코스,https://huggingface.co/learn/nlp-course,공식학습,advanced,영어,무료,참고,5,트랜스포머 기반 NLP 공식 코스
+X028,프론트엔드 개발자,UI/UX,,UX/UI 시작하기 — UX 개념(인프런 오리지널),UX 입문 기본 개념,https://www.inflearn.com/course/ux-%EA%B0%9C%EB%85%90-%EC%9D%B8%ED%94%84%EB%9F%B0-%EC%98%A4%EB%A6%AC%EC%A7%80%EB%84%90,강의,beginner,한국어,무료,3시간,4,UX 입문 기본 개념
+X029,프론트엔드 개발자,UI/UX,,UX/UI 시작하기 — UI 디자인(인프런 오리지널),UI 디자인 실무 기초,https://www.inflearn.com/course/ui-%EA%B0%9C%EB%85%90-%EC%9D%B8%ED%94%84%EB%9F%B0-%EC%98%A4%EB%A6%AC%EC%A7%80%EB%84%90,강의,intermediate,한국어,무료,4시간,4,UI 디자인 실무 기초
+X030,프론트엔드 개발자,UI/UX,,예민한 UX 디자인(전민수),현업 관점 UX 디자인 심화,https://www.inflearn.com/course/%EC%98%88%EB%AF%BC%ED%95%9C-UX-%EB%94%94%EC%9E%90%EC%9D%B8,강의,advanced,한국어,무료,6시간,4,현업 관점 UX 디자인 심화
+X031,AI/ML 엔지니어,LLM,,LLM 바닥부터 만들기 — 홍정모(YouTube),대형언어모델 핵심 1시간 정리,https://www.youtube.com/watch?v=osv2csoHVAo,유튜브,beginner,한국어,무료,1시간,4,대형언어모델 핵심 1시간 정리
+X032,AI/ML 엔지니어,LLM,,처음 해보는 맞춤형 LLM 만들기 — LoRA & QLoRA,LoRA 파인튜닝 입문 실습,https://www.inflearn.com/course/%EB%A7%9E%EC%B6%A4%ED%98%95-llm-%EB%A7%8C%EB%93%A4%EA%B8%B0-lora-amp,강의,intermediate,한국어,무료,3시간,4,LoRA 파인튜닝 입문 실습
+X033,AI/ML 엔지니어,LLM,,Introduction to LLMs — Google ML Crash Course,구글 ML 크래시코스 LLM 심화,https://developers.google.com/machine-learning/crash-course/llm,공식학습,advanced,영어,무료,참고,5,구글 ML 크래시코스 LLM 심화
+X034,AI/ML 엔지니어,파인튜닝,,맞춤형 LLM 만들기 — LoRA & QLoRA,LoRA/QLoRA 파인튜닝 입문,https://www.inflearn.com/course/%EB%A7%9E%EC%B6%A4%ED%98%95-llm-%EB%A7%8C%EB%93%A4%EA%B8%B0-lora-amp,강의,beginner,한국어,무료,3시간,4,LoRA/QLoRA 파인튜닝 입문
+X035,AI/ML 엔지니어,파인튜닝,,실전 LLM 파인튜닝 예제코드(위키북스),LoRA/QLoRA 한국어 실습 예제,https://github.com/wikibook/llm-finetuning,오픈소스,intermediate,한국어,무료,참고,4,LoRA/QLoRA 한국어 실습 예제
+X036,AI/ML 엔지니어,파인튜닝,,Hugging Face — Fine-tuning(Trainer),Trainer/SFT 공식 파인튜닝 가이드,https://huggingface.co/docs/transformers/en/training,공식문서,advanced,영어,무료,참고,5,Trainer/SFT 공식 파인튜닝 가이드
+X037,AI/ML 엔지니어,멀티모달,,Hugging Face NLP Course(멀티모달 포함),트랜스포머 기반 멀티모달까지 다루는 공식 코스,https://huggingface.co/learn/nlp-course,공식학습,intermediate,영어,무료,참고,4,트랜스포머 기반 멀티모달까지 다루는 공식 코스
+X038,AI/ML 엔지니어,멀티모달,,Hugging Face Transformers 공식 문서,비전·언어 멀티모달 모델 공식 문서,https://huggingface.co/docs/transformers/en/index,공식문서,advanced,영어,무료,참고,4,비전·언어 멀티모달 모델 공식 문서
